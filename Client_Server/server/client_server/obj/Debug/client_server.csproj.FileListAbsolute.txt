@@ -1,0 +1,8 @@
+C:\Users\abucevschi\Desktop\client_server\client_server\bin\Debug\client_server.exe.config
+C:\Users\abucevschi\Desktop\client_server\client_server\obj\Debug\client_server.Form1.resources
+C:\Users\abucevschi\Desktop\client_server\client_server\obj\Debug\client_server.Properties.Resources.resources
+C:\Users\abucevschi\Desktop\client_server\client_server\obj\Debug\client_server.csproj.GenerateResource.Cache
+C:\Users\abucevschi\Desktop\client_server\client_server\bin\Debug\client_server.exe
+C:\Users\abucevschi\Desktop\client_server\client_server\bin\Debug\client_server.pdb
+C:\Users\abucevschi\Desktop\client_server\client_server\obj\Debug\client_server.exe
+C:\Users\abucevschi\Desktop\client_server\client_server\obj\Debug\client_server.pdb
