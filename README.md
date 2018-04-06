@@ -6,5 +6,5 @@ Echipa:
 - Bucevschi Alexandru Gabriel
 - Olariu Madalina
 - Trinca Alexandra Ioana
-- Aurora Andreea
+- Savastre Aurora Andreea
 - Luca Iustin
