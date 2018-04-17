@@ -6,3 +6,12 @@ c:\users\abucevschi\documents\visual studio 2015\Projects\Client\Client\obj\Debu
 c:\users\abucevschi\documents\visual studio 2015\Projects\Client\Client\obj\Debug\Client.exe
 c:\users\abucevschi\documents\visual studio 2015\Projects\Client\Client\obj\Debug\Client.pdb
 C:\Users\abucevschi\Documents\Visual Studio 2015\Projects\Client\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Client.exe.config
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Client.exe
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Client.pdb
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.Properties.Resources.resources
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.csproj.GenerateResource.cache
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.exe
+G:\Doc\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.pdb
