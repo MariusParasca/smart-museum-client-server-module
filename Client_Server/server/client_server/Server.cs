@@ -15,12 +15,13 @@ namespace Server
     public class Server
     {
         private static Cryptor cryptor;
-
+        private static Compresser Compresser;
         internal static Cryptor Cryptor { get => cryptor; set => cryptor = value; }
 
         public static void Main()
         {
             Cryptor = new Cryptor();
+            Compresser = new Compresser();
             try
             {   
                 IPAddress ipAd = IPAddress.Parse("127.0.0.1");
@@ -35,12 +36,10 @@ namespace Server
                 Socket s = myList.AcceptSocket();
                 Console.WriteLine("Connection accepted from " + s.RemoteEndPoint);
 
-                Console.WriteLine(ReceiveText(s,100));
+                Console.WriteLine(ReceiveText(s));
                 SendText(s, "Mesaj");
-                SendPhoto(s, "G:\\Doc\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-
-                
-                
+                //   SendPhoto(s, "G:\\Doc\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
+                SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 s.Close();
                 myList.Stop();
 
@@ -51,11 +50,12 @@ namespace Server
             }
         }
 
-        public static String ReceiveText(Socket socket, int howBig)
+        public static String ReceiveText(Socket socket)
         {
-            byte[] bb = new byte[100000];
-            int k = socket.Receive(bb);
-      
+            BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
+            int howBig = binaryReader.ReadInt32();
+            byte[] bb = new byte[howBig];
+            int k = binaryReader.Read(bb, 0, howBig);
             Console.WriteLine("[TEXT] Received \n");
             return bArrayToString(bb, k);
         }
@@ -79,7 +79,10 @@ namespace Server
         {
             Bitmap bitmap = new Bitmap(imagePath);
             byte[] imageByte = ImageToByteArray(bitmap);
-            ASCIIEncoding asen = new ASCIIEncoding();           
+            ASCIIEncoding asen = new ASCIIEncoding();
+            imageByte = Compresser.Compress(imageByte);
+            //Console.Write("am scris" + imageByte.Length);
+            socket.Send(BitConverter.GetBytes(imageByte.Length));
             socket.Send(imageByte);          
             Console.WriteLine("\n[IMAGE] Image Send");
         }

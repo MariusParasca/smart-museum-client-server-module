@@ -16,3 +16,13 @@ G:\Doc\smart-museum-client-server-module\Client_Server\server\client_server\obj\
 G:\Doc\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.csproj.CoreCompileInputs.cache
 G:\Doc\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.exe
 G:\Doc\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.pdb
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\bin\Debug\client_server.exe.config
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\bin\Debug\client_server.exe
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\bin\Debug\client_server.pdb
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.csprojResolveAssemblyReference.cache
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.Form1.resources
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.Properties.Resources.resources
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.csproj.GenerateResource.cache
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.csproj.CoreCompileInputs.cache
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.exe
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.pdb

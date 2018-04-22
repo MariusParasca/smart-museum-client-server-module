@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Compresser.cs" />
     <Compile Include="Cryptor.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

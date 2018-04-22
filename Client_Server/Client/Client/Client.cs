@@ -16,26 +16,27 @@ namespace Client
         private static Cryptor cryptor;
 
         internal static Cryptor Cryptor { get => cryptor; set => cryptor = value; }
-
+        private static Compresser Compresser;
         public static void Main()
             {
                 Cryptor = new Cryptor();
+                Compresser = new Compresser();
                 try
                 {
                     TcpClient tcpclnt = new TcpClient();
                     Console.WriteLine("Connecting.....");
                     tcpclnt.Connect("127.0.0.1", 8001);
                     Console.WriteLine("Connected");
-                    Stream stm = tcpclnt.GetStream();
-
+                    BinaryReader binaryReader = new BinaryReader(tcpclnt.GetStream());
+                    BinaryWriter binaryWriter = new BinaryWriter(tcpclnt.GetStream());
 
 
                     //trimitere text
-                    SendText(stm, "Text de test");
+                    SendText(binaryWriter, "Text de test");
                     //primire text
-                    Console.WriteLine(ReceiveText(stm));
+                    Console.WriteLine(ReceiveText(binaryReader));
 
-                    ReceivePhoto(stm, "test.jpg");
+                    ReceivePhoto(new BinaryReader(tcpclnt.GetStream()), "test.jpg");
 
 
 
@@ -49,31 +50,37 @@ namespace Client
                 }
             }
 
-            public static void SendText(Stream stream, String text)
+            public static void SendText(BinaryWriter binaryWriter, String text)
             {
                 Console.WriteLine("[TEXT] Transmitting.....");
                 ASCIIEncoding asen = new ASCIIEncoding();
-                byte[] toSend = asen.GetBytes(text);              
-                stream.Write(toSend, 0, toSend.Length);
+                byte[] toSend = asen.GetBytes(text);
+                int size = toSend.Length;
+                binaryWriter.Write(BitConverter.GetBytes(size));
+                binaryWriter.Write(toSend, 0, size);
                 Console.WriteLine("[TEXT] Text was send.");
             }
 
 
 
-            public static String ReceiveText(Stream stream)
+            public static String ReceiveText(BinaryReader binaryReader)
             {
-                int howBig = 100000;
+                int howBig = binaryReader.ReadInt32();
                 byte[] bb = new byte[howBig];
-                int k = stream.Read(bb, 0, howBig);
+                int k = binaryReader.Read(bb, 0, howBig);
                 Console.WriteLine("[TEXT] Received \n");
                 return bArrayToString(bb,k);
             }
 
-            public static void ReceivePhoto(Stream stream, String fileName)
+            public static void ReceivePhoto(BinaryReader binaryReader, String fileName)
             {
-                int howBig = 10000000;
+                int howBig = binaryReader.ReadInt32();
+               // Console.Write("am citit " + howBig);
+
                 byte[] bb = new byte[howBig];
-                int k = stream.Read(bb, 0, howBig);
+                int readed = binaryReader.Read(bb, 0, howBig);
+                File.WriteAllBytes("compressed", bb);
+                bb = Compresser.Decompress(bb);
                 using (var ms = new MemoryStream(bb))
                 {
                     Image.FromStream(ms).Save(fileName);
