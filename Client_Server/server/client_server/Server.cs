@@ -59,7 +59,14 @@ namespace Server
             Console.WriteLine("[TEXT] Received \n");
             return bArrayToString(bb, k);
         }
-
+        private static int CalculateChecksum(byte[] byteArray)
+        {
+            int checksum = 0;
+            foreach (byte chData in byteArray)
+                checksum += chData;
+            return checksum;
+        }
+  
         public static String bArrayToString(byte[] byteArray, int len)
         {
             string str = System.Text.Encoding.UTF8.GetString(byteArray, 0, len);
@@ -69,9 +76,7 @@ namespace Server
         public static void SendText(Socket socket, String text)
         {
             ASCIIEncoding asen = new ASCIIEncoding();
-            socket.Send(asen.GetBytes(text));
-      
-
+            Send(socket, asen.GetBytes(text));
             Console.WriteLine("\n[TEXT] Message Send");
         }
             
@@ -79,12 +84,16 @@ namespace Server
         {
             Bitmap bitmap = new Bitmap(imagePath);
             byte[] imageByte = ImageToByteArray(bitmap);
-            ASCIIEncoding asen = new ASCIIEncoding();
-            imageByte = Compresser.Compress(imageByte);
-            //Console.Write("am scris" + imageByte.Length);
-            socket.Send(BitConverter.GetBytes(imageByte.Length));
-            socket.Send(imageByte);          
+            Send(socket, imageByte);
             Console.WriteLine("\n[IMAGE] Image Send");
+        }
+        public static void Send(Socket socket, byte[] byteArray)
+        {
+            byteArray = Compresser.Compress(byteArray);
+            socket.Send(BitConverter.GetBytes(byteArray.Length));
+            socket.Send(byteArray);
+            int checkSum = CalculateChecksum(byteArray);
+            socket.Send(BitConverter.GetBytes(checkSum));
         }
 
         public static byte[] ImageToByteArray(System.Drawing.Image imageIn)

@@ -65,30 +65,41 @@ namespace Client
 
             public static String ReceiveText(BinaryReader binaryReader)
             {
-                int howBig = binaryReader.ReadInt32();
-                byte[] bb = new byte[howBig];
-                int k = binaryReader.Read(bb, 0, howBig);
+                byte[] byteArray = Receive(binaryReader);
                 Console.WriteLine("[TEXT] Received \n");
-                return bArrayToString(bb,k);
+                return bArrayToString(byteArray,byteArray.Length);
             }
 
             public static void ReceivePhoto(BinaryReader binaryReader, String fileName)
             {
-                int howBig = binaryReader.ReadInt32();
-               // Console.Write("am citit " + howBig);
-
-                byte[] bb = new byte[howBig];
-                int readed = binaryReader.Read(bb, 0, howBig);
-                File.WriteAllBytes("compressed", bb);
-                bb = Compresser.Decompress(bb);
-                using (var ms = new MemoryStream(bb))
+                byte[] byteArray = Receive(binaryReader);
+                using (var ms = new MemoryStream(byteArray))
                 {
                     Image.FromStream(ms).Save(fileName);
                     Console.WriteLine("[PHOTO] Received \n");
                 }
             }
-
-            public static String bArrayToString(byte[] byteArray, int len)
+        private static int CalculateChecksum(byte[] byteArray)
+        {
+            int checksum = 0;
+            foreach (byte chData in byteArray)
+                checksum += chData;
+            return checksum;
+        }
+        public static byte[] Receive(BinaryReader binaryReader)
+        {
+            int howBig = binaryReader.ReadInt32();
+            byte[] byteArray = new byte[howBig];
+            int readed = binaryReader.Read(byteArray, 0, howBig);
+            int myCheckSum = CalculateChecksum(byteArray);
+            int checkSum = binaryReader.ReadInt32();
+            if (myCheckSum != checkSum)
+                return null;
+            byte[] decompressedByteArray = Compresser.Decompress(byteArray);
+            return decompressedByteArray;
+            
+        }
+        public static String bArrayToString(byte[] byteArray, int len)
             {
                 return System.Text.Encoding.UTF8.GetString(byteArray, 0, len);             
             }
