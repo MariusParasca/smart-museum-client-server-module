@@ -14,15 +14,17 @@ namespace Client
         public class Client
         {
         private static Cryptor cryptor;
-
+        private static Exhibit exhibit;
         internal static Cryptor Cryptor { get => cryptor; set => cryptor = value; }
         private static Compresser Compresser;
         public static void Main()
             {
                 Cryptor = new Cryptor();
                 Compresser = new Compresser();
+                
                 try
                 {
+                    
                     TcpClient tcpclnt = new TcpClient();
                     Console.WriteLine("Connecting.....");
                     tcpclnt.Connect("127.0.0.1", 8001);
@@ -42,15 +44,21 @@ namespace Client
                 ReceivePhoto(new BinaryReader(tcpclnt.GetStream()), "test.jpg");
 
 
-
+                
                 Console.WriteLine("\nJob done! Now exit!");
                     tcpclnt.Close();
+
+                exhibit = new Exhibit();
+                exhibit.LoadJson();
+                exhibit.show();
+
                 }
 
                 catch (Exception e)
                 {
                     Console.WriteLine("Error..... " + e.StackTrace);
                 }
+                
             }
 
             public static void SendText(BinaryWriter binaryWriter, String text)

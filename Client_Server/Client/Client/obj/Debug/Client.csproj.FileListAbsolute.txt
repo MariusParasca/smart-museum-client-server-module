@@ -33,3 +33,14 @@ E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.csp
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.exe
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.pdb
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Client.exe.config
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Client.exe
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Client.pdb
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.Properties.Resources.resources
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.csproj.GenerateResource.Cache
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.exe
+C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.pdb
