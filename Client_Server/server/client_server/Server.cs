@@ -20,6 +20,8 @@ namespace Server
 
         public static void Main()
         {
+            Database db = new Database();
+            SFTP sftp = new SFTP();
             Cryptor = new Cryptor();
             Compresser = new Compresser();
             try
@@ -36,10 +38,19 @@ namespace Server
                 Socket s = myList.AcceptSocket();
                 Console.WriteLine("Connection accepted from " + s.RemoteEndPoint);
 
+                String museumName = ReceiveText(s);
+                String museumPath = db.GetPath(museumName);
+                sftp.GetMuseumPackage(museumPath);
+                //Send(s, sftp.GetMuseumPackage(museumPath));
+
+
                 Console.WriteLine(ReceiveText(s));
                 SendText(s, "Mesaj");
+                
                 //   SendPhoto(s, "G:\\Doc\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-                SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
+                //SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
+                SendPhoto(s, "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\meme.jpg");
+                
                 s.Close();
                 myList.Stop();
 

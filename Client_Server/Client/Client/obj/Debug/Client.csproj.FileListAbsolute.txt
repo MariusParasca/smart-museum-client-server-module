@@ -24,3 +24,12 @@ C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\Clie
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.exe
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.pdb
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\bin\Debug\Client.exe.config
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\bin\Debug\Client.exe
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\bin\Debug\Client.pdb
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.Properties.Resources.resources
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.csproj.GenerateResource.Cache
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.exe
+E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.pdb

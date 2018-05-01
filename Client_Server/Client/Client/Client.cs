@@ -30,13 +30,16 @@ namespace Client
                     BinaryReader binaryReader = new BinaryReader(tcpclnt.GetStream());
                     BinaryWriter binaryWriter = new BinaryWriter(tcpclnt.GetStream());
 
-
+                    //trimitere nume muzeu pentru interogare
+                    Museum.GetMuseum(binaryWriter, binaryReader, "Muzeu de test zip");
                     //trimitere text
                     SendText(binaryWriter, "Text de test");
                     //primire text
                     Console.WriteLine(ReceiveText(binaryReader));
+                    
 
-                    ReceivePhoto(new BinaryReader(tcpclnt.GetStream()), "test.jpg");
+
+                ReceivePhoto(new BinaryReader(tcpclnt.GetStream()), "test.jpg");
 
 
 
