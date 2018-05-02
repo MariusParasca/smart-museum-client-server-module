@@ -13,7 +13,8 @@ public class Main {
         //databaseAdmin.insertIntoMuseums("Test", 100.f, 204.f, 20, "/home/smartmuseum/museums/test_echipa_admin");
         //databaseAdmin.insertIntoExhibits(1, 1, "Test", "Nu are", "Descriere...", "/home/smartmuseum/museums/test_echipa_admin/test");
         //databaseAdmin.getMuseumsContent();
-        databaseAdmin.getExhibitsContent();
+        //databaseAdmin.getExhibitsContent();
+        System.out.println(databaseAdmin.getMuseumsId("Test"));
         databaseAdmin.close();
     }
 

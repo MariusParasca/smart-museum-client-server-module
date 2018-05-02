@@ -123,4 +123,23 @@ public class DatabaseAdmin {
             se.printStackTrace();
         }
     }
+
+    public int getMuseumsId(String nume) {
+        int id = 0;
+        Statement stmt = null;
+        try {
+            System.out.println("Selecting id for museum " + nume);
+            stmt = conn.createStatement();
+            String sql = "SELECT id FROM SmartMuseumDB.Museums WHERE museumName =" + " '" + nume + "' ";
+            ResultSet rs = stmt.executeQuery(sql);
+            if(rs.next()) {
+                id = rs.getInt("id");
+            }
+            rs.close();
+        }catch(SQLException se){
+            System.out.println("Error: sql error!");
+            se.printStackTrace();
+        }
+        return id;
+    }
 }
