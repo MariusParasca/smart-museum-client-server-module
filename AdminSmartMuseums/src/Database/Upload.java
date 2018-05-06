@@ -1,3 +1,5 @@
+package Database;
+
 import com.jcraft.jsch.*;
 
 public class Upload {
