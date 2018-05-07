@@ -56,3 +56,17 @@ C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server
 C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.csproj.CoreCompileInputs.cache
 C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.exe
 C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.pdb
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\bin\Debug\client_server.exe.config
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\obj\Debug\client_server.exe
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\obj\Debug\client_server.pdb
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\obj\Debug\client_server.csprojResolveAssemblyReference.cache
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\obj\Debug\client_server.Form1.resources
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\obj\Debug\client_server.Properties.Resources.resources
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\obj\Debug\client_server.csproj.GenerateResource.Cache
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\bin\Debug\client_server.exe
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\bin\Debug\client_server.pdb
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\bin\Debug\MySql.Data.dll
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\bin\Debug\Renci.SshNet.dll
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\bin\Debug\Google.Protobuf.dll
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\bin\Debug\MySql.Data.xml
+C:\Users\lucai\Desktop\git\Client_Server\server\client_server\bin\Debug\Renci.SshNet.xml

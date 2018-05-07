@@ -5,7 +5,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
 public class Main {
-
+/*
     public static void main(String argv[]) throws SftpException, JSchException {
         //database.Upload upload = new database.Upload();
         //upload.start();
@@ -21,7 +21,6 @@ public class Main {
         new AdminAppFrame().setVisible(true);
         //System.out.println(databaseAdmin.getMuseumsId("Test"));
         databaseAdmin.close();
-
     }
-
+*/
 }

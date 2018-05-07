@@ -16,13 +16,13 @@ namespace Server
     {
         private static Cryptor cryptor;
         private static Compresser Compresser;
-        internal static Cryptor Cryptor { get => cryptor; set => cryptor = value; }
+        //internal static Cryptor Cryptor { get => cryptor; set => cryptor = value; }
 
         public static void Main()
         {
             Database db = new Database();
             SFTP sftp = new SFTP();
-            Cryptor = new Cryptor();
+            //Cryptor = new Cryptor();
             Compresser = new Compresser();
             try
             {   
@@ -38,6 +38,37 @@ namespace Server
                 Socket s = myList.AcceptSocket();
                 Console.WriteLine("Connection accepted from " + s.RemoteEndPoint);
 
+                /*
+                SendInt(s, 10);
+                SendString(s, "Ana are mere");
+                Console.WriteLine("Numarul primit este: " + ReceiveInt(s));
+                Console.WriteLine("Mesajul primit este: " + ReceiveString(s));
+                RecieveZip(s);
+                */
+                bool running = true;
+                while (running == true)
+                {
+                    int command = ReceiveInt(s);
+                    Console.WriteLine("Comanda: " + command);
+                    if (command == 1)
+                    {
+                        String nume = ReceiveString(s);
+                        String prenume = ReceiveString(s);
+                        SendString(s, "Conectat!");
+                    }
+
+                    if (command == 2)
+                    {
+                        String nume = ReceiveString(s);
+                        String prenume = ReceiveString(s);
+                        int varsta = ReceiveInt(s);
+                        SendString(s, "Inregistrat!");
+                    }
+
+                    if (command == 3)
+                        running = false;
+                }
+                /*
                 String museumName = ReceiveText(s);
                 String museumPath = db.GetPath(museumName);
                 sftp.GetMuseumPackage(museumPath);
@@ -50,7 +81,7 @@ namespace Server
                 //   SendPhoto(s, "G:\\Doc\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 //SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 SendPhoto(s, "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\meme.jpg");
-                
+                */
                 s.Close();
                 myList.Stop();
 
@@ -59,6 +90,47 @@ namespace Server
             {
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
+        }
+
+        public static void SendInt(Socket socket, int number)
+        {
+            socket.Send(BitConverter.GetBytes(number));
+
+            Console.WriteLine("Numarul: " + number + "a fost trimis");
+        }
+
+        public static void SendString(Socket socket, String text)
+        {
+            byte[] arr = System.Text.Encoding.ASCII.GetBytes(text);
+            SendInt(socket, arr.Length);
+            socket.Send(arr);
+            Console.WriteLine("Mesajul" + text + " a fost trimis");
+        }
+
+        public static int ReceiveInt(Socket socket)
+        {
+            BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
+            int number = binaryReader.ReadInt32();
+            return number;
+        }
+
+        public static string ReceiveString(Socket socket)
+        {
+            int length = ReceiveInt(socket);
+            byte[] b = new byte[length];
+            BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
+            int nrBytes = binaryReader.Read(b, 0, length);
+            return bArrayToString(b, nrBytes);
+        }
+
+        public static void RecieveZip(Socket socket)
+        {
+            BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
+            int length = ReceiveInt(socket);
+            byte[] b = new byte[length];
+            int nrBytes = binaryReader.Read(b, 0, length);
+            Console.WriteLine(length);
+            File.WriteAllBytes("D:\\Client_Server\\meme(copy).zip", b);
         }
 
         public static String ReceiveText(Socket socket)
