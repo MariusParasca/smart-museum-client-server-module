@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using client_server;
 using System.Linq;
+using MySql.Data.MySqlClient;
 
 namespace Server
 {
@@ -20,12 +21,14 @@ namespace Server
 
         public static void Main()
         {
-            Database db = new Database();
+            Museum.CreateGeoLocaitonFile();
             SFTP sftp = new SFTP();
             //Cryptor = new Cryptor();
             Compresser = new Compresser();
+            
             try
-            {   
+            {
+                
                 IPAddress ipAd = IPAddress.Parse("127.0.0.1");
                 
                 TcpListener myList = new TcpListener(ipAd, 8001);
@@ -37,7 +40,7 @@ namespace Server
 
                 Socket s = myList.AcceptSocket();
                 Console.WriteLine("Connection accepted from " + s.RemoteEndPoint);
-
+                
                 /*
                 SendInt(s, 10);
                 SendString(s, "Ana are mere");
@@ -45,6 +48,7 @@ namespace Server
                 Console.WriteLine("Mesajul primit este: " + ReceiveString(s));
                 RecieveZip(s);
                 */
+                
                 bool running = true;
                 while (running == true)
                 {
@@ -68,6 +72,7 @@ namespace Server
                     if (command == 3)
                         running = false;
                 }
+                
                 /*
                 String museumName = ReceiveText(s);
                 String museumPath = db.GetPath(museumName);
@@ -82,14 +87,16 @@ namespace Server
                 //SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 SendPhoto(s, "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\meme.jpg");
                 */
+               
                 s.Close();
                 myList.Stop();
-
+                
             }           
             catch (Exception e)
             {
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
+            
         }
 
         public static void SendInt(Socket socket, int number)
