@@ -1,4 +1,4 @@
-package Database;
+package ClientJava;
 
 import com.jcraft.jsch.*;
 

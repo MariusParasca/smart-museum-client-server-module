@@ -1,6 +1,7 @@
 package GUI.Frames;
 
-import Database.DatabaseAdmin;
+import ClientJava.Client;
+
 import GUI.Panels.Autentification;
 
 
@@ -8,7 +9,7 @@ import java.awt.*;
 
 public class AdminAppFrame extends Frame{
 
-    public static DatabaseAdmin adminApp;
+    public static Client adminApp;
     Autentification autentification;
 
     public AdminAppFrame() throws HeadlessException {
@@ -20,7 +21,7 @@ public class AdminAppFrame extends Frame{
     private void init(){
 
         appearence();
-        adminApp= new DatabaseAdmin();
+        adminApp= new Client();
         autentification = new Autentification(this);
         add(autentification, BorderLayout.CENTER);
     }

@@ -72,11 +72,11 @@ public class LoginPanel extends JPanel {
         login.addActionListener(new ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent e) {
-//                try {
-//                    Login log = new Login(usernameText.getText(), passText.getText());
-//                } catch (IOException e1) {
-//                    e1.printStackTrace();
-//                }
+                try {
+                    Login log = new Login(usernameText.getText(), passText.getText());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
 
                 AfterLoginFrame afterLoginFrame=new AfterLoginFrame();
                 afterLoginFrame.setVisible(true);

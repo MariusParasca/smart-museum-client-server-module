@@ -17,6 +17,10 @@ public class Client {
         this.serverName = serverName;
         this.port = port;
     }
+
+    public Client (){
+
+    }
     public void open() {
         try {
             System.out.println("Connecting to " + serverName + " on port " + port);
