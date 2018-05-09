@@ -1,12 +1,14 @@
-package GUI;
+package GUI.Panels;
 
+import GUI.Frames.LoginFrame;
+import GUI.Frames.RegisterFrame;
 import Models.Register;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import Models.*;
+
 public class RegisterPanel  extends JPanel {
 
     private final RegisterFrame registerFrame;

@@ -1,4 +1,4 @@
-package GUI;
+package GUI.Frames;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,17 +10,16 @@ public class Frame extends JFrame {
     }
 
 
-
-    protected void appearence(){
+    protected void appearence() {
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(new Dimension(800,500));
+        setSize(new Dimension(800, 500));
 
         setLayout(new BorderLayout());
 
 
     }
-
-
-
 }
+
+
+

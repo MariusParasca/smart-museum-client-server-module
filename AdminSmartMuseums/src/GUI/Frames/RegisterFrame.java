@@ -1,6 +1,6 @@
-package GUI;
+package GUI.Frames;
 
-import Models.Register;
+import GUI.Panels.RegisterPanel;
 
 import java.awt.*;
 

@@ -1,11 +1,10 @@
-package GUI;
+package GUI.Frames;
 
 import Database.DatabaseAdmin;
+import GUI.Panels.Autentification;
 
 
-import javax.swing.*;
 import java.awt.*;
-import java.io.Serializable;
 
 public class AdminAppFrame extends Frame{
 

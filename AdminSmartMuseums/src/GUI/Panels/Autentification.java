@@ -1,6 +1,8 @@
-package GUI;
+package GUI.Panels;
 
-import Models.Register;
+import GUI.Frames.AdminAppFrame;
+import GUI.Frames.LoginFrame;
+import GUI.Frames.RegisterFrame;
 
 import javax.swing.*;
 import java.awt.*;
