@@ -10,15 +10,38 @@ namespace Client
     class Museum
     {
         List<Exhibit> exhibits;
+        BinaryWriter outStream;
+        BinaryReader inStream;
 
-        public static Museum GetMuseum(BinaryWriter outStream, BinaryReader inStream, String name)
+        public Museum (BinaryWriter outStream, BinaryReader inStream, String name)
         {
-            Museum museum = new Museum();
-            Client.SendText(outStream, name);
-            //byte[] package = Client.Receive(inStream);
-            //File.WriteAllBytes(name + ".zip", package);
+            this.outStream = outStream;
+            this.inStream = inStream;
+            exhibits = new List<Exhibit>();
+            //GetMuseum(name);
+        }
 
-            return museum;
+        public void GetMuseum(String name) // modifica in privat
+        {
+            Client.SendText(outStream, name);
+            byte[] museumPackage = Client.Receive(inStream);
+            using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu name(adica numele muzeului);
+            {
+                fs.Write(museumPackage, 0, museumPackage.Length);
+            }
+            //trebuie despachetat  zip-ul si apoi apelata createExhibits(path-ul folderului)
+        }
+
+        public void CreateExhibits(String museumFolder) // modifica in privat
+        {
+            string[] directoryEntries = Directory.GetDirectories(museumFolder);
+            foreach (string directoryName in directoryEntries)
+            {
+                Console.WriteLine(directoryName);
+                Exhibit exhibit = new Exhibit(directoryName);
+                exhibits.Add(exhibit);
+            }
+                
         }
     }
 }

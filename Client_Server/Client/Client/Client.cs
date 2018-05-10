@@ -21,10 +21,12 @@ namespace Client
             {
                 Cryptor = new Cryptor();
                 Compresser = new Compresser();
-                exhibit = new Exhibit();
+                /*exhibit = new Exhibit();
                 exhibit.LoadJson("..\\..\\..\\exhibit.json");
                 exhibit.show();
-               try
+                Museum museum = new Museum(null, null, "Muzeu de test");
+                museum.CreateExhibits("..\\..\\..\\muzeu_de_test");*/
+            try
                  {
 
                      TcpClient tcpclnt = new TcpClient();
@@ -33,21 +35,10 @@ namespace Client
                      Console.WriteLine("Connected");
                      BinaryReader binaryReader = new BinaryReader(tcpclnt.GetStream());
                      BinaryWriter binaryWriter = new BinaryWriter(tcpclnt.GetStream());
+                     
 
-                     //Primirea unui tablou in format zip
-                     /*
-                     byte[] byteArrayFile = Receive(new BinaryReader(tcpclnt.GetStream()));
-                     using(FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip"))
-                     {
-                         fs.Write(byteArrayFile, 0, byteArrayFile.Length);
-                     }
-                     */
-
-
-            //trimitere nume muzeu pentru interogare
-            Museum.GetMuseum(binaryWriter, binaryReader, "Muzeu de test zip");
-                    //trimitere text
-                    SendText(binaryWriter, "Text de test");
+                //trimitere text
+                SendText(binaryWriter, "Text de test");
                     //primire text
                     Console.WriteLine(ReceiveText(binaryReader));
                     

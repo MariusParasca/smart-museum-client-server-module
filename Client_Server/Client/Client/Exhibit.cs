@@ -11,10 +11,88 @@ namespace Client
 {
     class Exhibit
     {
-        private List<Bitmap> images;
+        private List<String> imagePaths;
+        private String name;
         private String pathToAudioFile;
-        private String pathToJsonFile;
         private ExhibitInfo jsonInfo;
+        private BinaryWriter outStream;
+        private BinaryReader inStream;
+
+        public Exhibit() { }
+
+        public Exhibit(BinaryWriter outStream, BinaryReader inStream, String name)
+        {
+            this.outStream = outStream;
+            this.inStream = inStream;
+            imagePaths = new List<String>();
+            //GetExhibit(name)
+        }
+
+        public Exhibit(String exhibitFolder)
+        {
+            imagePaths = new List<String>();
+            CreateExhibit(exhibitFolder);
+        }
+
+        private void GetExhibit(String name) 
+        {
+            Client.SendText(outStream, name);
+            byte[] exhibitPackage = Client.Receive(inStream);
+            using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu name(adica numele exponatului);
+            {
+                fs.Write(exhibitPackage, 0, exhibitPackage.Length);
+            }
+            //trebuie despachetat  zip-ul si apoi apelata CreateExhibit(path-ul folderului)
+        }
+
+        public void CreateExhibit(String exhibitFolder) // modifica in privat
+        {
+            string[] fileEntries = Directory.GetFiles(exhibitFolder);
+            string[] directoryEntries = Directory.GetDirectories(exhibitFolder);
+            this.name = exhibitFolder.Split('\\').Last();
+            this.pathToAudioFile = fileEntries[0];
+            this.LoadJson(fileEntries[1]);
+            Console.WriteLine(exhibitFolder.Split('\\').Last() + " " + fileEntries[0] + " " + fileEntries[1]);
+            AddImagePaths(directoryEntries[0]);
+        }
+
+        public void AddImagePaths(String imgDirectory) // modifica in privat
+        {
+            string[] fileEntries = Directory.GetFiles(imgDirectory);
+            foreach (String filename in fileEntries)
+            {
+                this.AddImagePath(filename);
+                Console.WriteLine(filename);
+            }
+        }
+
+        /*
+        public Exhibit(String name, String pathToAudioFile)
+        {
+            this.name = name;
+            this.pathToAudioFile = pathToAudioFile;
+            imagePaths = new List<String>();
+        }*/
+
+        public void AddImagePath(String imagePath) // modifica in privat
+        {
+            imagePaths.Add(imagePath);
+        }
+
+        public String GetName()
+        {
+            return name;
+        }
+
+        public String GetPathToAudioFile()
+        {
+            return pathToAudioFile;
+        }
+
+        public List<String> GetImagePaths()
+        {
+            return imagePaths;
+        }
 
         class ExhibitInfo
         {
@@ -24,7 +102,7 @@ namespace Client
             public string linkVideo { get; set; }
         }
 
-        public void LoadJson(String filePath)
+        public void LoadJson(String filePath) // modifca in privat
         {
             using (StreamReader r = new StreamReader(filePath))
             {

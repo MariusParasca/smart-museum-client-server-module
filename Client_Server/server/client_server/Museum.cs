@@ -49,7 +49,7 @@ namespace client_server
             }
          }
 
-        public static String GetExhibitList(String museum)
+        public static String GetExhibitList(String museum) // probabil nu o sa mai trebuiasca
         {
             StringBuilder itemList = new StringBuilder();
             ExecuteQuery("SELECT e.name " +
@@ -66,6 +66,17 @@ namespace client_server
             return itemList.ToString();
         }
 
+        public static byte[] GetPackage(String tableName, String queryParameter)
+        {
+            byte[] byteArrayFile;
+            ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = '"+ queryParameter + "'");
+            reader.Read();
+            byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Tablou_de_test.zip"); //de inlocuit cu reader[0]
+            //byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\muzeu_de_test.zip"); //de inlocuit cu reader[0]
+            return byteArrayFile;
+        }
+
+        /* Probabil vor fii sterse
         public static byte[] GetExhibit(String exhibit)
         {
             byte[] byteArrayFile;
@@ -83,6 +94,6 @@ namespace client_server
             byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\muzeu_de_test.zip"); //de inlocuit cu reader[0]
             return byteArrayFile;
         }
-
+        */
     }
 }

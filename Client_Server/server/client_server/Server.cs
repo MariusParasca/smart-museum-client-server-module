@@ -22,7 +22,7 @@ namespace Server
         public static void Main()
         {
             Museum.CreateGeoLocaitonFile();
-            Museum.GetItemList("Muzeu de test");
+
             SFTP sftp = new SFTP();
             //Cryptor = new Cryptor();
             Compresser = new Compresser();
@@ -42,9 +42,6 @@ namespace Server
                 Socket s = myList.AcceptSocket();
                 Console.WriteLine("Connection accepted from " + s.RemoteEndPoint);
 
-                //Sending exhibit package test
-                //Send(s, Museum.GetItem("Sunset"));
-
                 /*
                 SendInt(s, 10);
                 SendString(s, "Ana are mere");
@@ -52,7 +49,7 @@ namespace Server
                 Console.WriteLine("Mesajul primit este: " + ReceiveString(s));
                 RecieveZip(s);
                 */
-                /*
+                
                 bool running = true;
                 while (running == true)
                 {
@@ -77,7 +74,7 @@ namespace Server
                         running = false;
                         
                 }
-                */
+                
                 /*
                 String museumName = ReceiveText(s);
                 String museumPath = db.GetPath(museumName);
