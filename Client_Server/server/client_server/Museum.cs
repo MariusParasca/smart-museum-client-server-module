@@ -49,5 +49,40 @@ namespace client_server
             }
          }
 
+        public static String GetExhibitList(String museum)
+        {
+            StringBuilder itemList = new StringBuilder();
+            ExecuteQuery("SELECT e.name " +
+                        " FROM SmartMuseumDB.Museums m INNER JOIN SmartMuseumDB.Exhibits e ON m.id = e.idMuseum " +
+                        " WHERE museumName = '" + museum + "'");
+            while (reader.Read())
+            {
+                itemList.Append(reader[0] + ",");
+            }
+            itemList.Remove(itemList.Length - 1, 1);
+            reader.Close();
+            Console.WriteLine(itemList.ToString());
+
+            return itemList.ToString();
+        }
+
+        public static byte[] GetExhibit(String exhibit)
+        {
+            byte[] byteArrayFile;
+            ExecuteQuery("SELECT path FROM SmartMuseumDB.Exhibits WHERE name = '" + exhibit + "'");
+            reader.Read();
+            byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Tablou_de_test.zip"); //de inlocuit cu reader[0]
+            return byteArrayFile;
+        }
+
+        public static byte[] GetMuseum(String museum)
+        {
+            byte[] byteArrayFile;
+            ExecuteQuery("SELECT path FROM SmartMuseumDB.Museums where museumName = '" + museum + "'");
+            reader.Read();
+            byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\muzeu_de_test.zip"); //de inlocuit cu reader[0]
+            return byteArrayFile;
+        }
+
     }
 }

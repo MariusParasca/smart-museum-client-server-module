@@ -18,14 +18,15 @@ namespace Client
 
         class ExhibitInfo
         {
-            internal String titlu;
-            internal String descriere;
-            internal String linkVideo;
+            public string title { get; set; }
+            public string descriptionRo { get; set; }
+            public string descriptionEn { get; set; }
+            public string linkVideo { get; set; }
         }
 
-        public void LoadJson()
+        public void LoadJson(String filePath)
         {
-            using (StreamReader r = new StreamReader("..\\..\\..\\file.json"))
+            using (StreamReader r = new StreamReader(filePath))
             {
                 string json = r.ReadToEnd();
                 jsonInfo = JsonConvert.DeserializeObject<ExhibitInfo>(json);
@@ -34,25 +35,35 @@ namespace Client
 
         public void show()
         {
-            Console.WriteLine("[JSON] Titlu:" + jsonInfo.titlu + "\n");
-            Console.WriteLine("[JSON] Descriere:" + jsonInfo.descriere + "\n");
+            Console.WriteLine("[JSON] Titlu:" + jsonInfo.title + "\n");
+            Console.WriteLine("[JSON] DescriereRo:" + jsonInfo.descriptionRo + "\n");
+            Console.WriteLine("[JSON] DescriereEn:" + jsonInfo.descriptionEn + "\n");
             Console.WriteLine("[JSON] Link Video:" + jsonInfo.linkVideo + "\n");
         }
 
-        public String GetTitlu()
+        public String GetTitle()
         {
-            if (jsonInfo.titlu != null)
+            if (jsonInfo.title != null)
             {
-                return jsonInfo.titlu;
+                return jsonInfo.title;
             }
             return "";
         }
 
-        public String GetDescriere()
+        public String GetDescriptionRo()
         {
-            if (jsonInfo.descriere != null)
+            if (jsonInfo.descriptionRo != null)
             {
-                return jsonInfo.descriere;
+                return jsonInfo.descriptionRo;
+            }
+            return "";
+        }
+
+        public String GetDescriptionEn()
+        {
+            if (jsonInfo.descriptionEn != null)
+            {
+                return jsonInfo.descriptionEn;
             }
             return "";
         }
