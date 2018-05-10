@@ -1,5 +1,6 @@
 package GUI.Panels;
 
+import ClientJava.Client;
 import GUI.Frames.LoginFrame;
 import GUI.Frames.RegisterFrame;
 import Models.Register;
@@ -17,12 +18,12 @@ public class RegisterPanel  extends JPanel {
     JLabel info = new JLabel("");
     JTextField museumText = new JTextField();
     JTextField emailText = new JTextField();
-
     JButton submit = new JButton("Submit");
-
+    private Client client;
 
     public RegisterPanel(RegisterFrame registerFrame) {
         this.registerFrame = registerFrame;
+        client = new Client();
         init();
     }
 
@@ -72,7 +73,7 @@ public class RegisterPanel  extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 Register reg=new Register(emailText.getText(),"Smart Museums ");
                 System.out.print("Email sent");
-                JFrame loginFrame=new LoginFrame();
+                JFrame loginFrame=new LoginFrame(client);
                 loginFrame.setVisible(true);
                 registerFrame.setVisible(false);
             }

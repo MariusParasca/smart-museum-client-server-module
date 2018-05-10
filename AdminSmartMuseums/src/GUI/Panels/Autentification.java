@@ -1,5 +1,6 @@
 package GUI.Panels;
 
+import ClientJava.Client;
 import GUI.Frames.AdminAppFrame;
 import GUI.Frames.LoginFrame;
 import GUI.Frames.RegisterFrame;
@@ -16,9 +17,9 @@ public class Autentification extends JPanel{
     JButton loginButton = new JButton("Login");
     JLabel welcomeMessage= new JLabel(" Bine ai venit in aplicatia unde poti adauga date despre muzeul tau");
     JPanel buttonPanel = new JPanel();
-
-    public Autentification( AdminAppFrame adminAppFrame) {
-
+    private Client client;
+    public Autentification(AdminAppFrame adminAppFrame, Client client) {
+        this.client = client;
         this.adminAppFrame = adminAppFrame;
         init();
     }
@@ -67,7 +68,7 @@ public class Autentification extends JPanel{
         loginButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                LoginFrame loginFrame=new LoginFrame();
+                LoginFrame loginFrame=new LoginFrame(client);
                 loginFrame.setVisible(true);
                 adminAppFrame.setVisible(false);
             }

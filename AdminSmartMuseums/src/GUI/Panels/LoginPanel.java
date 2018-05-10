@@ -1,5 +1,6 @@
 package GUI.Panels;
 
+import ClientJava.Client;
 import GUI.Frames.AfterLoginFrame;
 import GUI.Frames.LoginFrame;
 import Models.Login;
@@ -12,7 +13,7 @@ import java.io.IOException;
 public class LoginPanel extends JPanel {
 
     private LoginFrame loginframe;
-
+    private Client client;
     JLabel username = new JLabel(" Username");
     JLabel password = new JLabel(" Password");
     JLabel info = new JLabel("");
@@ -21,8 +22,8 @@ public class LoginPanel extends JPanel {
     JButton login = new JButton("Login");
 
 
-    public LoginPanel(LoginFrame loginFrame) {
-
+    public LoginPanel(LoginFrame loginFrame, Client client) {
+        this.client = client;
         this.loginframe = loginframe;
         init();
     }
@@ -73,7 +74,7 @@ public class LoginPanel extends JPanel {
 
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 try {
-                    Login log = new Login(usernameText.getText(), passText.getText());
+                    Login log = new Login(usernameText.getText(), passText.getText(), client);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
