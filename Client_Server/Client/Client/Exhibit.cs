@@ -37,10 +37,11 @@ namespace Client
         private void GetExhibit(String name) 
         {
             Client.SendText(outStream, name);
-            byte[] exhibitPackage = Client.Receive(inStream);
+            Packet exhibitPackage = Client.Receive(inStream);
             using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu name(adica numele exponatului);
             {
-                fs.Write(exhibitPackage, 0, exhibitPackage.Length);
+                byte[] packetBytes = Client.packetToBytes(exhibitPackage);
+             //   fs.Write(packetBytes, 0, exhibitPackage.data.Length);
             }
             //trebuie despachetat  zip-ul si apoi apelata CreateExhibit(path-ul folderului)
         }

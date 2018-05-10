@@ -46,3 +46,6 @@ C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server
 C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.pdb
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\bin\Debug\Newtonsoft.Json.dll
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\bin\Debug\Newtonsoft.Json.xml
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Newtonsoft.Json.dll
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Newtonsoft.Json.xml
+C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\Client\Client\obj\Debug\Client.csproj.CopyComplete

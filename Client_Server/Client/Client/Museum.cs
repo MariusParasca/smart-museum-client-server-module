@@ -24,10 +24,10 @@ namespace Client
         public void GetMuseum(String name) // modifica in privat
         {
             Client.SendText(outStream, name);
-            byte[] museumPackage = Client.Receive(inStream);
+            Packet museumPackage = Client.Receive(inStream);
             using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu name(adica numele muzeului);
             {
-                fs.Write(museumPackage, 0, museumPackage.Length);
+                //fs.Write(museumPackage, 0, museumPackage.data.Length);
             }
             //trebuie despachetat  zip-ul si apoi apelata createExhibits(path-ul folderului)
         }
