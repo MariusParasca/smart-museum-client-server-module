@@ -10,11 +10,9 @@ import java.awt.*;
 public class AdminAppFrame extends Frame{
 
     Autentification autentification;
-    public Client client;
 
-    public AdminAppFrame(Client client) throws HeadlessException {
+    public AdminAppFrame() throws HeadlessException {
         super("Administrator Museum App");
-        this.client = client;
         init();
 
     }
@@ -23,7 +21,7 @@ public class AdminAppFrame extends Frame{
 
         appearence();
 
-        autentification = new Autentification(this, client);
+        autentification = new Autentification(this);
         add(autentification, BorderLayout.CENTER);
     }
 

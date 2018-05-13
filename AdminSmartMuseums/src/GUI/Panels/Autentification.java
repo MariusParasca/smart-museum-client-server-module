@@ -17,9 +17,7 @@ public class Autentification extends JPanel{
     JButton loginButton = new JButton("Login");
     JLabel welcomeMessage= new JLabel(" Bine ai venit in aplicatia unde poti adauga date despre muzeul tau");
     JPanel buttonPanel = new JPanel();
-    private Client client;
-    public Autentification(AdminAppFrame adminAppFrame, Client client) {
-        this.client = client;
+    public Autentification(AdminAppFrame adminAppFrame) {
         this.adminAppFrame = adminAppFrame;
         init();
     }
@@ -68,7 +66,7 @@ public class Autentification extends JPanel{
         loginButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                LoginFrame loginFrame=new LoginFrame(client);
+                LoginFrame loginFrame=new LoginFrame();
                 loginFrame.setVisible(true);
                 adminAppFrame.setVisible(false);
             }

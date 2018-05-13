@@ -19,15 +19,13 @@ public class Login  {
     private static OutputStream out;
     private static PrintStream ps;
     private static Socket socket;
-    private Client client;
-    public Login(String username, String password, Client client) throws IOException {
+    public Login(String username, String password) throws IOException {
         this.username = username;
         this.password = password;
-        this.client = client;
 
         text = "[login-admin]"+ "<"+username+">"+"<"+password+">";
         // send(out, text);
-        client.sendString(text);
+        Client.getInstance().sendText(text);
 
     }
 

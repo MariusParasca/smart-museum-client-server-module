@@ -19,11 +19,9 @@ public class RegisterPanel  extends JPanel {
     JTextField museumText = new JTextField();
     JTextField emailText = new JTextField();
     JButton submit = new JButton("Submit");
-    private Client client;
 
     public RegisterPanel(RegisterFrame registerFrame) {
         this.registerFrame = registerFrame;
-        client = new Client();
         init();
     }
 
@@ -73,7 +71,7 @@ public class RegisterPanel  extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 Register reg=new Register(emailText.getText(),"Smart Museums ");
                 System.out.print("Email sent");
-                JFrame loginFrame=new LoginFrame(client);
+                JFrame loginFrame=new LoginFrame();
                 loginFrame.setVisible(true);
                 registerFrame.setVisible(false);
             }
