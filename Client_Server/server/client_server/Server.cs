@@ -24,7 +24,9 @@ namespace Server
         
         public static void Main()
         {
-            Museum.CreateGeoLocaitonFile();
+            Museum.CreateGeoLocationFile();
+            //Museum.GetExhibitList("Muzeu de test");
+            Museum.GetPackage("SmartMuseumDB.Museums", "Muzeu de test");
             StreamWriter sw = File.AppendText("log.txt");
             sw.AutoFlush = true;
 

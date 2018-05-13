@@ -10,15 +10,22 @@ namespace Client
     class Museum
     {
         List<Exhibit> exhibits;
+        String name;
         BinaryWriter outStream;
         BinaryReader inStream;
 
         public Museum (BinaryWriter outStream, BinaryReader inStream, String name)
         {
+            this.name = name;
             this.outStream = outStream;
             this.inStream = inStream;
             exhibits = new List<Exhibit>();
             //GetMuseum(name);
+        }
+
+        public Museum(String name)
+        {
+            CreateExhibits(name);
         }
 
         public void GetMuseum(String name) // modifica in privat

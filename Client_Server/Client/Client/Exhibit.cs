@@ -22,6 +22,11 @@ namespace Client
 
         public Exhibit(BinaryWriter outStream, BinaryReader inStream, String name)
         {
+            if(name == null)
+            {
+                Console.WriteLine("name is null");
+                return;
+            }
             this.outStream = outStream;
             this.inStream = inStream;
             imagePaths = new List<String>();
@@ -30,6 +35,11 @@ namespace Client
 
         public Exhibit(String exhibitFolder)
         {
+            if(exhibitFolder == null)
+            {
+                Console.WriteLine("exhibitFolder is null");
+                return;
+            }
             imagePaths = new List<String>();
             CreateExhibit(exhibitFolder);
         }

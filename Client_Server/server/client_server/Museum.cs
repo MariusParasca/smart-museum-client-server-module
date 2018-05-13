@@ -13,26 +13,44 @@ namespace client_server
         private static MySqlConnection conn;
         private static MySqlDataReader reader;
         private static MySqlCommand command;
-        public static void CreateGeoLocaitonFile()
+        public static void CreateGeoLocationFile()
         {
             conn = Database.GetConnection();
             createJsonFile();
         }
 
-        private static void ExecuteQuery(String query)
+        private static void ExecuteQuery(String query, String[] parameters)
         {
+            if(query == null)
+            {
+                Console.WriteLine("query is null");
+                return;
+            }
+            conn = Database.GetConnection();
             command = new MySqlCommand(query, conn);
 
-            reader = command.ExecuteReader();   
+            if (parameters != null)
+            {
+                String parameter = "@val";
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    command.Parameters.AddWithValue(parameter + (i + 1), parameters[i]);
+                }
+            
+                command.Prepare();
+            }
+
+            reader = command.ExecuteReader();
+                     
         }
 
         private static void createJsonFile()
         {
             StringBuilder jsonInfo = new StringBuilder("{ \"museums\": { \"museum\": [ ");
-            ExecuteQuery("SELECT museumName, latitude, longitude, radius FROM SmartMuseumDB.Museums");
+            ExecuteQuery("SELECT name, latitude, longitude, radius FROM SmartMuseumDB.Museums", null);
             while (reader.Read())
             {
-                jsonInfo.Append("{ \"museumName\": \"" + reader[0] + "\"," +
+                jsonInfo.Append("{ \"name\": \"" + reader[0] + "\"," +
                                 "\"latitude\": \"" + reader[1] + "\"," +
                                 "\"longitude\": \"" + reader[2] + "\"," +
                                 "\"radius\": \"" + reader[3] + "\" },");
@@ -51,10 +69,15 @@ namespace client_server
 
         public static String GetExhibitList(String museum) // probabil nu o sa mai trebuiasca
         {
+            if(museum == null)
+            {
+                Console.WriteLine("Museum is null");
+                return null;
+            }
             StringBuilder itemList = new StringBuilder();
             ExecuteQuery("SELECT e.name " +
                         " FROM SmartMuseumDB.Museums m INNER JOIN SmartMuseumDB.Exhibits e ON m.id = e.idMuseum " +
-                        " WHERE museumName = '" + museum + "'");
+                        " WHERE museumName = @val1", new String[] { museum });
             while (reader.Read())
             {
                 itemList.Append(reader[0] + ",");
@@ -68,9 +91,15 @@ namespace client_server
 
         public static byte[] GetPackage(String tableName, String queryParameter)
         {
+            if(tableName == null || queryParameter == null)
+            {
+                Console.WriteLine("Table name or query parameter is null");
+                return null;
+            }
             byte[] byteArrayFile;
-            ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = '"+ queryParameter + "'");
+            ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new String[] { queryParameter });
             reader.Read();
+            Console.WriteLine(reader[0]);    
             byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Tablou_de_test.zip"); //de inlocuit cu reader[0]
             //byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\muzeu_de_test.zip"); //de inlocuit cu reader[0]
             return byteArrayFile;
