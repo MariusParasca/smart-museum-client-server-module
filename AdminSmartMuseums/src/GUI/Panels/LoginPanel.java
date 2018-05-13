@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LoginPanel extends JPanel {
 
@@ -20,6 +22,16 @@ public class LoginPanel extends JPanel {
     JTextField usernameText = new JTextField();
     JTextField passText = new JTextField();
     JButton login = new JButton("Login");
+
+
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[info.uaic.ro]", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validate(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+        return matcher.find();
+    }
 
 
     public LoginPanel(LoginFrame loginFrame, Client client) {
@@ -73,24 +85,36 @@ public class LoginPanel extends JPanel {
         login.addActionListener(new ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                try {
-                    Login log = new Login(usernameText.getText(), passText.getText(), client);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
 
-                AfterLoginFrame afterLoginFrame=new AfterLoginFrame();
-                afterLoginFrame.setVisible(true);
-                loginframe.setVisible(false);
+
+                if( usernameText.getText().length() == 0 || passText.getText().length() == 0 ){
+                    JOptionPane.showMessageDialog(null,"Please complete all fields");
+                }
+                else
+                if(!validate(usernameText.getText())) {
+                    JOptionPane.showMessageDialog(null,"Insert a valid email");
+
+                }
+                  else
+            {
+                try {
+
+
+                       Login log = new Login(usernameText.getText(), passText.getText(), client);
+                   } catch (IOException e1) {
+                       e1.printStackTrace();
+                    }
+
+                    AfterLoginFrame afterLoginFrame = new AfterLoginFrame();
+                    afterLoginFrame.setVisible(true);
+                    loginframe.setVisible(false);
+                }
 
             }
 
         });
 
-
-
-
-    }
+        }
     }
 
 

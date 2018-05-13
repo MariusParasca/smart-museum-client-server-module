@@ -30,7 +30,23 @@ public class AfterLoginPanel extends JPanel {
         button.setFont(new Font("Arial", Font.BOLD, 15));
     }
 
+    public void tableShow(){
 
+        JFrame frame = new JFrame();
+        Object rowData[][] = new Object[27][1];
+
+
+        Object columnNames[] = { "Exhibit"};
+        JTable table = new JTable(rowData, columnNames);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.setSize(400,500);
+        frame.setVisible(true);
+
+
+
+    }
    private  void init(){
 
        this.setLayout(new BorderLayout());
@@ -56,27 +72,29 @@ public class AfterLoginPanel extends JPanel {
            }
 
        });
-//       updateButton.addActionListener(new ActionListener() {
-//
-//           public void actionPerformed(ActionEvent e) {
-//
-//               UpdateFrame insertFrame=new UpdateFrame();
-//               updateFrame.setVisible(true);
-//
-//           }
-//
-//       });
-//
-//       deleteButton.addActionListener(new ActionListener() {
-//
-//           public void actionPerformed(ActionEvent e) {
-//
-//               DeleteFrame deleteFrame=new DeleteFrame();
-//               deleteFrame.setVisible(true);
-//
-//           }
-//
-//       });
+
+
+       updateButton.addActionListener(new ActionListener() {
+
+           public void actionPerformed(ActionEvent e) {
+
+              tableShow();
+
+           }
+
+       });
+
+       deleteButton.addActionListener(new ActionListener() {
+
+           public void actionPerformed(ActionEvent e) {
+
+
+
+              tableShow();
+
+           }
+
+       });
    }
 
 }

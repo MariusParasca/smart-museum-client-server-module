@@ -3,14 +3,18 @@ package GUI.Panels;
 import GUI.Frames.InsertFrame;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 public class InsertPanel extends JPanel {
 
     private InsertFrame insertFrame;
     JLabel name = new JLabel(" Name of exhibit");
     JLabel description = new JLabel(" Short description");
-    JLabel links = new JLabel(" Upload related links");
+    JLabel links = new JLabel(" Video links");
     JTextField nameText = new JTextField();
     JTextField descText = new JTextField();
     JTextField linkText = new JTextField();
@@ -20,6 +24,7 @@ public class InsertPanel extends JPanel {
     JButton submit = new JButton("Create exhibit");
     JPanel insert = new JPanel();
     JPanel buttons = new JPanel();
+
     public InsertPanel(InsertFrame insertFrame) {
 
         this.insertFrame = insertFrame;
@@ -41,10 +46,12 @@ public class InsertPanel extends JPanel {
 
     }
 
+
+
     private void init() {
         this.setLayout(new BorderLayout());
         insert.setLayout(new BoxLayout(insert, BoxLayout.PAGE_AXIS));
-        buttons. setLayout(new BorderLayout());
+        buttons.setLayout(new BorderLayout());
         insert.setBorder(BorderFactory.createEmptyBorder(30, 75, 50, 60));
         buttons.setBorder(BorderFactory.createEmptyBorder(30, 70, 80, 70));
         setBorder(BorderFactory.createEmptyBorder(30, 50, 50, 60));
@@ -74,5 +81,81 @@ public class InsertPanel extends JPanel {
         buttons.add(uploadPhoto, BorderLayout.EAST);
         add(buttons, BorderLayout.CENTER);
         add(submit, BorderLayout.SOUTH);
+
+
+        uploadPhoto.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFileChooser file = new JFileChooser();
+                file.setCurrentDirectory(new File(System.getProperty("user.home")));
+                //filter the files
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.Images", "jpg","gif","png");
+                file.addChoosableFileFilter(filter);
+                int result = file.showSaveDialog(null);
+
+                if(result == JFileChooser.APPROVE_OPTION){
+                    File selectedFile = file.getSelectedFile();
+                    String path = selectedFile.getAbsolutePath();
+
+                }
+
+
+                else if(result == JFileChooser.CANCEL_OPTION){
+                    System.out.println("No File Select");
+                }
+            }
+        });
+
+
+
+        uploadAudio.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFileChooser file = new JFileChooser();
+                file.setCurrentDirectory(new File(System.getProperty("user.home")));
+                //filter the files
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.audio", "mp3");
+                file.addChoosableFileFilter(filter);
+                int result = file.showSaveDialog(null);
+
+                if(result == JFileChooser.APPROVE_OPTION){
+                    File selectedFile = file.getSelectedFile();
+                    String path = selectedFile.getAbsolutePath();
+
+                }
+
+
+                else if(result == JFileChooser.CANCEL_OPTION){
+                    System.out.println("No File Select");
+                }
+            }
+        });
+
+        submit.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                if(nameText.getText().trim().length() != 0 &&  descText.getText().trim().length() != 0 && linkText.getText().trim().length() !=0)
+
+                    { JOptionPane.showMessageDialog(null,"Exhibit created successfully");
+
+                        insertFrame.setVisible(false);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null,"Complete all fields ");
+                    }
+
+
+            }
+        });
+
+
+
     }
+
+
+
+
 }

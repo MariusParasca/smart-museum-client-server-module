@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterPanel  extends JPanel {
 
@@ -16,11 +18,19 @@ public class RegisterPanel  extends JPanel {
     JLabel museumName = new JLabel(" Add your museum name");
     JLabel emailAddress = new JLabel(" Add your email Address");
     JLabel info = new JLabel("");
-    JTextField museumText = new JTextField();
-    JTextField emailText = new JTextField();
-    JButton submit = new JButton("Submit");
+    public JTextField museumText = new JTextField();
+    public JTextField emailText = new JTextField();
+    public JButton submit = new JButton("Submit");
     private Client client;
 
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[info.uaic.ro]", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validate(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+        return matcher.find();
+    }
     public RegisterPanel(RegisterFrame registerFrame) {
         this.registerFrame = registerFrame;
         client = new Client();
@@ -71,18 +81,34 @@ public class RegisterPanel  extends JPanel {
         submit.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+
+                if(museumText.getText().trim().length() != 0 &&  emailText.getText().trim().length() != 0 )
+                    if(validate(emailText.getText()))
+                {
                 Register reg=new Register(emailText.getText(),"Smart Museums ");
-                System.out.print("Email sent");
+//                System.out.print("Email sent");
                 JFrame loginFrame=new LoginFrame(client);
                 loginFrame.setVisible(true);
                 registerFrame.setVisible(false);
+                JOptionPane.showMessageDialog(null,"Account setup was successful");
             }
+            else {
+                    JOptionPane.showMessageDialog(null,"Email must be : firstname.lastname@info.uaic.ro ");
+                }
+                    else
+                {
+                    JOptionPane.showMessageDialog(null,"Please complete all fields");
+                }
 
+        }
         });
 
 
 
-    }
+
+}
+
+
 
 
 }
