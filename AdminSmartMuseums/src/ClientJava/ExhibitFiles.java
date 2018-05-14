@@ -7,10 +7,12 @@ import java.util.ArrayList;
 
 public class ExhibitFiles {
     private String path;
+    private String pathImg;
     public void createDirectory(String path, String directoryName) {
-        this.path = path+directoryName+"\\";
+        this.path = path+"\\"+directoryName+"\\";
+        this.pathImg = this.path+"\\img";
         new File(this.path).mkdirs();
-        new File(this.path+"\\img").mkdirs();
+        new File(this.pathImg).mkdirs();
     }
 
     public void addImages(ArrayList<File> photos, String path) {
@@ -18,7 +20,7 @@ public class ExhibitFiles {
             for(File photo : photos) {
                 BufferedImage buffer = ImageIO.read(photo);
                 String fileName = photo.getName();
-                File outputfile = new File(path+"\\img\\"+fileName);
+                File outputfile = new File(pathImg+"\\"+fileName);
                 System.out.println(path+fileName);
                 ImageIO.write(buffer, "jpeg", outputfile);
             }
@@ -52,5 +54,9 @@ public class ExhibitFiles {
 
     public String getPath() {
         return path;
+    }
+
+    public String getPathImg() {
+        return pathImg;
     }
 }

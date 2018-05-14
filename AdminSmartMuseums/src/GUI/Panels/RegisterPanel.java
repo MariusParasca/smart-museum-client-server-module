@@ -1,5 +1,6 @@
 package GUI.Panels;
 
+import ClientJava.Client;
 import GUI.Frames.LoginFrame;
 import GUI.Frames.RegisterFrame;
 import Models.Register;
@@ -80,7 +81,7 @@ public class RegisterPanel  extends JPanel {
             public void actionPerformed(ActionEvent e) {
 
                 if(museumText.getText().trim().length() != 0 &&  emailText.getText().trim().length() != 0 )
-                    if(validate(emailText.getText()))
+                    if(validate(museumText.getText()))
                 {
                 Register reg=new Register(emailText.getText(),"Smart Museums ");
 //                System.out.print("Email sent");
@@ -88,6 +89,9 @@ public class RegisterPanel  extends JPanel {
                 loginFrame.setVisible(true);
                 registerFrame.setVisible(false);
                 JOptionPane.showMessageDialog(null,"Account setup was successful");
+
+                String text = "[register]"+ "<"+museumText+">"+"<"+museumText+">";
+                Client.getInstance().sendText(text);
             }
             else {
                     JOptionPane.showMessageDialog(null,"Email must be : firstname.lastname@info.uaic.ro ");
