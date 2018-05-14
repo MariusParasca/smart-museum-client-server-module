@@ -48,6 +48,10 @@
           <root url="jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.0.0/junit-platform-commons-1.0.0.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/New folder/apiguardian-api-1.0.0.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/New folder/json-simple-1.1.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/New folder/junit-jupiter-api-5.0.0.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/New folder/junit-platform-commons-1.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

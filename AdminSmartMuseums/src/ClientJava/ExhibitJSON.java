@@ -24,7 +24,6 @@ public class ExhibitJSON {
             obj.put("description", description);
             obj.put("title", title);
         }
-        System.out.println(obj);
     }
 
     public void save() {
@@ -36,5 +35,13 @@ public class ExhibitJSON {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getPath() {
+        return path;
     }
 }
