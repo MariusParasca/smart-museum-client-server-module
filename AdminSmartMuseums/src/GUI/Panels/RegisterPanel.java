@@ -21,7 +21,6 @@ public class RegisterPanel  extends JPanel {
     public JTextField museumText = new JTextField();
     public JTextField emailText = new JTextField();
     public JButton submit = new JButton("Submit");
-    private Client client;
 
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -33,7 +32,6 @@ public class RegisterPanel  extends JPanel {
     }
     public RegisterPanel(RegisterFrame registerFrame) {
         this.registerFrame = registerFrame;
-        client = new Client();
         init();
     }
 
@@ -87,7 +85,7 @@ public class RegisterPanel  extends JPanel {
                 {
                 Register reg=new Register(emailText.getText(),"Smart Museums ");
 //                System.out.print("Email sent");
-                JFrame loginFrame=new LoginFrame(client);
+                JFrame loginFrame=new LoginFrame();
                 loginFrame.setVisible(true);
                 registerFrame.setVisible(false);
                 JOptionPane.showMessageDialog(null,"Account setup was successful");

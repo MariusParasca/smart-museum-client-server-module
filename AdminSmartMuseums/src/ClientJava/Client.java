@@ -13,16 +13,18 @@ public class Client {
     private DataOutputStream out;
     private DataInputStream in;
 
-    public Client(String serverName, int port) {
-        this.serverName = serverName;
-        this.port = port;
+    private static Client instance = new Client();
+
+    private Client (){ }
+
+    public static Client getInstance(){
+        return instance;
     }
 
-    public Client (){
-
-    }
-    public void open() {
+    public void open(String serverName, int port) {
         try {
+            this.serverName = serverName;
+            this.port = port;
             System.out.println("Connecting to " + serverName + " on port " + port);
             socket = new Socket(serverName, port);
 
@@ -84,12 +86,16 @@ public class Client {
         }
     }
 
-    public void sendString(String string) {
+    public void sendText(String string) {
         try {
+            int sum = 0;
             byte[] bytes = string.getBytes();
             int nrBytes = bytes.length;
             sendInt(nrBytes);
             out.write(bytes);
+            for(byte b : bytes)
+                sum += b;
+            sendInt(sum);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,6 +117,6 @@ public class Client {
         } catch (IOException exp) {
             exp.printStackTrace();
         }*/
-       ;
+        ;
     }
 }

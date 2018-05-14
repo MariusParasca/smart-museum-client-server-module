@@ -34,8 +34,7 @@ public class LoginPanel extends JPanel {
     }
 
 
-    public LoginPanel(LoginFrame loginFrame, Client client) {
-        this.client = client;
+    public LoginPanel(LoginFrame loginFrame) {
         this.loginframe = loginframe;
         init();
     }
@@ -100,7 +99,7 @@ public class LoginPanel extends JPanel {
                 try {
 
 
-                       Login log = new Login(usernameText.getText(), passText.getText(), client);
+                       Login log = new Login(usernameText.getText(), passText.getText());
                    } catch (IOException e1) {
                        e1.printStackTrace();
                     }

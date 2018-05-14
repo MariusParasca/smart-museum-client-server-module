@@ -8,17 +8,15 @@ import java.awt.*;
 public class LoginFrame extends Frame {
 
    LoginPanel loginPanel;
-    private Client client;
-    public LoginFrame(Client client) throws HeadlessException {
+    public LoginFrame() throws HeadlessException {
         super("Login");
-        this.client = client;
         init();
     }
 
     private void init(){
         appearence();
 
-        loginPanel = new LoginPanel(this, client);
+        loginPanel = new LoginPanel(this);
         add(loginPanel, BorderLayout.CENTER);
 
 

@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import javax.swing.*;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegisterFrameTest {
 

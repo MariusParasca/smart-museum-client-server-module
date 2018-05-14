@@ -1,7 +1,6 @@
 package Models;
 
 import ClientJava.Client;
-import org.omg.CORBA.StringHolder;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,15 +18,13 @@ public class Login  {
     private static OutputStream out;
     private static PrintStream ps;
     private static Socket socket;
-    private Client client;
-    public Login(String username, String password, Client client) throws IOException {
+    public Login(String username, String password) throws IOException {
         this.username = username;
         this.password = password;
-        this.client = client;
 
         text = "[login-admin]"+ "<"+username+">"+"<"+password+">";
         // send(out, text);
-        client.sendString(text);
+       Client.getInstance().sendText(text);
 
     }
 
