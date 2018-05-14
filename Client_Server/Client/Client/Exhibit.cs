@@ -22,6 +22,11 @@ namespace Client
 
         public Exhibit(BinaryWriter outStream, BinaryReader inStream, String name)
         {
+            if (name == null || outStream == null || inStream == null)
+            {
+                Console.WriteLine("name or outStream or inStream is null");
+                return;
+            }
             this.outStream = outStream;
             this.inStream = inStream;
             imagePaths = new List<String>();
@@ -30,50 +35,82 @@ namespace Client
 
         public Exhibit(String exhibitFolder)
         {
+            if(exhibitFolder == null)
+            {
+                Console.WriteLine("exhibitFolder is null");
+                return;
+            }
             imagePaths = new List<String>();
             CreateExhibit(exhibitFolder);
         }
 
-        private void GetExhibit(String name) 
+        private void GetExhibit(String pathToExhibit) 
         {
-            Client.SendText(outStream, name);
-            Packet exhibitPackage = Client.Receive(inStream);
-            using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu name(adica numele exponatului);
+            if(pathToExhibit == null)
             {
-                byte[] packetBytes = Client.packetToBytes(exhibitPackage);
-             //   fs.Write(packetBytes, 0, exhibitPackage.data.Length);
+                Console.WriteLine("pathToExhibit is null");
+                return;
             }
-            //trebuie despachetat  zip-ul si apoi apelata CreateExhibit(path-ul folderului)
+            try
+            {
+                Client.SendText(outStream, name);
+                Packet exhibitPackage = Client.Receive(inStream);
+                using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu name(adica numele exponatului);
+                {
+                    byte[] packetBytes = Client.packetToBytes(exhibitPackage);
+                    //   fs.Write(packetBytes, 0, exhibitPackage.data.Length);
+                }
+                //trebuie despachetat  zip-ul si apoi apelata CreateExhibit(path-ul folderului)
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
+            }
         }
 
         public void CreateExhibit(String exhibitFolder) // modifica in privat
         {
-            string[] fileEntries = Directory.GetFiles(exhibitFolder);
-            string[] directoryEntries = Directory.GetDirectories(exhibitFolder);
-            this.name = exhibitFolder.Split('\\').Last();
-            this.pathToAudioFile = fileEntries[0];
-            this.LoadJson(fileEntries[1]);
-            Console.WriteLine(exhibitFolder.Split('\\').Last() + " " + fileEntries[0] + " " + fileEntries[1]);
-            AddImagePaths(directoryEntries[0]);
+            try
+            {
+                string[] fileEntries = Directory.GetFiles(exhibitFolder);
+                string[] directoryEntries = Directory.GetDirectories(exhibitFolder);
+                this.name = exhibitFolder.Split('\\').Last();
+                this.pathToAudioFile = fileEntries[0];
+                this.LoadJson(fileEntries[1]);
+                Console.WriteLine(exhibitFolder.Split('\\').Last() + " " + fileEntries[0] + " " + fileEntries[1]);
+                AddImagePaths(directoryEntries[0]);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                Console.WriteLine("Invalid directory path. Exception: " + e.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
+            }
         }
 
         public void AddImagePaths(String imgDirectory) // modifica in privat
         {
-            string[] fileEntries = Directory.GetFiles(imgDirectory);
-            foreach (String filename in fileEntries)
+            try
             {
-                this.AddImagePath(filename);
-                Console.WriteLine(filename);
+                string[] fileEntries = Directory.GetFiles(imgDirectory);
+                foreach (String filename in fileEntries)
+                {
+                    this.AddImagePath(filename);
+                    Console.WriteLine(filename);
+                }
             }
-        }
+            catch (DirectoryNotFoundException e)
+            {
+                Console.WriteLine("Invalid directory or file name. Exception: " + e.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
+            }
 
-        /*
-        public Exhibit(String name, String pathToAudioFile)
-        {
-            this.name = name;
-            this.pathToAudioFile = pathToAudioFile;
-            imagePaths = new List<String>();
-        }*/
+        }
 
         public void AddImagePath(String imagePath) // modifica in privat
         {
@@ -105,10 +142,21 @@ namespace Client
 
         public void LoadJson(String filePath) // modifca in privat
         {
-            using (StreamReader r = new StreamReader(filePath))
+            try
             {
-                string json = r.ReadToEnd();
-                jsonInfo = JsonConvert.DeserializeObject<ExhibitInfo>(json);
+                using (StreamReader r = new StreamReader(filePath))
+                {
+                    string json = r.ReadToEnd();
+                    jsonInfo = JsonConvert.DeserializeObject<ExhibitInfo>(json);
+                }
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                Console.WriteLine("Invalid directory. Exception: " + e.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
             }
         }
 

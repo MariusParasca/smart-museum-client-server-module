@@ -28,46 +28,50 @@ namespace Client
             {
                 Cryptor = new Cryptor();
                 Compresser = new Compresser();
-                /*exhibit = new Exhibit();
-                exhibit.LoadJson("..\\..\\..\\exhibit.json");
-                exhibit.show();
-                Museum museum = new Museum(null, null, "Muzeu de test");
-                museum.CreateExhibits("..\\..\\..\\muzeu_de_test");*/
+                exhibit = new Exhibit();
+            //exhibit.LoadJson("..\\..\\..\\exhibit.jsons");
+            //exhibit.show();
+            /*
+            exhibit.CreateExhibit(null);
+            Museum museum = new Museum(null, null, null);
+            museum.CreateExhibits("..\\..\\..\\muzeu_de_testsf");
+            while (true) ;
+            */  
             try
-                 {
+            {
 
-                     TcpClient tcpclnt = new TcpClient();
-                     Console.WriteLine("Connecting.....");
-                     tcpclnt.Connect("127.0.0.1", 8001);
-                     Console.WriteLine("Connected");
-                     BinaryReader binaryReader = new BinaryReader(tcpclnt.GetStream());
-                     BinaryWriter binaryWriter = new BinaryWriter(tcpclnt.GetStream());
-                     
-
-                //trimitere text
-                SendText(binaryWriter, "Text de test");
-                    //primire text
-                    Console.WriteLine(ReceiveText(binaryReader));
-                    
+                 TcpClient tcpclnt = new TcpClient();
+                 Console.WriteLine("Connecting.....");
+                 tcpclnt.Connect("127.0.0.1", 8001);
+                 Console.WriteLine("Connected");
+                 BinaryReader binaryReader = new BinaryReader(tcpclnt.GetStream());
+                 BinaryWriter binaryWriter = new BinaryWriter(tcpclnt.GetStream());
 
 
-                ReceivePhoto(new BinaryReader(tcpclnt.GetStream()), "test.jpg");
-                
-               
+            //trimitere text
+            SendText(binaryWriter, "Text de test");
+                //primire text
+                Console.WriteLine(ReceiveText(binaryReader));
 
-                Console.WriteLine("byte array file recevied");
 
-                
-                Console.WriteLine("\nJob done! Now exit!");
-                    tcpclnt.Close();
-                }
 
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error..... " + e.StackTrace);
-                }
-                
+            ReceivePhoto(new BinaryReader(tcpclnt.GetStream()), "test.jpg");
+
+
+
+            Console.WriteLine("byte array file recevied");
+
+
+            Console.WriteLine("\nJob done! Now exit!");
+                tcpclnt.Close();
             }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Error..... " + e.StackTrace);
+            }
+
+        }
 
         private static void ReceivePhoto(BinaryReader binaryReader, string v)
         {
