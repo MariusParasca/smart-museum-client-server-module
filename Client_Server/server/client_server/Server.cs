@@ -56,7 +56,7 @@ namespace Server
                 Console.WriteLine("Mesajul primit este: " + ReceiveString(s));
                 RecieveZip(s);
                 */
-                
+
                 /*
                 String museumName = ReceiveText(s);
                 String museumPath = db.GetPath(museumName);
@@ -68,10 +68,14 @@ namespace Server
                 SendText(s, "Mesaj");
                 
                 //   SendPhoto(s, "G:\\Doc\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-                //SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
+                SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 SendPhoto(s, "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\meme.jpg");
                 */
-
+                //SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
+              
+                ReceiveText(s);
+                SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
+                SendText(s, "asd");
                 s.Close();
                 myList.Stop();
                 
@@ -82,9 +86,9 @@ namespace Server
             }
             
         }
-        public static String ReceiveText(BinaryReader binaryReader)
+        public static string ReceiveText(Socket socket)
         {
-            Packet packet = Receive(binaryReader);
+            Packet packet = Receive(socket);
             return bArrayToString(packet.data, packet.data.Length);
         }
         private static Packet bytesToPacket(byte[] arr)
@@ -101,9 +105,11 @@ namespace Server
 
             return str;
         }
-        public static Packet Receive(BinaryReader binaryReader)
+        public static Packet Receive(Socket socket)
         {
+
             Packet packet;
+            BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
             int howBig = binaryReader.ReadInt32();
             byte[] packetBytes = new byte[howBig];
             int readed = binaryReader.Read(packetBytes, 0, howBig);
@@ -116,10 +122,19 @@ namespace Server
                 Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
                 return packet;
             }
-            byte[] decompressedByteArray = Compresser.Decompress(packetBytes);
-            packet = bytesToPacket(decompressedByteArray);
-            Console.WriteLine("[" + DateTime.Now + "] Packet received!");
-            return packet;
+            try
+            {
+                packet = bytesToPacket(packetBytes);
+                byte[] decompressedByteArray = Compresser.Decompress(packet.data);
+                packet = bytesToPacket(decompressedByteArray);
+                Console.WriteLine("[" + DateTime.Now + "] Packet received!");
+                return packet;
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                 return new Packet();
+               
+            }
 
         }
         private static int CalculateChecksum(byte[] packetBytes)
@@ -172,12 +187,14 @@ namespace Server
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             packet.data = Compresser.Compress(packet.data);
             int size = Marshal.SizeOf(packet);
+            Console.WriteLine(size);
             socket.Send(BitConverter.GetBytes(size));
             byte[] packetBytes = packetToBytes(packet);
             socket.Send(packetBytes);
             Console.WriteLine("[" + DateTime.Now + "] Packet sent!");
             int checkSum = CalculateChecksum(packetBytes);
             socket.Send(BitConverter.GetBytes(checkSum));
+            int x = socket.EndSend(null);
         }
 
         private static byte[] ImageToByteArray(System.Drawing.Image imageIn)

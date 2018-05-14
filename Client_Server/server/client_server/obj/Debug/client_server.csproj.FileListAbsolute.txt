@@ -23,7 +23,6 @@ C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\serv
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.Form1.resources
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.Properties.Resources.resources
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.csproj.GenerateResource.cache
-C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.csproj.CoreCompileInputs.cache
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.exe
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.pdb
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\bin\Debug\client_server.exe.config
@@ -74,4 +73,3 @@ C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\serv
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\bin\Debug\Google.Protobuf.dll
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\bin\Debug\MySql.Data.xml
 C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\bin\Debug\Renci.SshNet.xml
-C:\Users\abucevschi\Desktop\smart-museum-client-server-module\Client_Server\server\client_server\obj\Debug\client_server.csproj.CopyComplete

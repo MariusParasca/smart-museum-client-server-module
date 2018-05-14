@@ -21,8 +21,9 @@ namespace client_server
             using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
             {
                 dstream.CopyTo(output);
+                return output.ToArray();
             }
-            return output.ToArray();
+            
         }
     }
 }

@@ -42,8 +42,8 @@ namespace Client
         {
             try
             {
-                Client.SendText(outStream, name);
-                Packet museumPackage = Client.Receive(inStream);
+                Client.SendText( name);
+                Packet museumPackage = Client.Receive();
                 using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu path-ul cu folderul muzee + name(adica numele muzeului);
                 {
                     //fs.Write(museumPackage, 0, museumPackage.data.Length);

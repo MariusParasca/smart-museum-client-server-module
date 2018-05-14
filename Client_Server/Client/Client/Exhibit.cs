@@ -53,8 +53,8 @@ namespace Client
             }
             try
             {
-                Client.SendText(outStream, name);
-                Packet exhibitPackage = Client.Receive(inStream);
+                Client.SendText(name);
+                Packet exhibitPackage = Client.Receive();
                 using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu name(adica numele exponatului);
                 {
                     byte[] packetBytes = Client.packetToBytes(exhibitPackage);
