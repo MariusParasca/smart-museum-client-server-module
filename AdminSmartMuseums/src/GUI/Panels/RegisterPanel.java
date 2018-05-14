@@ -1,6 +1,5 @@
 package GUI.Panels;
 
-import ClientJava.Client;
 import GUI.Frames.LoginFrame;
 import GUI.Frames.RegisterFrame;
 import Models.Register;
@@ -24,7 +23,7 @@ public class RegisterPanel  extends JPanel {
 
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[info.uaic.ro]", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]", Pattern.CASE_INSENSITIVE);
 
     public static boolean validate(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);

@@ -6,40 +6,40 @@ import org.junit.Test;
 
 import javax.swing.*;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegisterFrameTest {
 
 
-        @Test
-        public void testInputMuseumTextField() {
+    @Test
+    public void testInputMuseumTextField() {
 
-            RegisterFrame registerFrame = new RegisterFrame();
-            registerFrame.setVisible(true);
-            RegisterPanel registerPanel = new RegisterPanel(registerFrame);
-            String expectedResults;
-
-
-            JTextField inputTests = registerPanel.museumText;
-
-             assertNotNull("cant access", inputTests);
-
-            inputTests.setText("");
+        RegisterFrame registerFrame = new RegisterFrame();
+        registerFrame.setVisible(true);
+        RegisterPanel registerPanel = new RegisterPanel(registerFrame);
+        String expectedResults;
 
 
+        JTextField inputTests = registerPanel.museumText;
 
-            inputTests.postActionEvent();
+        assertNotNull("cant access", inputTests);
 
-
-            expectedResults = "";
-            assertEquals(expectedResults, inputTests.getText());
+        inputTests.setText("");
 
 
 
-        }
+        inputTests.postActionEvent();
 
-        @Test
+
+        expectedResults = "";
+        assertEquals(expectedResults, inputTests.getText());
+
+
+
+    }
+
+    @Test
     public void WhenNullFieldsSubmitShouldBeFalse() {
 
         RegisterFrame registerFrame = new RegisterFrame();
@@ -131,4 +131,3 @@ public class RegisterFrameTest {
 
 
 }
-

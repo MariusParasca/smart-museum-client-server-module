@@ -63,5 +63,71 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="com.bluecatcode.junit:junit-4.10-extended:1.0.4" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/spring-jdbc-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-context-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/commons-logging-1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/aopalliance-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-context-support-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-jms-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-aspects-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-instrument-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-orm-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-aop-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-instrument-tomcat-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-beans-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-expression-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-core-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-messaging-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-oxm-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-test-4.3.16.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-tx-4.3.16.RELEASE.jar!/" />
+          <root url="file://$MODULE_DIR$" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/src" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../JUNIT/opentest4j-1.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../JUNIT/apiguardian-api-1.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../JUNIT/junit-jupiter-api-5.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../JUNIT/junit-platform-commons-1.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

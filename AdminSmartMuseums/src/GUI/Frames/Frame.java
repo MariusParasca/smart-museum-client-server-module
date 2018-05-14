@@ -1,11 +1,7 @@
 package GUI.Frames;
 
-import ClientJava.Client;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class Frame extends JFrame {
 
@@ -21,7 +17,7 @@ public class Frame extends JFrame {
 
         setLayout(new BorderLayout());
 
-        addWindowListener(new WindowAdapter()
+        /*addWindowListener(new WindowAdapter()
         {
             @Override
             public void windowClosing(WindowEvent e)
@@ -30,7 +26,7 @@ public class Frame extends JFrame {
                 System.out.println("Socket closed");
                 e.getWindow().dispose();
             }
-        });
+        });*/
     }
 }
 

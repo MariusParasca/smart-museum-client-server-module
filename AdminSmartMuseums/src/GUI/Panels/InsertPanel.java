@@ -1,5 +1,6 @@
 package GUI.Panels;
 
+import ClientJava.ExhibitFiles;
 import GUI.Frames.InsertFrame;
 
 import javax.swing.*;
@@ -8,6 +9,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class InsertPanel extends JPanel {
 
@@ -25,6 +28,8 @@ public class InsertPanel extends JPanel {
     JPanel insert = new JPanel();
     JPanel buttons = new JPanel();
 
+    private ArrayList<File> photos = new ArrayList<File>();
+    private File audioFile = null;
     public InsertPanel(InsertFrame insertFrame) {
 
         this.insertFrame = insertFrame;
@@ -97,7 +102,9 @@ public class InsertPanel extends JPanel {
                 if(result == JFileChooser.APPROVE_OPTION){
                     File selectedFile = file.getSelectedFile();
                     String path = selectedFile.getAbsolutePath();
-
+                    String fileName = selectedFile.getName();
+                    photos.add(selectedFile);
+                    System.out.println(selectedFile.getAbsolutePath());
                 }
 
 
@@ -123,7 +130,7 @@ public class InsertPanel extends JPanel {
                 if(result == JFileChooser.APPROVE_OPTION){
                     File selectedFile = file.getSelectedFile();
                     String path = selectedFile.getAbsolutePath();
-
+                    audioFile = selectedFile;
                 }
 
 
@@ -141,7 +148,20 @@ public class InsertPanel extends JPanel {
 
                     { JOptionPane.showMessageDialog(null,"Exhibit created successfully");
 
+                        ExhibitFiles exhibitFiles = new ExhibitFiles();
+                        exhibitFiles.createDirectory("C:\\", nameText.getText());
+                        exhibitFiles.addImages(photos, exhibitFiles.getPath());
+                        if(!audioFile.equals(null))
+                            try {
+                                exhibitFiles.addAudio(audioFile, exhibitFiles.getPath()+"\\");
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+
+                        //String text = "[insert-exhibit]" + "<"+nameText.getText()+">"+"<"+descText.getText()+">"+"<"+linkText.getText()+">";
+                        //Client.getInstance().sendText(text);
                         insertFrame.setVisible(false);
+
                     }
                     else {
                         JOptionPane.showMessageDialog(null,"Complete all fields ");

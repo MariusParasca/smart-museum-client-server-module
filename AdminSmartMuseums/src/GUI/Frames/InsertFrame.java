@@ -22,7 +22,5 @@ public class InsertFrame extends JFrame {
         setLayout(new BorderLayout());
         insertPanel = new InsertPanel(this);
         add(insertPanel, BorderLayout.CENTER);
-
-
     }
 }
