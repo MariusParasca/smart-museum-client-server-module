@@ -1,6 +1,5 @@
 package GUI.Panels;
 
-import ClientJava.Client;
 import GUI.Frames.LoginFrame;
 import GUI.Frames.RegisterFrame;
 import Models.Register;
@@ -90,8 +89,8 @@ public class RegisterPanel  extends JPanel {
                 registerFrame.setVisible(false);
                 JOptionPane.showMessageDialog(null,"Account setup was successful");
 
-                String text = "[register]"+ "<"+museumText+">"+"<"+museumText+">";
-                Client.getInstance().sendText(text);
+                //String text = "[register]"+ "<"+museumText+">"+"<"+museumText+">";
+                //Client.getInstance().sendText(text);
             }
             else {
                     JOptionPane.showMessageDialog(null,"Email must be : firstname.lastname@info.uaic.ro ");

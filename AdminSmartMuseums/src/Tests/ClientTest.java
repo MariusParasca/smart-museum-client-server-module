@@ -24,5 +24,4 @@ public class ClientTest {
         assertEquals(100, Client.getInstance().getPort());
     }
 
-
 }

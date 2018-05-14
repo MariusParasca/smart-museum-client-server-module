@@ -1,6 +1,7 @@
 package GUI.Panels;
 
 import ClientJava.ExhibitFiles;
+import ClientJava.ExhibitJSON;
 import GUI.Frames.InsertFrame;
 
 import javax.swing.*;
@@ -150,6 +151,12 @@ public class InsertPanel extends JPanel {
 
                         ExhibitFiles exhibitFiles = new ExhibitFiles();
                         exhibitFiles.createDirectory("C:\\", nameText.getText());
+
+                        //create json file
+                        ExhibitJSON exhibitJSON = new ExhibitJSON(nameText.getText(), exhibitFiles.getPath());
+                        exhibitJSON.add(nameText.getText(), descText.getText(), descText.getText(), linkText.getText());
+                        exhibitJSON.save();
+
                         exhibitFiles.addImages(photos, exhibitFiles.getPath());
                         if(!audioFile.equals(null))
                             try {
@@ -158,6 +165,7 @@ public class InsertPanel extends JPanel {
                                 ex.printStackTrace();
                             }
 
+                        //exhibitJSON.add(nameText.getText(), );
                         //String text = "[insert-exhibit]" + "<"+nameText.getText()+">"+"<"+descText.getText()+">"+"<"+linkText.getText()+">";
                         //Client.getInstance().sendText(text);
                         insertFrame.setVisible(false);
