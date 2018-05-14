@@ -119,4 +119,16 @@ public class Client {
         }*/
         ;
     }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public DataOutputStream getOut() {
+        return out;
+    }
 }
