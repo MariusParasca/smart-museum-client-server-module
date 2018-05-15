@@ -14,7 +14,7 @@ namespace Server.Tests
         [TestMethod()]
         public void MainTest()
         {
-            Server.Main();
+           Server.Main();
            // Assert.Fail();
         }
     }

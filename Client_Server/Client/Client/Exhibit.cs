@@ -57,7 +57,7 @@ namespace Client
             }
             catch (Exception e)
             {
-               // Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
+                Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
             }
         }
 

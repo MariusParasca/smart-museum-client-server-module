@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace client_server
 {
-    class Museum 
+    public class Museum
     {
         private static MySqlConnection conn;
         private static MySqlDataReader reader;
@@ -21,27 +21,29 @@ namespace client_server
 
         private static void ExecuteQuery(String query, String[] parameters)
         {
-            if(query == null)
+            try
             {
-                Console.WriteLine("query is null");
-                return;
-            }
-            conn = Database.GetConnection();
-            command = new MySqlCommand(query, conn);
+                conn = Database.GetConnection();
+                command = new MySqlCommand(query, conn);
 
-            if (parameters != null)
-            {
-                String parameter = "@val";
-                for (int i = 0; i < parameters.Length; i++)
+                if(parameters != null)
                 {
-                    command.Parameters.AddWithValue(parameter + (i + 1), parameters[i]);
+                    String parameter = "@val";
+                    for (int i = 0; i < parameters.Length; i++)
+                    {
+                        command.Parameters.AddWithValue(parameter + (i + 1), parameters[i]);
+                    }
                 }
-            
+
                 command.Prepare();
+                
+                reader = command.ExecuteReader();       
+            }
+            catch(MySqlException e)
+            {
+                Console.WriteLine(e.ToString());
             }
 
-            reader = command.ExecuteReader();
-                     
         }
 
         private static void createJsonFile()
@@ -67,7 +69,7 @@ namespace client_server
             }
          }
 
-        public static String GetExhibitList(String museum) // probabil nu o sa mai trebuiasca
+        /*public static String GetExhibitList(String museum) // probabil nu o sa mai trebuiasca
         {
             if(museum == null)
             {
@@ -87,7 +89,7 @@ namespace client_server
             Console.WriteLine(itemList.ToString());
 
             return itemList.ToString();
-        }
+        }*/
 
         public static byte[] GetPackage(String tableName, String queryParameter)
         {
@@ -96,12 +98,19 @@ namespace client_server
                 Console.WriteLine("Table name or query parameter is null");
                 return null;
             }
-            byte[] byteArrayFile;   
+            byte[] byteArrayFile = new byte[] {};   
             ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new String[] { queryParameter });
-            reader.Read();
-            Console.WriteLine(reader[0]);    
-            byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Tablou_de_test.zip"); //de inlocuit cu reader[0]
-            //byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\muzeu_de_test.zip"); //de inlocuit cu reader[0]
+            if(reader != null)
+            {
+                reader.Read();
+                if(reader.HasRows)
+                {
+                    Console.WriteLine(reader[0]);
+                    byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Tablou_de_test.zip"); //de inlocuit cu reader[0]
+                    //byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\muzeu_de_test.zip"); //de inlocuit cu reader[0]
+                }
+            }
+            
             return byteArrayFile;
         }
 
