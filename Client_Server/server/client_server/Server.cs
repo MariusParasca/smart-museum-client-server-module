@@ -56,9 +56,9 @@ namespace Server
                 }
                 */
 
-
                 Socket s = myList.AcceptSocket();
-                    Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + s.RemoteEndPoint);
+                Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + s.RemoteEndPoint);
+
                 /*SendInt(s, 10);
                 SendString(s, "Ana are mere");
                 Console.WriteLine("Numarul primit este: " + ReceiveInt(s));
@@ -66,19 +66,21 @@ namespace Server
                 RecieveZip(s);
                 */
 
-                /*
+                
                 Console.WriteLine(ReceiveText(s));
                 SendText(s, "Mesaj");
                 
                 //   SendPhoto(s, "G:\\Doc\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-                */
+                
 
+
+                /*
                 ReceiveText(s);
                 //SendPhoto(s, "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\meme.jpg");
                 SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 SendText(s, "asd");
-
+                */
                 s.Close();
                 myList.Stop();
                 

@@ -31,19 +31,6 @@ namespace Client.Tests
             exhibit.GetName();
             exhibit.GetLinkVideo();
             exhibit.GetPathToAudioFile();
-            /*
-            exhibit.AddImagePath(null);
-            exhibit.AddImagePaths(null);
-            exhibit.GetExhibit(null);
-            exhibit.CreateExhibit(null);
-            exhibit.LoadJson(null);
-            exhibit.AddImagePath("//invalid");
-            exhibit.AddImagePaths("//invalid");
-            exhibit.GetExhibit("//invalid");
-            exhibit.CreateExhibit("//invalid");
-            exhibit.LoadJson("//invalid");
-            */
-            //Assert.Fail();
         }
 
         [TestMethod()]

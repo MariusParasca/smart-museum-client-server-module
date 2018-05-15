@@ -28,6 +28,7 @@ namespace Client
         public static void Main()
             {
                 Compresser = new Compresser();
+                //Museum museum = new Museum("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Client\\muzeu_de_test");
             try
             {
                 /*
@@ -40,22 +41,18 @@ namespace Client
                  binaryReader = new BinaryReader(tcpclnt.GetStream());
                  */
                 connectToServer("127.0.0.1", 8001);
-
-                //Creare exhibit invalid
-
                 
                 //trimitere text
                 SendText( "Text de test");
-            ReceivePhoto("test.jpg");
+                ReceivePhoto("test.jpg");
 
 
                 //primire text
                 Console.WriteLine(ReceiveText());
          
-            Console.WriteLine("byte array file recevied");
+                Console.WriteLine("byte array file recevied");
             
-
-            Console.WriteLine("\nJob done! Now exit!");
+                Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
 

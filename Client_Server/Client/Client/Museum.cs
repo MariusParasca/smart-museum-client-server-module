@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    class Museum
+    public class Museum
     {
         List<Exhibit> exhibits;
         String name;
@@ -25,7 +25,7 @@ namespace Client
             this.outStream = outStream;
             this.inStream = inStream;
             exhibits = new List<Exhibit>();
-            //GetMuseum(name);
+            GetMuseum(name);
         }
 
         public Museum(String pathToMuseum) 
@@ -35,10 +35,12 @@ namespace Client
                 Console.WriteLine("pathToMuseum is null");
                 return;
             }
+            exhibits = new List<Exhibit>();
+            this.name = pathToMuseum.Split('\\').Last();
             CreateExhibits(pathToMuseum); // trebuie dat path-ul muzeului
         }
 
-        public void GetMuseum(String name) // modifica in privat
+        private void GetMuseum(String name) // trebuie modificata
         {
             try
             {
@@ -57,7 +59,7 @@ namespace Client
 
         }
 
-        public void CreateExhibits(String museumFolder) // modifica in privat
+        private void CreateExhibits(String museumFolder) // modifica in privat
         {
             string[] directoryEntries;
             try
@@ -69,10 +71,6 @@ namespace Client
                     Exhibit exhibit = new Exhibit(directoryName);
                     exhibits.Add(exhibit);
                 }
-            }
-            catch (DirectoryNotFoundException e)
-            {
-                Console.WriteLine("Invalid directory name. Exception: " + e.ToString());
             }
             catch (Exception e)
             {
