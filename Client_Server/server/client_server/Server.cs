@@ -46,11 +46,20 @@ namespace Server
                 Console.WriteLine("[" + DateTime.Now + "] The local End point is  :" + myList.LocalEndpoint);
                 Console.WriteLine("[" + DateTime.Now + "] Waiting for a connection.....");
 
-                Socket s = myList.AcceptSocket();
-                Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + s.RemoteEndPoint);
 
-                /*
-                SendInt(s, 10);
+                /*//sterge inainte de push
+                Socket s;
+                while (true)
+                {
+                    s = myList.AcceptSocket();
+                    Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + s.RemoteEndPoint);
+                }
+                */
+
+
+                Socket s = myList.AcceptSocket();
+                    Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + s.RemoteEndPoint);
+                /*SendInt(s, 10);
                 SendString(s, "Ana are mere");
                 Console.WriteLine("Numarul primit este: " + ReceiveInt(s));
                 Console.WriteLine("Mesajul primit este: " + ReceiveString(s));
@@ -58,24 +67,18 @@ namespace Server
                 */
 
                 /*
-                String museumName = ReceiveText(s);
-                String museumPath = db.GetPath(museumName);
-                sftp.GetMuseumPackage(museumPath);
-                //Send(s, sftp.GetMuseumPackage(museumPath));
-
-
                 Console.WriteLine(ReceiveText(s));
                 SendText(s, "Mesaj");
                 
                 //   SendPhoto(s, "G:\\Doc\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-                SendPhoto(s, "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\meme.jpg");
                 */
-                //SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-              
+
                 ReceiveText(s);
+                //SendPhoto(s, "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\meme.jpg");
                 SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
                 SendText(s, "asd");
+
                 s.Close();
                 myList.Stop();
                 

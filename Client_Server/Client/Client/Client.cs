@@ -16,26 +16,34 @@ namespace Client
 
     public class Client
         {
-        private static Exhibit exhibit;
         private static Compresser Compresser;
         private static BinaryReader binaryReader;
-        private static BinaryWriter binaryWriter; 
+        private static BinaryWriter binaryWriter;
+        private static TcpClient tcpclnt;
+
+        //Astea sunt create doar pentru test, vor fii sterse probabil
+        public static BinaryReader GetBinaryReader() { return binaryReader; }
+        public static BinaryWriter GetBinaryWriter() { return binaryWriter; }
 
         public static void Main()
             {
                 Compresser = new Compresser();
-                exhibit = new Exhibit();
-        try{
-               
-                  TcpClient tcpclnt = new TcpClient();
-               
-                Console.WriteLine("Connecting.....");
+            try
+            {
+                /*
+                 TcpClient tcpclnt = new TcpClient();
+
+                 Console.WriteLine("Connecting.....");
                  tcpclnt.Connect("127.0.0.1", 8001);
                  Console.WriteLine("Connected");
-                binaryWriter = new BinaryWriter(tcpclnt.GetStream());
-                binaryReader = new BinaryReader(tcpclnt.GetStream());
+                 binaryWriter = new BinaryWriter(tcpclnt.GetStream());
+                 binaryReader = new BinaryReader(tcpclnt.GetStream());
+                 */
+                connectToServer("127.0.0.1", 8001);
 
+                //Creare exhibit invalid
 
+                
                 //trimitere text
                 SendText( "Text de test");
             ReceivePhoto("test.jpg");
@@ -45,7 +53,7 @@ namespace Client
                 Console.WriteLine(ReceiveText());
          
             Console.WriteLine("byte array file recevied");
-
+            
 
             Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
@@ -56,6 +64,17 @@ namespace Client
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
 
+        }
+
+        public static void connectToServer(String ip, int port)
+        {
+            tcpclnt = new TcpClient();
+
+            Console.WriteLine("Connecting.....");
+            tcpclnt.Connect(ip, port);
+            Console.WriteLine("Connected");
+            binaryWriter = new BinaryWriter(tcpclnt.GetStream());
+            binaryReader = new BinaryReader(tcpclnt.GetStream());
         }
 
         public static String ReceiveText()

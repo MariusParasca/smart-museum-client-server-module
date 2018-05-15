@@ -29,7 +29,6 @@ E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\bin\Debug\Client.pdb
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.Properties.Resources.resources
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.csproj.GenerateResource.Cache
-E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.exe
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\Client\Client\obj\Debug\Client.pdb
 C:\Users\Victor\Documents\GitHub\smart-museum-client-server-module\Client_Server\Client\Client\bin\Debug\Client.exe.config

@@ -32,7 +32,6 @@ E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\obj\Debug\cli
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\obj\Debug\client_server.Form1.resources
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\obj\Debug\client_server.Properties.Resources.resources
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\obj\Debug\client_server.csproj.GenerateResource.Cache
-E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\obj\Debug\client_server.csproj.CoreCompileInputs.cache
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\obj\Debug\client_server.exe
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\obj\Debug\client_server.pdb
 E:\Dropbox\Facultate\IP\Proiect\Client_Server\server\client_server\bin\Debug\MySql.Data.dll
