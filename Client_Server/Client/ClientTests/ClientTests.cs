@@ -27,69 +27,69 @@ namespace Client.Tests
 
         }
 
-     /*   [TestMethod()]
-        public void MainTest1()
-        {
-            Client.Main();
-        }
+        /*   [TestMethod()]
+           public void MainTest1()
+           {
+               Client.Main();
+           }
 
-        [TestMethod()]
-        public void ReceiveTextTest()
-        {
-            try{
+           [TestMethod()]
+           public void ReceiveTextTest()
+           {
+               try{
 
-                Client.ReceiveText();
+                   Client.ReceiveText();
 
-            }
-            catch (Exception e){
-                Console.WriteLine("Exceptie " + e.ToString());
-            }
-        }
+               }
+               catch (Exception e){
+                   Console.WriteLine("Exceptie " + e.ToString());
+               }
+           }
 
-        [TestMethod()]
-        public void ReceivePhotoTest()
-        {
+           [TestMethod()]
+           public void ReceivePhotoTest()
+           {
 
-            try
-            {
+               try
+               {
 
-                Client.ReceivePhoto(" test11.jpg");
+                   Client.ReceivePhoto(" test11.jpg");
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exceptie " + e.ToString());
-            }
-        }
+               }
+               catch (Exception e)
+               {
+                   Console.WriteLine("Exceptie " + e.ToString());
+               }
+           }
 
-    /*    [TestMethod()]
-        public void ReceiveTest()
-        {
-            throw new NotImplementedException();
-        }
+       /*    [TestMethod()]
+           public void ReceiveTest()
+           {
+               throw new NotImplementedException();
+           }
 
-        [TestMethod()]
-        public void bArrayToStringTest()
-        {
-            throw new NotImplementedException();
-        }
+           [TestMethod()]
+           public void bArrayToStringTest()
+           {
+               throw new NotImplementedException();
+           }
 
-        [TestMethod()]
-        public void SendTextTest()
-        {
-            throw new NotImplementedException();
-        }
+           [TestMethod()]
+           public void SendTextTest()
+           {
+               throw new NotImplementedException();
+           }
 
-        [TestMethod()]
-        public void SendPhotoTest()
-        {
-            throw new NotImplementedException();
-        }
+           [TestMethod()]
+           public void SendPhotoTest()
+           {
+               throw new NotImplementedException();
+           }
 
-        [TestMethod()]
-        public void packetToBytesTest()
-        {
-            throw new NotImplementedException();
-        }*/
+           [TestMethod()]
+           public void packetToBytesTest()
+           {
+               throw new NotImplementedException();
+           }*/
     }
 }

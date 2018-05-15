@@ -9,16 +9,14 @@ using Newtonsoft.Json;
 
 namespace Client
 {
-    class Exhibit
+    public class Exhibit
     {
         private List<String> imagePaths;
-        private String name;
-        private String pathToAudioFile;
+        private String name = null;
+        private String pathToAudioFile = null;
         private ExhibitInfo jsonInfo;
         private BinaryWriter outStream;
         private BinaryReader inStream;
-
-        public Exhibit() { }
 
         public Exhibit(BinaryWriter outStream, BinaryReader inStream, String name)
         {
@@ -30,7 +28,7 @@ namespace Client
             this.outStream = outStream;
             this.inStream = inStream;
             imagePaths = new List<String>();
-            //GetExhibit(name)
+            GetExhibit(name);
         }
 
         public Exhibit(String exhibitFolder)
@@ -44,13 +42,8 @@ namespace Client
             CreateExhibit(exhibitFolder);
         }
 
-        private void GetExhibit(String pathToExhibit) 
+        private void GetExhibit(String pathToExhibit)  // Aceasta metoda trebuie modificata
         {
-            if(pathToExhibit == null)
-            {
-                Console.WriteLine("pathToExhibit is null");
-                return;
-            }
             try
             {
                 Client.SendText(name);
@@ -68,7 +61,7 @@ namespace Client
             }
         }
 
-        public void CreateExhibit(String exhibitFolder) // modifica in privat
+        private void CreateExhibit(String exhibitFolder) // modifica in privat
         {
             try
             {
@@ -80,17 +73,13 @@ namespace Client
                 Console.WriteLine(exhibitFolder.Split('\\').Last() + " " + fileEntries[0] + " " + fileEntries[1]);
                 AddImagePaths(directoryEntries[0]);
             }
-            catch (DirectoryNotFoundException e)
-            {
-                Console.WriteLine("Invalid directory path. Exception: " + e.ToString());
-            }
             catch (Exception e)
             {
                 Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
             }
         }
 
-        public void AddImagePaths(String imgDirectory) // modifica in privat
+        private void AddImagePaths(String imgDirectory) // modifica in privat
         {
             try
             {
@@ -101,10 +90,6 @@ namespace Client
                     Console.WriteLine(filename);
                 }
             }
-            catch (DirectoryNotFoundException e)
-            {
-                Console.WriteLine("Invalid directory or file name. Exception: " + e.ToString());
-            }
             catch (Exception e)
             {
                 Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
@@ -112,7 +97,7 @@ namespace Client
 
         }
 
-        public void AddImagePath(String imagePath) // modifica in privat
+        private void AddImagePath(String imagePath) // modifica in privat
         {
             imagePaths.Add(imagePath);
         }
@@ -140,7 +125,7 @@ namespace Client
             public string linkVideo { get; set; }
         }
 
-        public void LoadJson(String filePath) // modifca in privat
+        private void LoadJson(String filePath) // modifca in privat
         {
             try
             {
@@ -150,16 +135,13 @@ namespace Client
                     jsonInfo = JsonConvert.DeserializeObject<ExhibitInfo>(json);
                 }
             }
-            catch (DirectoryNotFoundException e)
-            {
-                Console.WriteLine("Invalid directory. Exception: " + e.ToString());
-            }
             catch (Exception e)
             {
                 Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
             }
         }
 
+        /*
         public void show()
         {
             Console.WriteLine("[JSON] Titlu:" + jsonInfo.title + "\n");
@@ -167,41 +149,44 @@ namespace Client
             Console.WriteLine("[JSON] DescriereEn:" + jsonInfo.descriptionEn + "\n");
             Console.WriteLine("[JSON] Link Video:" + jsonInfo.linkVideo + "\n");
         }
-
+        */
         public String GetTitle()
         {
-            if (jsonInfo.title != null)
+            if (jsonInfo == null)
             {
-                return jsonInfo.title;
+                return null;
             }
-            return "";
+            return jsonInfo.title;
         }
 
         public String GetDescriptionRo()
         {
-            if (jsonInfo.descriptionRo != null)
+            if (jsonInfo == null)
             {
-                return jsonInfo.descriptionRo;
+                return null;
             }
-            return "";
+
+            return jsonInfo.descriptionRo;
         }
 
         public String GetDescriptionEn()
         {
-            if (jsonInfo.descriptionEn != null)
+            if (jsonInfo == null)
             {
-                return jsonInfo.descriptionEn;
+                return null;
             }
-            return "";
+
+            return jsonInfo.descriptionEn;
         }
 
         public String GetLinkVideo()
         {
-            if (jsonInfo.linkVideo != null)
+            if (jsonInfo == null)
             {
-                return jsonInfo.linkVideo;
+                return null;
             }
-            return "";
+
+            return jsonInfo.linkVideo;
         }
 
     }
