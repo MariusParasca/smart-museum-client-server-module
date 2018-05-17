@@ -11,33 +11,44 @@ using client_server;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 
-[StructLayout(LayoutKind.Sequential, Size = 1024)]
-//[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+class Constants
+{
+    public const int type_length = 8;
+    public const int data_length = 1016;
+}
+[StructLayout(LayoutKind.Sequential, Size = Constants.type_length + Constants.type_length)]
 internal struct Packet
 {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Constants.type_length)]
     public string type;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1016)]
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.type_length)]
     public byte[] data;
 }
+
 namespace Server
 {
     public class Server
     {
         private static Compresser Compresser;
+        private static StreamWriter sw;
+        public static void Log()
+        {
+            DateTime dateTime = DateTime.Today;
+            string logFileName = ".\\Logs\\" + dateTime.ToString("dd_MM_yyyy") + ".log";
+            if( sw == null)
+                sw = File.AppendText(logFileName);
+            sw.AutoFlush = true;
+            Console.SetOut(sw);
 
+        }
         public static void Main()
         {
             //Museum.CreateGeoLocationFile();
             //Museum.GetExhibitList("Muzeu de test");
             //Museum.GetPackage("SmartMuseumDB.Museums", "Muzeu de test");
-            StreamWriter sw = File.AppendText("log.txt");
-            sw.AutoFlush = true;
-
             SFTP sftp = new SFTP();
             Compresser = new Compresser();
-              Console.SetOut(sw);
-
+              
             try
             {
 
@@ -45,12 +56,13 @@ namespace Server
 
                 TcpListener myList = new TcpListener(ipAd, 8001);
                 myList.Start();
-
+                Log();
                 Console.WriteLine("[" + DateTime.Now + "] The server is running at port 8001...");
                 Console.WriteLine("[" + DateTime.Now + "] The local End point is  :" + myList.LocalEndpoint);
                 Console.WriteLine("[" + DateTime.Now + "] Waiting for a connection.....");
 
                 Socket s = myList.AcceptSocket();
+              
                 Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + s.RemoteEndPoint);
 
                 /*
@@ -66,29 +78,18 @@ namespace Server
                 String museumPath = db.GetPath(museumName);
                 sftp.GetMuseumPackage(museumPath);
                 //Send(s, sftp.GetMuseumPackage(museumPath));
-
-
+                   */
                 Console.WriteLine(ReceiveText(s));
-                SendText(s, "Mesaj");
-                
-                //   SendPhoto(s, "G:\\Doc\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-                SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-                SendPhoto(s, "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\meme.jpg");
-                */
-                //SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
+                SendPhoto(s, ".//Resources//meme.jpg");
                 string str = ReceiveText(s);
-                Console.WriteLine("Text *"+ str+ "*#");
-                Console.Write("****");
-            //    System.Diagnostics.Debug.Write("HERE");
-
-                /*   SendPhoto(s, "C:\\Users\\abucevschi\\Desktop\\smart-museum-client-server-module\\Client_Server\\meme.jpg");
-                   SendText(s, "asd");*/
+                SendText(s, "asd");
                 s.Close();
                 myList.Stop();
 
             }
             catch (Exception e)
             {
+                Log();
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
 
@@ -96,37 +97,41 @@ namespace Server
         public static string ReceiveText(Socket socket)
         {
             Packet packet = Receive(socket);
-            Console.WriteLine("type:" + packet.type + "\n");
+            if(packet.type != "[Text]")
+            {
+                Console.WriteLine("[" + DateTime.Now + "] Type is not [Text]");
+                return "[Error]";
+            }
             return bArrayToString(packet.data, packet.data.Length);
         }
         private static Packet bytesToPacket(byte[] arr)
         {
             try
             {
-               
                 Packet packet = new Packet();
-                byte[] tarr =new byte[8];
-                Array.Copy(arr, tarr, 8);
+                byte[] tarr = new byte[Constants.type_length];
+                Array.Copy(arr, tarr, Constants.type_length);
                 packet.type = Encoding.UTF8.GetString(tarr);
-                packet.data = new byte[arr.Length - 8];
-                Array.Copy(arr, 8, packet.data, 0, arr.Length -8);
+                packet.data = new byte[arr.Length - Constants.type_length];
+                Array.Copy(arr, Constants.type_length, packet.data, 0, arr.Length - Constants.type_length);
                 return packet;
             }
             catch (Exception e)
             {
+                Log();
                 Console.WriteLine(e.ToString());
                 Packet packet = new Packet();
-                packet.type = "[Error]";// Encoding.ASCII.GetBytes("[Error]");
+                packet.type = "[Error]";
                 return packet;
             }
         }
         internal static Packet Receive(Socket socket)
         {
 
-            Packet packet;
+            Log();
             try
             {
-
+                Packet packet;
                 BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
                 int howBig = binaryReader.ReadInt32();
                 byte[] packetBytes = new byte[howBig];
@@ -142,9 +147,6 @@ namespace Server
                     Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
                     return packet;
                 }
-                //    packet = bytesToPacket(packetBytes);
-                //packet.data = packetBytes;
-             //   byte[] decompressedByteArray = Compresser.Decompress(packetBytes);
                 packet = bytesToPacket(packetBytes);
                 Console.WriteLine("[" + DateTime.Now + "] Packet received!");
                 return packet;
@@ -168,19 +170,18 @@ namespace Server
         public static string bArrayToString(byte[] byteArray, int len)
         {
             string str = Encoding.ASCII.GetString(byteArray, 0, len);
-            Console.WriteLine(len);
-            Console.WriteLine( str.Length);
             return str;
         }
 
         public static void SendText(Socket socket, String text)
         {
-            //    ASCIIEncoding asen = new ASCIIEncoding();
+            Log();
             Packet packet;
-            packet.type = "[Text]";//Encoding.ASCII.GetBytes("[Text]");
-            packet.data = Encoding.ASCII.GetBytes(text);
+            packet.type = "[Text]";
+            Console.WriteLine(text);
+            packet.data = Encoding.UTF8.GetBytes(text);
             Send(socket, packet);
-            Console.WriteLine("[" + DateTime.Now + "] Text Sent");
+            Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
         public static void SendPhoto(Socket socket, String imagePath)
@@ -195,37 +196,33 @@ namespace Server
         }
         private static byte[] packetToBytes(Packet packet)
         {
+            Log();
             try
             {
 
-
-                int rawSize = Marshal.SizeOf(typeof(Packet));
-                IntPtr buffer = Marshal.AllocHGlobal(rawSize);
-                Marshal.StructureToPtr(packet, buffer, false);
-                byte[] rawData = new byte[rawSize];
-                Marshal.Copy(buffer, rawData, 0, rawSize);
-                Marshal.FreeHGlobal(buffer);
-                return rawData;
+                byte[] packetBytes = Encoding.UTF8.GetBytes(packet.type);
+                Array.Resize<byte>(ref packetBytes, 8 + packet.data.Length);
+                Array.Copy(packet.data, 0, packetBytes, 8, packet.data.Length);
+                return packetBytes;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine("Error..... " + e.StackTrace);
                 return null;
             }
         }
         private static void Send(Socket socket, Packet packet)
         {
+            Log();
             BinaryFormatter binaryFormatter = new BinaryFormatter();
-            packet.data = Compresser.Compress(packet.data);
-            int size = Marshal.SizeOf(packet);
-            Console.WriteLine(size);
-            socket.Send(BitConverter.GetBytes(size));
-            //   byte[] packetBytes = packetToBytes(packet);
-            socket.Send(packet.data);
-            Console.WriteLine("[" + DateTime.Now + "] Packet sent!");
-            int checkSum = CalculateChecksum(packet.data);
-            socket.Send(BitConverter.GetBytes(checkSum));
-            int x = socket.EndSend(null);
+            byte[] packetBytes = packetToBytes(packet);
+            int size = packetBytes.Length;
+            socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
+            socket.Send(packetBytes, size, SocketFlags.None);
+            Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
+            int checkSum = CalculateChecksum(packetBytes);
+            Console.WriteLine(checkSum);
+            socket.Send(BitConverter.GetBytes(checkSum),  4, SocketFlags.None);
         }
 
         private static byte[] ImageToByteArray(System.Drawing.Image imageIn)

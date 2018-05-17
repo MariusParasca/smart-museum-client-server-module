@@ -5,16 +5,18 @@ using System.Net.Sockets;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Reflection;
 
-[StructLayout(LayoutKind.Sequential, Size = 1024)]
-//[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+class Constants
+{
+    public const int type_length = 8;
+    public const int data_length = 1016;
+}
+[StructLayout(LayoutKind.Sequential, Size = Constants.type_length + Constants.type_length)]
 internal struct Packet
 {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Constants.type_length)]
     public string type;
-
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1016)]
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.type_length)]
     public byte[] data;
 }
 namespace Client
@@ -45,18 +47,9 @@ namespace Client
                 
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
-
-                //trimitere text
                 SendText("String de test");
-                //   ReceivePhoto("test.jpg");
-
-
-                //primire text
-                //  Console.WriteLine(ReceiveText());
-
-                //        Console.WriteLine("byte array file recevied");
-
-
+                ReceivePhoto(".\\Resources\\test.jpg");
+                Console.WriteLine(ReceiveText());
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
@@ -91,21 +84,19 @@ namespace Client
         {
             try
             {
-                int rawsize = Marshal.SizeOf(typeof(Packet));
-                if (rawsize > arr.Length)
-                    return default(Packet);
-
-                IntPtr buffer = Marshal.AllocHGlobal(rawsize);
-                Marshal.Copy(arr, 0, buffer, rawsize);
-                Packet obj = (Packet)Marshal.PtrToStructure(buffer, typeof(Packet));
-                Marshal.FreeHGlobal(buffer);
-                return obj;
+                Packet packet = new Packet();
+                byte[] tarr = new byte[Constants.type_length];
+                Array.Copy(arr, tarr, Constants.type_length);
+                packet.type = Encoding.UTF8.GetString(tarr);
+                packet.data = new byte[arr.Length - Constants.type_length];
+                Array.Copy(arr, Constants.type_length, packet.data, 0, arr.Length - Constants.type_length);
+                return packet;  
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 Packet packet = new Packet();
-                packet.type = "[Error]";//Encoding.ASCII.GetBytes("[Error]");
+                packet.type = "[Error]";
                 return packet;
             }
         }
@@ -125,19 +116,19 @@ namespace Client
                 Packet packet;
                 int howBig = binaryReader.ReadInt32();
                 byte[] packetBytes = new byte[howBig];
+                Console.WriteLine("size " + howBig);
                 int readed = binaryReader.Read(packetBytes, 0, howBig);
+                Console.WriteLine("readed " + readed);
                 int myCheckSum = CalculateChecksum(packetBytes);
                 int checkSum = binaryReader.ReadInt32();
                 if (myCheckSum != checkSum)
                 {
-                    packet.type = "[Error]";// Encoding.ASCII.GetBytes("[Error]");
-                    packet.data = Encoding.ASCII.GetBytes("Checksum does not match!");
+                    packet.type = "[Error]";
+                    packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
                     Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
                     return packet;
                 }
-                byte[] decompressedByteArray = Compresser.Decompress(packetBytes);
-                packet = bytesToPacket(decompressedByteArray);
-
+                packet = bytesToPacket(packetBytes);
                 Console.WriteLine("[" + DateTime.Now + "] Packet received!");
                 return packet;
             }
@@ -160,14 +151,10 @@ namespace Client
 
         public static void SendText(String text)
         {
-            // ASCIIEncoding asen = new ASCIIEncoding();
             Packet packet;
-            packet.type = "[Text]";// Encoding.ASCII.GetBytes("[Text]");
+            packet.type = "[Text]";
             Console.WriteLine(text);
-            //     Console.WriteLine(Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(text)));
             packet.data = Encoding.UTF8.GetBytes(text);
-            //   Console.WriteLine(Encoding.ASCII.GetString(packet.data));
-
             Send(packet);
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
@@ -177,7 +164,7 @@ namespace Client
             Bitmap bitmap = new Bitmap(imagePath);
             byte[] imageByte = ImageToByteArray(bitmap);
             Packet packet;
-            packet.type = "[Image]";// Encoding.ASCII.GetBytes("[Image]");
+            packet.type = "[Image]";
             packet.data = imageByte;
             Send(packet);
             Console.WriteLine("[" + DateTime.Now + "] Image Sent!");
@@ -188,16 +175,10 @@ namespace Client
             try
             {
 
-                int size = 1024;
-                IntPtr buffer = Marshal.AllocHGlobal(size);
-                Marshal.StructureToPtr(  packet, buffer, false);
-                byte[] rawData = new byte[size];
-                Marshal.Copy(buffer, rawData, 0, size);
-                Marshal.FreeHGlobal(buffer);
-                return rawData;
-                // var formatter = new BinaryFormatter();
-                //  formatter.Serialize()
-                // return arr;
+                byte[] packetBytes = Encoding.UTF8.GetBytes(packet.type);
+                Array.Resize<byte>(ref packetBytes, 8 + packet.data.Length);
+                Array.Copy(packet.data, 0, packetBytes, 8, packet.data.Length);
+                return packetBytes;
             }
             catch (Exception e)
             {
@@ -209,21 +190,11 @@ namespace Client
         {
             try
             {
-                //   binaryWriter.Flush();
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
-                byte[] packetBytes = Encoding.UTF8.GetBytes(packet.type);
-                Array.Resize<byte>(ref packetBytes, 8 + packet.data.Length);
-                Array.Copy(packet.data,0, packetBytes, 8, packet.data.Length);
-           //     packetBytes = Compresser.Compress(packetBytes);
+                byte[] packetBytes = packetToBytes(packet);
                 int size = packetBytes.Length;
-                Console.Write("* *" + size);
-               
-                //if (!BitConverter.IsLittleEndian)
-                  //  Array.Reverse(intBytes);
                 binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
-                binaryWriter.Flush();
                 binaryWriter.Write(packetBytes, 0, size);
-                binaryWriter.Flush();
                 Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
                 int checkSum = CalculateChecksum(packetBytes);
                 Console.WriteLine(checkSum);
