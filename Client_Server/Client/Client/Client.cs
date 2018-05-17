@@ -24,6 +24,7 @@ namespace Client
         private static Compresser Compresser;
         private static BinaryReader binaryReader;
         private static BinaryWriter binaryWriter;
+        private static TcpClient tcpclnt;
 
         public static void Main()
         {
@@ -63,7 +64,21 @@ namespace Client
 
         }
 
-        public static String ReceiveText()
+        public static BinaryReader GetBinaryReader() { return binaryReader; }
+        public static BinaryWriter GetBinaryWriter() { return binaryWriter; }
+
+        public static void connectToServer(String ip, int port)
+        {
+            tcpclnt = new TcpClient();
+
+            Console.WriteLine("Connecting.....");
+            tcpclnt.Connect(ip, port);
+            Console.WriteLine("Connected");
+            binaryWriter = new BinaryWriter(tcpclnt.GetStream());
+            binaryReader = new BinaryReader(tcpclnt.GetStream());
+        }
+
+    public static String ReceiveText()
         {
             Packet packet = Receive();
             return Encoding.ASCII.GetString(packet.data, 0, packet.data.Length);

@@ -17,7 +17,7 @@ namespace Client.Tests
         {
             try
             {
-                Client.Main();
+                //Client.Main();
             }
             catch (Exception e)
             {
