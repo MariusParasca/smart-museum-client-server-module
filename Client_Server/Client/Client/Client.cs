@@ -5,21 +5,24 @@ using System.Net.Sockets;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection;
 
-[StructLayout(LayoutKind.Sequential, Size = 1020)]
+[StructLayout(LayoutKind.Sequential, Size = 1024)]
 //[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-public struct Packet
+internal struct Packet
 {
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-    public byte[] type;
-  //  [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1014)]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
+    public string type;
+
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1016)]
     public byte[] data;
 }
 namespace Client
 {
-
+     
     public class Client
     {
+        
         private static Exhibit exhibit;
         private static Compresser Compresser;
         private static BinaryReader binaryReader;
@@ -39,6 +42,7 @@ namespace Client
                 tcpclnt.Connect("127.0.0.1", 8001);
                 Console.WriteLine("Connected");
                 binaryWriter = new BinaryWriter(tcpclnt.GetStream());
+                
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
 
@@ -101,7 +105,7 @@ namespace Client
             {
                 Console.WriteLine(e.ToString());
                 Packet packet = new Packet();
-                packet.type = Encoding.ASCII.GetBytes("[Error]");
+                packet.type = "[Error]";//Encoding.ASCII.GetBytes("[Error]");
                 return packet;
             }
         }
@@ -114,7 +118,7 @@ namespace Client
                 Console.WriteLine("[PHOTO] Received \n");
             }
         }
-        public static Packet Receive()
+        internal static Packet Receive()
         {
             try
             {
@@ -126,7 +130,7 @@ namespace Client
                 int checkSum = binaryReader.ReadInt32();
                 if (myCheckSum != checkSum)
                 {
-                    packet.type = Encoding.ASCII.GetBytes("[Error]");
+                    packet.type = "[Error]";// Encoding.ASCII.GetBytes("[Error]");
                     packet.data = Encoding.ASCII.GetBytes("Checksum does not match!");
                     Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
                     return packet;
@@ -158,10 +162,10 @@ namespace Client
         {
             // ASCIIEncoding asen = new ASCIIEncoding();
             Packet packet;
-            packet.type = Encoding.ASCII.GetBytes("[Text]");
+            packet.type = "[Text]";// Encoding.ASCII.GetBytes("[Text]");
             Console.WriteLine(text);
             //     Console.WriteLine(Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(text)));
-            packet.data = Encoding.ASCII.GetBytes(text);
+            packet.data = Encoding.UTF8.GetBytes(text);
             //   Console.WriteLine(Encoding.ASCII.GetString(packet.data));
 
             Send(packet);
@@ -173,21 +177,22 @@ namespace Client
             Bitmap bitmap = new Bitmap(imagePath);
             byte[] imageByte = ImageToByteArray(bitmap);
             Packet packet;
-            packet.type = Encoding.ASCII.GetBytes("[Image]");
+            packet.type = "[Image]";// Encoding.ASCII.GetBytes("[Image]");
             packet.data = imageByte;
             Send(packet);
             Console.WriteLine("[" + DateTime.Now + "] Image Sent!");
         }
-        public static byte[] packetToBytes(Packet packet)
+
+        internal static byte[] packetToBytes(Packet packet)
         {
             try
             {
 
-                int rawSize = Marshal.SizeOf(typeof(Packet));
-                IntPtr buffer = Marshal.AllocHGlobal(rawSize);
-                Marshal.StructureToPtr(packet, buffer, false);
-                byte[] rawData = new byte[rawSize];
-                Marshal.Copy(buffer, rawData, 0, rawSize);
+                int size = 1024;
+                IntPtr buffer = Marshal.AllocHGlobal(size);
+                Marshal.StructureToPtr(  packet, buffer, false);
+                byte[] rawData = new byte[size];
+                Marshal.Copy(buffer, rawData, 0, size);
                 Marshal.FreeHGlobal(buffer);
                 return rawData;
                 // var formatter = new BinaryFormatter();
@@ -206,22 +211,24 @@ namespace Client
             {
                 //   binaryWriter.Flush();
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
-                byte[] packetBytes = packetToBytes(packet);
+                byte[] packetBytes = Encoding.UTF8.GetBytes(packet.type);
+                Array.Resize<byte>(ref packetBytes, 8 + packet.data.Length);
+                Array.Copy(packet.data,0, packetBytes, 8, packet.data.Length);
            //     packetBytes = Compresser.Compress(packetBytes);
                 int size = packetBytes.Length;
                 Console.Write("* *" + size);
-                byte[] intBytes = BitConverter.GetBytes(size);
-                if (!BitConverter.IsLittleEndian)
-                    Array.Reverse(intBytes);
-                binaryWriter.Write(intBytes);
-                binaryWriter.Write(packetBytes);
+               
+                //if (!BitConverter.IsLittleEndian)
+                  //  Array.Reverse(intBytes);
+                binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
+                binaryWriter.Flush();
+                binaryWriter.Write(packetBytes, 0, size);
+                binaryWriter.Flush();
                 Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
                 int checkSum = CalculateChecksum(packetBytes);
                 Console.WriteLine(checkSum);
-                intBytes = BitConverter.GetBytes(checkSum);
-                if (!BitConverter.IsLittleEndian)
-                    Array.Reverse(intBytes);
-                binaryWriter.Write(intBytes);
+                binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
+                binaryWriter.Flush();
             }
             catch (Exception e)
             {
@@ -238,8 +245,7 @@ namespace Client
             }
         }
 
-
-
+       
     }
 
 

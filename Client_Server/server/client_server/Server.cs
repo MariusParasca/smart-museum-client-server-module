@@ -10,13 +10,14 @@ using System.IO;
 using client_server;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
-[StructLayout(LayoutKind.Sequential, Size = 1020)]
+
+[StructLayout(LayoutKind.Sequential, Size = 1024)]
 //[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-public struct Packet
+internal struct Packet
 {
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-    public byte[] type;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1014)]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
+    public string type;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1016)]
     public byte[] data;
 }
 namespace Server
@@ -95,32 +96,31 @@ namespace Server
         public static string ReceiveText(Socket socket)
         {
             Packet packet = Receive(socket);
-            Console.WriteLine("type:"+bArrayToString(packet.type, packet.type.Length)+"\n");
+            Console.WriteLine("type:" + packet.type + "\n");
             return bArrayToString(packet.data, packet.data.Length);
         }
         private static Packet bytesToPacket(byte[] arr)
         {
             try
             {
-                int rawsize = Marshal.SizeOf(typeof(Packet));
-                //     if (rawsize > arr.Length)
-                //                    return default(Packet);
-
-                IntPtr buffer = Marshal.AllocHGlobal(rawsize);
-                Marshal.Copy(arr, 0, buffer, arr.Length);
-                Packet packet = (Packet)Marshal.PtrToStructure(buffer, typeof(Packet));
-                Marshal.FreeHGlobal(buffer);
+               
+                Packet packet = new Packet();
+                byte[] tarr =new byte[8];
+                Array.Copy(arr, tarr, 8);
+                packet.type = Encoding.UTF8.GetString(tarr);
+                packet.data = new byte[arr.Length - 8];
+                Array.Copy(arr, 8, packet.data, 0, arr.Length -8);
                 return packet;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 Packet packet = new Packet();
-                packet.type = Encoding.ASCII.GetBytes("[Error]");
+                packet.type = "[Error]";// Encoding.ASCII.GetBytes("[Error]");
                 return packet;
             }
         }
-        public static Packet Receive(Socket socket)
+        internal static Packet Receive(Socket socket)
         {
 
             Packet packet;
@@ -137,7 +137,7 @@ namespace Server
                 int checkSum = binaryReader.ReadInt32();
                 if (myCheckSum != checkSum)
                 {
-                    packet.type = Encoding.ASCII.GetBytes("[Error]");
+                    packet.type = "[Error]";// Encoding.ASCII.GetBytes("[Error]");
                     packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
                     Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
                     return packet;
@@ -177,7 +177,7 @@ namespace Server
         {
             //    ASCIIEncoding asen = new ASCIIEncoding();
             Packet packet;
-            packet.type = Encoding.ASCII.GetBytes("[Text]");
+            packet.type = "[Text]";//Encoding.ASCII.GetBytes("[Text]");
             packet.data = Encoding.ASCII.GetBytes(text);
             Send(socket, packet);
             Console.WriteLine("[" + DateTime.Now + "] Text Sent");
@@ -188,7 +188,7 @@ namespace Server
             Bitmap bitmap = new Bitmap(imagePath);
             byte[] imageByte = ImageToByteArray(bitmap);
             Packet packet;
-            packet.type = Encoding.ASCII.GetBytes("[Image]");
+            packet.type = "[Image]";//Encoding.ASCII.GetBytes("[Image]");
             packet.data = imageByte;
             Send(socket, packet);
             Console.WriteLine("[" + DateTime.Now + "] Image Sent");
@@ -246,6 +246,7 @@ namespace Server
             Buffer.BlockCopy(baseArray, 0, rv, lenBytes.Length, len);
             return rv;
         }
+
 
     }
 }
