@@ -86,11 +86,12 @@ namespace Server
                        */
                     // while (socket.Connected)
                     //{
-                    //     Console.WriteLine(ReceiveText(socket));
+                    //   
                     string str = ReceiveText(socket);
 
                     SendPhoto(socket, ".//Resources//meme.jpg");
                     SendText(socket, "asd");
+                    ReceivePhoto(socket, "final_Test.jpg");
                   //  socket.Close();
 
                     //}
@@ -135,21 +136,31 @@ namespace Server
                 return packet;
             }
         }
+        public static void ReceivePhoto(Socket socket, String fileName)
+        {
+            byte[] data = Receive(socket);
+            using (var ms = new MemoryStream(data))
+            {
+                Image.FromStream(ms).Save(".\\Resources\\" + fileName);
+                Console.WriteLine("[PHOTO] Received \n");
+            }
+        }
         internal static byte[] Receive(Socket socket)
         {
 
             Log();
             try
             {
-                Packet packet;
+                Packet packet = new Packet();
                 BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
                 int len = binaryReader.ReadInt32();
+                packet.data = new byte[Constants.data_length];
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
+                byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
                 while (cnt < len)
                 {
                     int howBig = binaryReader.ReadInt32();
-                    byte[] packetBytes = new byte[howBig];
                     int readed = binaryReader.Read(packetBytes, 0, howBig);
                     int myCheckSum = CalculateChecksum(packetBytes);
                     int checkSum = binaryReader.ReadInt32();
@@ -252,15 +263,7 @@ namespace Server
 
                     cnt += x;
                 }
-               /* packetBytes = packetToBytes(endPacket);
-                size = packetBytes.Length;
-                socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
-                socket.Send(packetBytes, size, SocketFlags.None);
-                checkSum = CalculateChecksum(packetBytes);
-                Console.WriteLine(checkSum);
-                socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
-                cnt += x;
-                */
+         
 
             }
 

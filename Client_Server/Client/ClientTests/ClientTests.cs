@@ -9,6 +9,7 @@ using System.IO;
 
 namespace Client.Tests
 {
+    [TestClass()]
     public class ClientTests
     {
         [TestMethod()]
@@ -17,22 +18,19 @@ namespace Client.Tests
         {
             try
             {
-                //Client.Main();
+                Client.Main();
+              
+
+                
             }
             catch (Exception e)
             {
 
-                //    Assert.Fail();
+                Console.WriteLine("Exceptie " + e.ToString());
             }
 
         }
-
-        /*   [TestMethod()]
-           public void MainTest1()
-           {
-               Client.Main();
-           }
-
+     
            [TestMethod()]
            public void ReceiveTextTest()
            {
@@ -53,43 +51,44 @@ namespace Client.Tests
                try
                {
 
-                   Client.ReceivePhoto(" test11.jpg");
+                Client.ReceivePhoto("test.jpg");
 
-               }
+            }
                catch (Exception e)
                {
                    Console.WriteLine("Exceptie " + e.ToString());
                }
            }
+        [TestMethod()]
+        public void SendTextTest()
+        {
 
-       /*    [TestMethod()]
-           public void ReceiveTest()
-           {
-               throw new NotImplementedException();
-           }
+            try
+            {
 
-           [TestMethod()]
-           public void bArrayToStringTest()
-           {
-               throw new NotImplementedException();
-           }
+                 Client.SendText("String de test");
 
-           [TestMethod()]
-           public void SendTextTest()
-           {
-               throw new NotImplementedException();
-           }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exceptie " + e.ToString());
+            }
+        }
+        [TestMethod()]
+        public void SendPhotoTest()
+        {
 
-           [TestMethod()]
-           public void SendPhotoTest()
-           {
-               throw new NotImplementedException();
-           }
+            try
+            {
 
-           [TestMethod()]
-           public void packetToBytesTest()
-           {
-               throw new NotImplementedException();
-           }*/
+                Client.SendPhoto(".\\Resources\\test.jpg");
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exceptie " + e.ToString());
+            }
+        }
+
     }
 }

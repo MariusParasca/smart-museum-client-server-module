@@ -49,8 +49,9 @@ namespace Client
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
                 SendText("String de test");
-                ReceivePhoto(".\\Resources\\test.jpg");
-                Console.WriteLine(ReceiveText());
+                ReceivePhoto("test.jpg");
+                ReceiveText();
+                SendPhoto( ".//Resources//test.jpg");
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
@@ -106,7 +107,7 @@ namespace Client
             byte[] data = Receive();
             using (var ms = new MemoryStream(data))
             {
-                Image.FromStream(ms).Save(fileName);
+                Image.FromStream(ms).Save(".\\Resources\\" + fileName);
                 Console.WriteLine("[PHOTO] Received \n");
             }
         }
@@ -120,10 +121,11 @@ namespace Client
                 packet.data = new byte[Constants.data_length];
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
+                byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
                 while (cnt < len)
                 {
                     int howBig = binaryReader.ReadInt32();
-                    byte[] packetBytes = new byte[howBig];
+                  
                     int readed = binaryReader.Read(packetBytes, 0, howBig);
                     int myCheckSum = CalculateChecksum(packetBytes);
                     int checkSum = binaryReader.ReadInt32();
@@ -221,15 +223,7 @@ namespace Client
                     binaryWriter.Flush();
                     cnt += x;
                 }
-                packetBytes = packetToBytes(endPacket);
-                size = packetBytes.Length;
-                binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
-                binaryWriter.Write(packetBytes, 0, size);
-                checkSum = CalculateChecksum(packetBytes);
-                Console.WriteLine(checkSum);
-                binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
-                binaryWriter.Flush();
-                cnt += x;
+              
 
             }
 
