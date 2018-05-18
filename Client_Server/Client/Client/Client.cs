@@ -30,7 +30,7 @@ namespace Client
         private static BinaryReader binaryReader;
         private static BinaryWriter binaryWriter;
         private static TcpClient tcpclnt;
-
+        private static Packet endPacket;
         public static void Main()
         {
             Compresser = new Compresser();
@@ -39,7 +39,8 @@ namespace Client
             {
 
                 TcpClient tcpclnt = new TcpClient();
-
+                endPacket.type = "[EndT]";
+                endPacket.data = new byte[1];
                 Console.WriteLine("Connecting.....");
                 tcpclnt.Connect("127.0.0.1", 8001);
                 Console.WriteLine("Connected");
@@ -75,10 +76,10 @@ namespace Client
             binaryReader = new BinaryReader(tcpclnt.GetStream());
         }
 
-    public static String ReceiveText()
+        public static string ReceiveText()
         {
-            Packet packet = Receive();
-            return Encoding.ASCII.GetString(packet.data, 0, packet.data.Length);
+            byte[] data = Receive();
+            return Encoding.ASCII.GetString(data, 0, data.Length);
         }
         private static Packet bytesToPacket(byte[] arr)
         {
@@ -102,41 +103,53 @@ namespace Client
         }
         public static void ReceivePhoto(String fileName)
         {
-            Packet packet = Receive();
-            using (var ms = new MemoryStream(packet.data))
+            byte[] data = Receive();
+            using (var ms = new MemoryStream(data))
             {
                 Image.FromStream(ms).Save(fileName);
                 Console.WriteLine("[PHOTO] Received \n");
             }
         }
-        internal static Packet Receive()
+        internal static byte[] Receive()
         {
+
             try
             {
-                Packet packet;
-                int howBig = binaryReader.ReadInt32();
-                byte[] packetBytes = new byte[howBig];
-                Console.WriteLine("size " + howBig);
-                int readed = binaryReader.Read(packetBytes, 0, howBig);
-                Console.WriteLine("readed " + readed);
-                int myCheckSum = CalculateChecksum(packetBytes);
-                int checkSum = binaryReader.ReadInt32();
-                if (myCheckSum != checkSum)
+                Packet packet = new Packet();
+                int len = binaryReader.ReadInt32();
+                packet.data = new byte[Constants.data_length];
+                int cnt = 0;
+                byte[] data = new byte[len + Constants.data_length];
+                while (cnt < len)
                 {
-                    packet.type = "[Error]";
-                    packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
-                    Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
-                    return packet;
+                    int howBig = binaryReader.ReadInt32();
+                    byte[] packetBytes = new byte[howBig];
+                    int readed = binaryReader.Read(packetBytes, 0, howBig);
+                    int myCheckSum = CalculateChecksum(packetBytes);
+                    int checkSum = binaryReader.ReadInt32();
+                    if (myCheckSum != checkSum)
+                    {
+                        packet.type = "[Error]";
+                        packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
+                        Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
+                        return null;
+                    }
+                    packet = bytesToPacket(packetBytes);
+                    Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
+                    cnt += howBig - Constants.type_length;
+                  
+                    if (packet.type == "[EndT]")
+                        break;
+
+                    Console.WriteLine("[" + DateTime.Now + "] Packet received!");
                 }
-                packet = bytesToPacket(packetBytes);
-                Console.WriteLine("[" + DateTime.Now + "] Packet received!");
-                return packet;
+                return data;
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
+                return null;
 
-                Console.WriteLine("Error..... " + e.StackTrace);
-                return new Packet();
             }
 
         }
@@ -151,22 +164,15 @@ namespace Client
 
         public static void SendText(String text)
         {
-            Packet packet;
-            packet.type = "[Text]";
-            Console.WriteLine(text);
-            packet.data = Encoding.UTF8.GetBytes(text);
-            Send(packet);
+            Send("[Text]",  Encoding.UTF8.GetBytes(text));
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
         public static void SendPhoto(String imagePath)
         {
             Bitmap bitmap = new Bitmap(imagePath);
-            byte[] imageByte = ImageToByteArray(bitmap);
-            Packet packet;
-            packet.type = "[Image]";
-            packet.data = imageByte;
-            Send(packet);
+            byte[] imageBytes = ImageToByteArray(bitmap);
+            Send("[Image]", imageBytes);
             Console.WriteLine("[" + DateTime.Now + "] Image Sent!");
         }
 
@@ -186,21 +192,47 @@ namespace Client
                 return null;
             }
         }
-        private static void Send(Packet packet)
+        private static void Send(string type, byte[] data)
         {
             try
             {
+                Packet packet = new Packet();
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
-                byte[] packetBytes = packetToBytes(packet);
-                int size = packetBytes.Length;
+                byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
+                packet.data = new byte[Constants.data_length];
+                int cnt = 0;
+                int x = 0;
+                int size = 0, checkSum = 0;
+                int len = data.Length;
+                binaryWriter.Write(BitConverter.GetBytes(len), 0, 4);
+                while (cnt < len)
+                {
+                    x = Math.Min(Constants.data_length, len - cnt);
+                    packet.type = type;
+                    Array.Copy(data, cnt, packet.data, 0, x);
+                    packetBytes = packetToBytes(packet);
+                    size = packetBytes.Length;
+                    binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
+                    binaryWriter.Write(packetBytes, 0, size);
+                    Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
+                     checkSum = CalculateChecksum(packetBytes);
+                    Console.WriteLine(checkSum);
+                    binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
+                    binaryWriter.Flush();
+                    cnt += x;
+                }
+                packetBytes = packetToBytes(endPacket);
+                size = packetBytes.Length;
                 binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
                 binaryWriter.Write(packetBytes, 0, size);
-                Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
-                int checkSum = CalculateChecksum(packetBytes);
+                checkSum = CalculateChecksum(packetBytes);
                 Console.WriteLine(checkSum);
                 binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
                 binaryWriter.Flush();
+                cnt += x;
+
             }
+
             catch (Exception e)
             {
                 Console.WriteLine("Error..... " + e.StackTrace);

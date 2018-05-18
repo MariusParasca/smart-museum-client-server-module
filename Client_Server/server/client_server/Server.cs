@@ -31,6 +31,8 @@ namespace Server
     {
         private static Compresser Compresser;
         private static StreamWriter sw;
+        private static bool running;
+        private static Packet endPacket;
         public static void Log()
         {
             DateTime dateTime = DateTime.Today;
@@ -48,43 +50,54 @@ namespace Server
             //Museum.GetPackage("SmartMuseumDB.Museums", "Muzeu de test");
             SFTP sftp = new SFTP();
             Compresser = new Compresser();
-              
+            running = true;
+            endPacket.type = "[EndT]";
             try
             {
-
                 IPAddress ipAd = IPAddress.Parse("127.0.0.1");
-
                 TcpListener myList = new TcpListener(ipAd, 8001);
                 myList.Start();
-                Log();
-                Console.WriteLine("[" + DateTime.Now + "] The server is running at port 8001...");
-                Console.WriteLine("[" + DateTime.Now + "] The local End point is  :" + myList.LocalEndpoint);
-                Console.WriteLine("[" + DateTime.Now + "] Waiting for a connection.....");
+                while (running)
+                {
+                    
+                   
+                    Log();
+                    Console.WriteLine("[" + DateTime.Now + "] The server is running at port 8001...");
+                    Console.WriteLine("[" + DateTime.Now + "] The local End point is  :" + myList.LocalEndpoint);
+                    Console.WriteLine("[" + DateTime.Now + "] Waiting for a connection.....");
 
-                Socket s = myList.AcceptSocket();
-              
-                Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + s.RemoteEndPoint);
+                    Socket socket = myList.AcceptSocket();
 
-                /*
-                SendInt(s, 10);
-                SendString(s, "Ana are mere");
-                Console.WriteLine("Numarul primit este: " + ReceiveInt(s));
-                Console.WriteLine("Mesajul primit este: " + ReceiveString(s));
-                RecieveZip(s);
-                */
+                    Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + socket.RemoteEndPoint);
 
-                /*
-                String museumName = ReceiveText(s);
-                String museumPath = db.GetPath(museumName);
-                sftp.GetMuseumPackage(museumPath);
-                //Send(s, sftp.GetMuseumPackage(museumPath));
-                   */
-                Console.WriteLine(ReceiveText(s));
-                SendPhoto(s, ".//Resources//meme.jpg");
-                string str = ReceiveText(s);
-                SendText(s, "asd");
-                s.Close();
+                    /*
+                    SendInt(s, 10);
+                    SendString(s, "Ana are mere");
+                    Console.WriteLine("Numarul primit este: " + ReceiveInt(s));
+                    Console.WriteLine("Mesajul primit este: " + ReceiveString(s));
+                    RecieveZip(s);
+                    */
+
+                    /*
+                    String museumName = ReceiveText(s);
+                    String museumPath = db.GetPath(museumName);
+                    sftp.GetMuseumPackage(museumPath);
+                    //Send(s, sftp.GetMuseumPackage(museumPath));
+                       */
+                    // while (socket.Connected)
+                    //{
+                    //     Console.WriteLine(ReceiveText(socket));
+                    string str = ReceiveText(socket);
+
+                    SendPhoto(socket, ".//Resources//meme.jpg");
+                    SendText(socket, "asd");
+                  //  socket.Close();
+
+                    //}
+
+                }
                 myList.Stop();
+
 
             }
             catch (Exception e)
@@ -96,13 +109,10 @@ namespace Server
         }
         public static string ReceiveText(Socket socket)
         {
-            Packet packet = Receive(socket);
-            if(packet.type != "[Text]")
-            {
-                Console.WriteLine("[" + DateTime.Now + "] Type is not [Text]");
-                return "[Error]";
-            }
-            return bArrayToString(packet.data, packet.data.Length);
+            byte[] data = Receive(socket);
+            string str = bArrayToString(data, data.Length);
+            Console.WriteLine("[" + DateTime.Now + "] Packet received!  " + str);
+            return str;
         }
         private static Packet bytesToPacket(byte[] arr)
         {
@@ -125,7 +135,7 @@ namespace Server
                 return packet;
             }
         }
-        internal static Packet Receive(Socket socket)
+        internal static byte[] Receive(Socket socket)
         {
 
             Log();
@@ -133,28 +143,37 @@ namespace Server
             {
                 Packet packet;
                 BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
-                int howBig = binaryReader.ReadInt32();
-                byte[] packetBytes = new byte[howBig];
-                Console.WriteLine("size " + howBig);
-                int readed = binaryReader.Read(packetBytes, 0, howBig);
-                Console.WriteLine("readed " + readed);
-                int myCheckSum = CalculateChecksum(packetBytes);
-                int checkSum = binaryReader.ReadInt32();
-                if (myCheckSum != checkSum)
+                int len = binaryReader.ReadInt32();
+                int cnt = 0;
+                byte[] data = new byte[len + Constants.data_length];
+                while (cnt < len)
                 {
-                    packet.type = "[Error]";// Encoding.ASCII.GetBytes("[Error]");
-                    packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
-                    Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
-                    return packet;
+                    int howBig = binaryReader.ReadInt32();
+                    byte[] packetBytes = new byte[howBig];
+                    int readed = binaryReader.Read(packetBytes, 0, howBig);
+                    int myCheckSum = CalculateChecksum(packetBytes);
+                    int checkSum = binaryReader.ReadInt32();
+                    if (myCheckSum != checkSum)
+                    {
+                        packet.type = "[Error]";
+                        packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
+                        Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
+                        return null;
+                    }
+                    packet = bytesToPacket(packetBytes);
+                    Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
+                    cnt += howBig - Constants.type_length;
+                    if (packet.type == "[EndT]")
+                        break;
+
+                    Console.WriteLine("[" + DateTime.Now + "] Packet received!");
                 }
-                packet = bytesToPacket(packetBytes);
-                Console.WriteLine("[" + DateTime.Now + "] Packet received!");
-                return packet;
+                return data;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                return new Packet();
+                return null;
 
             }
 
@@ -176,22 +195,16 @@ namespace Server
         public static void SendText(Socket socket, String text)
         {
             Log();
-            Packet packet;
-            packet.type = "[Text]";
-            Console.WriteLine(text);
-            packet.data = Encoding.UTF8.GetBytes(text);
-            Send(socket, packet);
+            byte[] data = Encoding.UTF8.GetBytes(text);
+            Send(socket,"[Text]", data);
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
         public static void SendPhoto(Socket socket, String imagePath)
         {
             Bitmap bitmap = new Bitmap(imagePath);
-            byte[] imageByte = ImageToByteArray(bitmap);
-            Packet packet;
-            packet.type = "[Image]";//Encoding.ASCII.GetBytes("[Image]");
-            packet.data = imageByte;
-            Send(socket, packet);
+            byte[] imageBytes = ImageToByteArray(bitmap);
+            Send(socket, "[Image]", imageBytes);
             Console.WriteLine("[" + DateTime.Now + "] Image Sent");
         }
         private static byte[] packetToBytes(Packet packet)
@@ -211,19 +224,52 @@ namespace Server
                 return null;
             }
         }
-        private static void Send(Socket socket, Packet packet)
+        private static void Send(Socket socket, string type, byte[] data)
         {
-            Log();
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            byte[] packetBytes = packetToBytes(packet);
-            int size = packetBytes.Length;
-            socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
-            socket.Send(packetBytes, size, SocketFlags.None);
-            Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
-            int checkSum = CalculateChecksum(packetBytes);
-            Console.WriteLine(checkSum);
-            socket.Send(BitConverter.GetBytes(checkSum),  4, SocketFlags.None);
+            try
+            {
+                Packet packet = new Packet();
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
+                packet.data = new byte[Constants.data_length];
+                int cnt = 0;
+                int x = 0;
+                int size = 0, checkSum = 0;
+                int len = data.Length;
+                socket.Send(BitConverter.GetBytes(len), 4, SocketFlags.None);
+                while (cnt < len)
+                {
+                    x = Math.Min(Constants.data_length, len - cnt);
+                    packet.type = type;
+                    Array.Copy(data, cnt, packet.data, 0, x);
+                    packetBytes = packetToBytes(packet);
+                    size = packetBytes.Length;
+                    socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
+                    socket.Send(packetBytes, size, SocketFlags.None);
+                    Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
+                    checkSum = CalculateChecksum(packetBytes);
+                    socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
+
+                    cnt += x;
+                }
+               /* packetBytes = packetToBytes(endPacket);
+                size = packetBytes.Length;
+                socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
+                socket.Send(packetBytes, size, SocketFlags.None);
+                checkSum = CalculateChecksum(packetBytes);
+                Console.WriteLine(checkSum);
+                socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
+                cnt += x;
+                */
+
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Error..... " + e.StackTrace);
+            }
         }
+    
 
         private static byte[] ImageToByteArray(System.Drawing.Image imageIn)
         {
