@@ -1,10 +1,15 @@
 package ClientJava;
 
 // File Name GreetingClient.java
-import java.net.*;
-import java.io.*;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 
 public class Client {
     private Socket socket;
@@ -21,27 +26,36 @@ public class Client {
         return instance;
     }
 
-    public void open(String serverName, int port) {
+    public boolean open(String serverName, int port) {
         try {
             this.serverName = serverName;
             this.port = port;
             System.out.println("Connecting to " + serverName + " on port " + port);
             socket = new Socket(serverName, port);
 
-            System.out.println("Just connected to " + socket.getRemoteSocketAddress());
             out = new DataOutputStream(socket.getOutputStream());
             in = new DataInputStream(socket.getInputStream());
+            if (socket.isConnected())
+                return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void close() {
+    public boolean close() {
         try {
             socket.close();
+            if(socket.isConnected())
+                return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 
     //Primeste de la server o valoare de tip int si o retureneaza.
@@ -87,37 +101,65 @@ public class Client {
     }
 
     public void sendText(String string) {
-        try {
+
             int sum = 0;
             byte[] bytes = string.getBytes();
+            send(bytes);
+
+    }
+
+    public void send(byte[] bytes) {
+        try {
             int nrBytes = bytes.length;
+            int sum = 0;
             sendInt(nrBytes);
-            out.write(bytes);
-            for(byte b : bytes)
-                sum += b;
-            sendInt(sum);
+            System.out.println(nrBytes);
+            int crt = 0;
+            int len = nrBytes;
+            while(crt < nrBytes) {
+
+                if(len >= 1024) {
+                    byte[] pachet = new byte[1024];
+                    System.arraycopy(bytes, crt, pachet, 0, 1024);
+                    sendInt(1024);
+                    sum = 0;
+                    for(byte b : pachet) {
+                        sum += b;
+                    }
+                    System.out.println( " ");
+                    sendInt(sum);
+                    out.write(pachet);
+                    crt += 1024;
+                    len -= 1024;
+                    System.out.println("Reeee" + crt + "  " + len);
+                } else {
+                    byte[] pachet = new byte[len];
+                    System.arraycopy(bytes, crt, pachet, 0, len);
+                    sendInt(len);
+                    System.out.println(len);
+                    sum = 0;
+                    for(byte b : pachet){
+                        sum += b;
+                    }
+                    sendInt(sum);
+                    out.write(pachet);
+                    crt += len;
+                    System.out.println("Reeee" + crt );
+                }
+
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void sendZip(String path) {
+        try {
+            byte[] array = Files.readAllBytes(new File(path).toPath());
+            System.out.println(array.length);
+            send(array);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void sendZip(String path) {
-       /* byte bytes[] = null;
-        try (FileInputStream fis = new FileInputStream(new File(path))) {
-            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                byte[] buffer = new byte[4096000];
-                int read = -1;
-                while ((read = fis.read(buffer)) != -1) {
-                    baos.write(buffer, 0, read);
-                }
-                bytes = baos.toByteArray();
-                sendInt(bytes.length);
-                out.write(bytes);
-            }
-        } catch (IOException exp) {
-            exp.printStackTrace();
-        }*/
-        ;
     }
 
     public String getServerName() {

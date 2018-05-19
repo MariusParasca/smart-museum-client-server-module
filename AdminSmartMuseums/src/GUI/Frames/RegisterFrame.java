@@ -10,7 +10,7 @@ public class RegisterFrame extends Frame
     RegisterPanel registerPanel;
 
     public RegisterFrame() throws HeadlessException {
-        super("bla");
+        super("Register");
         init();
 
     }

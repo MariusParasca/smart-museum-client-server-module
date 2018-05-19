@@ -1,5 +1,6 @@
 package GUI.Panels;
 
+import ClientJava.Client;
 import GUI.Frames.LoginFrame;
 import GUI.Frames.RegisterFrame;
 import Models.Register;
@@ -20,6 +21,8 @@ public class RegisterPanel  extends JPanel {
     public JTextField museumText = new JTextField();
     public JTextField emailText = new JTextField();
     public JButton submit = new JButton("Submit");
+    private Client client;
+    public JOptionPane message = new JOptionPane();
 
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -31,6 +34,7 @@ public class RegisterPanel  extends JPanel {
     }
     public RegisterPanel(RegisterFrame registerFrame) {
         this.registerFrame = registerFrame;
+        //client = new Client();
         init();
     }
 
@@ -80,35 +84,29 @@ public class RegisterPanel  extends JPanel {
             public void actionPerformed(ActionEvent e) {
 
                 if(museumText.getText().trim().length() != 0 &&  emailText.getText().trim().length() != 0 )
-                    if(validate(museumText.getText()))
-                {
-                Register reg=new Register(emailText.getText(),"Smart Museums ");
+                    if(validate(emailText.getText()))
+                    {
+                        Register reg=new Register(emailText.getText(),"Smart Museums ");
 //                System.out.print("Email sent");
-                JFrame loginFrame=new LoginFrame();
-                loginFrame.setVisible(true);
-                registerFrame.setVisible(false);
-                JOptionPane.showMessageDialog(null,"Account setup was successful");
-
-                //String text = "[register]"+ "<"+museumText+">"+"<"+museumText+">";
-                //Client.getInstance().sendText(text);
-            }
-            else {
-                    JOptionPane.showMessageDialog(null,"Email must be : firstname.lastname@info.uaic.ro ");
-                }
-                    else
+                        JFrame loginFrame=new LoginFrame();
+                        loginFrame.setVisible(true);
+                        registerFrame.setVisible(false);
+                        message.showMessageDialog(null,"Account setup was successful");
+                    }
+                    else {
+                        message.showMessageDialog(null,"Enter a valid email");
+                    }
+                else
                 {
-                    JOptionPane.showMessageDialog(null,"Please complete all fields");
+                    message.showMessageDialog(null,"Please complete all fields");
                 }
 
-        }
+            }
         });
 
 
 
 
-}
-
-
-
+    }
 
 }

@@ -35,7 +35,7 @@ public class LoginPanel extends JPanel {
 
 
     public LoginPanel(LoginFrame loginFrame) {
-        this.loginframe = loginframe;
+        this.loginframe = loginFrame;
         init();
     }
 

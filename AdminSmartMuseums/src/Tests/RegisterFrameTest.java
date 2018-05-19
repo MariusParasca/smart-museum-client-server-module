@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegisterFrameTest {
 
+
     @Test
     public void testInputMuseumTextField() {
 
@@ -62,7 +63,7 @@ public class RegisterFrameTest {
 
 
 
-        assertEquals(false, submit.getHideActionText());
+        assertEquals(false, submit.isValid());
 
 
 
@@ -91,7 +92,7 @@ public class RegisterFrameTest {
         submit.doClick();
 
 
-
+        assertEquals(false, submit.isValid());
 
 
 

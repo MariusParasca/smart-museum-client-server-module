@@ -1,5 +1,7 @@
 package Models;
 
+import ClientJava.Client;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -22,7 +24,7 @@ public class Login  {
 
         text = "[login-admin]"+ "<"+username+">"+"<"+password+">";
         // send(out, text);
-      // Client.getInstance().sendText(text);
+       Client.getInstance().sendText(text);
 
     }
 
