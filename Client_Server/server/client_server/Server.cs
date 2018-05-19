@@ -89,14 +89,34 @@ namespace Server
                     //   
                     /*  string str = ReceiveText(socket);
 
+<<<<<<< HEAD
                       SendPhoto(socket, ".//Resources//meme.jpg");
                       SendText(socket, "asd");
                       ReceivePhoto(socket, "final_Test.jpg");*/
                     SendZip(socket, "[Muzeu]", ".//Resources//muzeu_de_test.zip");
                   //  socket.Close();
+=======
+                    SendPhoto(socket, ".//Resources//meme.jpg");
+                    SendText(socket, "asd");
+                    ReceivePhoto(socket, "final_Test.jpg");
+                    //  socket.Close();
+>>>>>>> f607300b144a3dc278beecf59f425ddd0213afc6
 
                     //}
-
+                    for(int i = 0; i < 2; i++)
+                    {
+                        String museumName = ReceiveText(socket); //primirea numelui muzeului
+                        byte[] package = Museum.GetPackage("SmartMuseumDB.Museums", museumName);
+                        Packet packet = bytesToPacket(package);
+                        Send(socket, packet.type, packet.data);
+                    }
+                    for (int i = 0; i < 2; i++)
+                    {
+                        String exhibitName = ReceiveText(socket); //primirea numelui exponatului
+                        byte[] package = Museum.GetPackage("SmartMuseumDB.Exhibits", exhibitName);
+                        Packet packet = bytesToPacket(package);
+                        Send(socket, packet.type, packet.data);
+                    }
                 }
                 myList.Stop();
 
@@ -134,6 +154,8 @@ namespace Server
                 Console.WriteLine(e.ToString());
                 Packet packet = new Packet();
                 packet.type = "[Error]";
+                // am adaugat linia de cod pentru cazul in care muzeul nu este gasit in baza de date
+                packet.data = new byte[] { 0 };
                 return packet;
             }
         }

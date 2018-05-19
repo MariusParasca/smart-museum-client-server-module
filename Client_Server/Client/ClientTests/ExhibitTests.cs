@@ -20,10 +20,6 @@ namespace Client.Tests
             exhibit = new Exhibit(null);
             exhibit = new Exhibit("//invalid");
             exhibit = new Exhibit(null, null, "ceva");
-            Client.connectToServer("127.0.0.1", 8001);
-            exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
-            exhibit = new Exhibit(Client.GetBinaryWriter(), null, "ceva");
-            exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), null);
             exhibit.GetDescriptionEn();
             exhibit.GetDescriptionRo();
             exhibit.GetImagePaths();
@@ -36,8 +32,7 @@ namespace Client.Tests
         [TestMethod()]
         public void LoadExhibitTest()
         {
-            Client.connectToServer("127.0.0.1", 8001);
-            Exhibit exhibit = new Exhibit("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Client\\muzeu_de_test\\Tablou_de_test");
+            Exhibit exhibit = new Exhibit(".\\Resources\\muzeu_de_test\\Tablou_de_test");
             exhibit.GetDescriptionEn();
             exhibit.GetDescriptionRo();
             exhibit.GetImagePaths();

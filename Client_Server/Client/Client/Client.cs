@@ -34,7 +34,9 @@ namespace Client
         public static void Main()
         {
             Compresser = new Compresser();
-     //       exhibit = new Exhibit();
+            //       exhibit = new Exhibit();
+            Museum museum2 = new Museum(".\\Resources\\muzeu_de_test");
+            Exhibit exhibit2 = new Exhibit(".\\Resources\\muzeu_de_test\\Tablou_de_test");
             try
             {
 
@@ -48,11 +50,25 @@ namespace Client
                 
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
+<<<<<<< HEAD
                 //SendText("String de test");
                 //ReceivePhoto("test.jpg");
                 //ReceiveText();
                 // SendPhoto( ".//Resources//test.jpg");
                 ReceiveZip();
+=======
+                SendText("String de test");
+                ReceivePhoto("test.jpg");
+                ReceiveText();
+                SendPhoto( ".//Resources//test.jpg");
+
+                //Teste
+                Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
+                museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
+                Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Sunset");
+                exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
+
+>>>>>>> f607300b144a3dc278beecf59f425ddd0213afc6
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
@@ -76,6 +92,18 @@ namespace Client
             Console.WriteLine("Connected");
             binaryWriter = new BinaryWriter(tcpclnt.GetStream());
             binaryReader = new BinaryReader(tcpclnt.GetStream());
+        }
+
+        public static bool CheckPacketError(byte[] packet)
+        {
+            for (int i = 0; i < packet.Length; i++)
+            {
+                if (packet[i] != 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static string ReceiveText()

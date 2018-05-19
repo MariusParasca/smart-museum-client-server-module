@@ -14,13 +14,10 @@ namespace Client.Tests
         [TestMethod()]
         public void MuseumTest()
         {
-            Museum museum = new Museum(null, null, null);
-            Client.connectToServer("127.0.0.1", 8001);
-            //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid");
-            //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Client\\muzeu_de_test");
+            Museum museum = new Museum(".\\Resources\\muzeu_de_test");
+            museum = new Museum(null, null, null);
             museum = new Museum(null);
             museum = new Museum("//invalid");
-            museum = new Museum("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Client\\muzeu_de_test");
         }
     }
 }

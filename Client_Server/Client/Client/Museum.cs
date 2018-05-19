@@ -14,9 +14,9 @@ namespace Client
         BinaryWriter outStream;
         BinaryReader inStream;
 
-        public Museum (BinaryWriter outStream, BinaryReader inStream, String name)
+        public Museum(BinaryWriter outStream, BinaryReader inStream, String name)
         {
-            if(name == null || outStream == null || inStream == null)
+            if (name == null || outStream == null || inStream == null)
             {
                 Console.WriteLine("name or outStream or inStream is null");
                 return;
@@ -25,12 +25,13 @@ namespace Client
             this.outStream = outStream;
             this.inStream = inStream;
             exhibits = new List<Exhibit>();
-            GetMuseum(name);
+            String path = ".\\Resources\\" + name.Replace(' ', '_');
+            GetMuseum(path);
         }
 
-        public Museum(String pathToMuseum) 
+        public Museum(String pathToMuseum)
         {
-            if(pathToMuseum == null)
+            if (pathToMuseum == null)
             {
                 Console.WriteLine("pathToMuseum is null");
                 return;
@@ -40,17 +41,29 @@ namespace Client
             CreateExhibits(pathToMuseum); // trebuie dat path-ul muzeului
         }
 
-        private void GetMuseum(String name) // trebuie modificata
+        private void GetMuseum(String pathToMuseum) // trebuie modificata
         {
             try
             {
-                Client.SendText( name);
-//Packet museumPackage = Client.Receive();
-                using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu path-ul cu folderul muzee + name(adica numele muzeului);
+                Client.SendText(this.name);
+                byte[] museumPackage = Client.Receive();
+                bool ok = Client.CheckPacketError(museumPackage);
+                if (!ok)
                 {
-                    //fs.Write(museumPackage, 0, museumPackage.data.Length);
+                    Console.WriteLine("Invalid museum name");
                 }
-                //trebuie despachetat  zip-ul si apoi apelata createExhibits(path-ul folderului)
+                else
+                {
+                    //trebuie modificat path-ul aferent
+                    using (FileStream fs = File.Create(pathToMuseum + ".zip")) //probabil fara extensia .zip
+                    {
+                        fs.Write(museumPackage, 0, museumPackage.Length);
+                    }
+
+                    //trebuie despachetat  zip-ul si apoi apelata createExhibits(path-ul folderului)
+                    CreateExhibits(pathToMuseum); // folder hardcodat
+                    Console.WriteLine("Package(museum) received");
+                }                
             }
             catch (Exception e)
             {
@@ -59,7 +72,7 @@ namespace Client
 
         }
 
-        private void CreateExhibits(String museumFolder) // modifica in privat
+        private void CreateExhibits(String museumFolder)
         {
             string[] directoryEntries;
             try
@@ -75,7 +88,7 @@ namespace Client
             catch (Exception e)
             {
                 Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
-            }         
+            }
         }
     }
 
