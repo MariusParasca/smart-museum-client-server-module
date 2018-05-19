@@ -48,10 +48,11 @@ namespace Client
                 
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
-                SendText("String de test");
-                ReceivePhoto("test.jpg");
-                ReceiveText();
-                SendPhoto( ".//Resources//test.jpg");
+                //SendText("String de test");
+                //ReceivePhoto("test.jpg");
+                //ReceiveText();
+                // SendPhoto( ".//Resources//test.jpg");
+                ReceiveZip();
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
@@ -155,6 +156,95 @@ namespace Client
             }
 
         }
+        internal static byte[] ReceiveZip()
+        {
+
+            try
+            {
+                Packet packet = new Packet();
+                int len = binaryReader.ReadInt32();
+                //hh:mm:ss
+                packet.data = new byte[Constants.data_length];
+                int cnt = 0;
+                byte[] data = new byte[len + Constants.data_length];
+                byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
+                DateTime dateTime = DateTime.Now;
+                //FileStream fs = File.Create( );
+                string filename = ".//Resources//" + dateTime.ToString("dd_MM_yyyy_hh_mm_ss") + ".zip";
+                Stream fs = new FileStream(filename, FileMode.Append);
+                BinaryWriter bw = new BinaryWriter(fs);
+
+                while (cnt < len)
+                {
+                    int howBig = binaryReader.ReadInt32();
+
+                    int readed = binaryReader.Read(packetBytes, 0, howBig);
+                    int myCheckSum = CalculateChecksum(packetBytes);
+                    int checkSum = binaryReader.ReadInt32();
+                    if (myCheckSum != checkSum)
+                    {
+                        packet.type = "[Error]";
+                        packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
+                        Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
+                        return null;
+                    }
+                    packet = bytesToPacket(packetBytes);
+                    cnt += howBig - Constants.type_length;
+
+                    bw.Write(packet.data);
+                    bw.Flush();
+                    Console.WriteLine("[" + DateTime.Now + "] Packet received!");
+                }
+                return data;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return null;
+
+            }
+
+        }
+        private static void SendZip(Socket socket, string type, string filePath)
+        {
+            try
+            {
+                Packet packet = new Packet();
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
+                byte[] data = new byte[Constants.data_length];
+                packet.data = new byte[Constants.data_length];
+                int cnt = 0;
+                int x = 0;
+                int size = 0, checkSum = 0;
+                int len = (int)new FileInfo(filePath).Length;
+                FileStream fs = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                socket.Send(BitConverter.GetBytes(len), 4, SocketFlags.None);
+                while (cnt < len)
+                {
+                    x = Math.Min(Constants.data_length, len - cnt);
+                    packet.type = type;
+                    int read = fs.Read(data, 0, Constants.data_length);
+                    Array.Copy(data, 0, packet.data, 0, x);
+                    packetBytes = packetToBytes(packet);
+                    size = packetBytes.Length;
+                    socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
+                    socket.Send(packetBytes, size, SocketFlags.None);
+                    Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
+                    checkSum = CalculateChecksum(packetBytes);
+                    socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
+                    cnt += x;
+                }
+
+
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Error..... " + e.StackTrace);
+            }
+        }
+
         private static int CalculateChecksum(byte[] packetBytes)
         {
             int checksum = 0;
