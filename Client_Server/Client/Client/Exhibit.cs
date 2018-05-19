@@ -50,8 +50,8 @@ namespace Client
             try
             {
                 Client.SendText(name);
-                byte[] exhibitPackage = Client.Receive();
-                bool ok = Client.CheckPacketError(exhibitPackage);
+                byte[] exhibitPackage = Client.ReceiveZip();
+                /*bool ok = Client.CheckPacketError(exhibitPackage);
                 if (!ok)
                 {
                     Console.WriteLine("Invalid exhibit name");
@@ -65,7 +65,7 @@ namespace Client
                     //trebuie despachetat  zip-ul si apoi apelata CreateExhibit(path-ul folderului)
                     CreateExhibit(pathToExhibit); // folder hardcodat
                     Console.WriteLine("Package(exhibit) received");
-                }
+                }*/
             }
             catch (Exception e)
             {

@@ -50,25 +50,25 @@ namespace Client
                 
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
-<<<<<<< HEAD
                 //SendText("String de test");
                 //ReceivePhoto("test.jpg");
                 //ReceiveText();
                 // SendPhoto( ".//Resources//test.jpg");
                 ReceiveZip();
-=======
-                SendText("String de test");
+
+                //SendText("String de test");
                 ReceivePhoto("test.jpg");
                 ReceiveText();
                 SendPhoto( ".//Resources//test.jpg");
 
                 //Teste
                 Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
-                museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
+                //museum = new Museum(binaryWriter, binaryReader, "invalid");
+                //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
                 Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Sunset");
-                exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
+                //exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
+                // exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
 
->>>>>>> f607300b144a3dc278beecf59f425ddd0213afc6
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }

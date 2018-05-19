@@ -95,27 +95,28 @@ namespace Server
                       ReceivePhoto(socket, "final_Test.jpg");*/
                     SendZip(socket, "[Muzeu]", ".//Resources//muzeu_de_test.zip");
                   //  socket.Close();
-=======
+                    
                     SendPhoto(socket, ".//Resources//meme.jpg");
                     SendText(socket, "asd");
                     ReceivePhoto(socket, "final_Test.jpg");
                     //  socket.Close();
->>>>>>> f607300b144a3dc278beecf59f425ddd0213afc6
 
                     //}
-                    for(int i = 0; i < 2; i++)
+                    for(int i = 0; i < 1; i++)
                     {
                         String museumName = ReceiveText(socket); //primirea numelui muzeului
-                        byte[] package = Museum.GetPackage("SmartMuseumDB.Museums", museumName);
-                        Packet packet = bytesToPacket(package);
-                        Send(socket, packet.type, packet.data);
+                        String path = Museum.GetPath("SmartMuseumDB.Museums", museumName);
+                        //byte[] package = Museum.GetPackage("SmartMuseumDB.Museums", museumName);
+                        //Packet packet = bytesToPacket(package);
+                        SendZip(socket, "[Muzeu]", path);
                     }
-                    for (int i = 0; i < 2; i++)
+                    for (int i = 0; i < 1; i++)
                     {
                         String exhibitName = ReceiveText(socket); //primirea numelui exponatului
-                        byte[] package = Museum.GetPackage("SmartMuseumDB.Exhibits", exhibitName);
-                        Packet packet = bytesToPacket(package);
-                        Send(socket, packet.type, packet.data);
+                        String path = Museum.GetPath("SmartMuseumDB.Exhibits", exhibitName);
+                        //byte[] package = Museum.GetPackage("SmartMuseumDB.Exhibits", exhibitName);
+                        //Packet packet = bytesToPacket(package);
+                        SendZip(socket, "[Exponat]", path);
                     }
                 }
                 myList.Stop();

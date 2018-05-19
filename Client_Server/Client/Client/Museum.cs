@@ -46,7 +46,8 @@ namespace Client
             try
             {
                 Client.SendText(this.name);
-                byte[] museumPackage = Client.Receive();
+                byte[] museumPackage = Client.ReceiveZip();
+                /*
                 bool ok = Client.CheckPacketError(museumPackage);
                 if (!ok)
                 {
@@ -63,7 +64,7 @@ namespace Client
                     //trebuie despachetat  zip-ul si apoi apelata createExhibits(path-ul folderului)
                     CreateExhibits(pathToMuseum); // folder hardcodat
                     Console.WriteLine("Package(museum) received");
-                }                
+                }      */          
             }
             catch (Exception e)
             {

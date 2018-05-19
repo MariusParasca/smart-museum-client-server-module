@@ -91,6 +91,31 @@ namespace client_server
             return itemList.ToString();
         }*/
 
+        public static String GetPath(String tableName, String queryParameter)
+        {
+            if (tableName == null || queryParameter == null)
+            {
+                Console.WriteLine("Table name or query parameter is null");
+                return null;
+            }
+            queryParameter = queryParameter.Replace("\0", String.Empty);
+            byte[] byteArrayFile = new byte[] { };
+            ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new String[] { queryParameter });
+            if (reader != null)
+            {
+                reader.Read();
+                if (reader.HasRows)
+                {
+                    Console.WriteLine(reader[0]);
+                    String path = reader[0].ToString();
+                    CloseConnection();
+                    return path;
+                }
+            }
+            CloseConnection();
+            return "noExist";
+        }
+
         public static byte[] GetPackage(String tableName, String queryParameter)
         {
             if(tableName == null || queryParameter == null)
