@@ -25,10 +25,12 @@ namespace Client
                 Console.WriteLine("name or outStream or inStream is null");
                 return;
             }
+            this.name = name;
             this.outStream = outStream;
             this.inStream = inStream;
             imagePaths = new List<String>();
-            GetExhibit(name);
+            String path = ".\\Resources\\" + name;
+            GetExhibit(path);
         }
 
         public Exhibit(String exhibitFolder)
@@ -39,6 +41,7 @@ namespace Client
                 return;
             }
             imagePaths = new List<String>();
+            this.name = exhibitFolder.Split('\\').Last();
             CreateExhibit(exhibitFolder);
         }
 
@@ -47,13 +50,22 @@ namespace Client
             try
             {
                 Client.SendText(name);
-          //      Packet exhibitPackage = Client.Receive();
-                using (FileStream fs = File.Create("..\\..\\..\\Tablou_de_test.zip")) //de inlocuit cu name(adica numele exponatului);
+                byte[] exhibitPackage = Client.Receive();
+                bool ok = Client.CheckPacketError(exhibitPackage);
+                if (!ok)
                 {
-                //    byte[] packetBytes = Client.packetToBytes(exhibitPackage);
-                    //   fs.Write(packetBytes, 0, exhibitPackage.data.Length);
+                    Console.WriteLine("Invalid exhibit name");
                 }
-                //trebuie despachetat  zip-ul si apoi apelata CreateExhibit(path-ul folderului)
+                else
+                {
+                    using (FileStream fs = File.Create(pathToExhibit + ".zip"))
+                    {
+                        fs.Write(exhibitPackage, 0, exhibitPackage.Length);
+                    }
+                    //trebuie despachetat  zip-ul si apoi apelata CreateExhibit(path-ul folderului)
+                    CreateExhibit(pathToExhibit); // folder hardcodat
+                    Console.WriteLine("Package(exhibit) received");
+                }
             }
             catch (Exception e)
             {
@@ -67,7 +79,6 @@ namespace Client
             {
                 string[] fileEntries = Directory.GetFiles(exhibitFolder);
                 string[] directoryEntries = Directory.GetDirectories(exhibitFolder);
-                this.name = exhibitFolder.Split('\\').Last();
                 this.pathToAudioFile = fileEntries[0];
                 this.LoadJson(fileEntries[1]);
                 Console.WriteLine(exhibitFolder.Split('\\').Last() + " " + fileEntries[0] + " " + fileEntries[1]);

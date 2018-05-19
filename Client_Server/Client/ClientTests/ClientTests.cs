@@ -30,7 +30,7 @@ namespace Client.Tests
             }
 
         }
-     
+     /*
            [TestMethod()]
            public void ReceiveTextTest()
            {
@@ -89,6 +89,6 @@ namespace Client.Tests
                 Console.WriteLine("Exceptie " + e.ToString());
             }
         }
-
+        */
     }
 }

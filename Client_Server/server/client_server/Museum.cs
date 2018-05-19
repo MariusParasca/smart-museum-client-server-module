@@ -37,7 +37,7 @@ namespace client_server
 
                 command.Prepare();
                 
-                reader = command.ExecuteReader();       
+                reader = command.ExecuteReader();
             }
             catch(MySqlException e)
             {
@@ -60,8 +60,8 @@ namespace client_server
             }
             jsonInfo.Remove(jsonInfo.Length - 1, 1);
             jsonInfo.Append("] } }");
-            reader.Close();
-            
+            CloseConnection();
+
             using (FileStream fileStream = File.Create("geoLocations.json"))
             {
                 Byte[] info = new UTF8Encoding(true).GetBytes(jsonInfo.ToString());
@@ -98,6 +98,7 @@ namespace client_server
                 Console.WriteLine("Table name or query parameter is null");
                 return null;
             }
+            queryParameter = queryParameter.Replace("\0", String.Empty);
             byte[] byteArrayFile = new byte[] {};   
             ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new String[] { queryParameter });
             if(reader != null)
@@ -106,12 +107,17 @@ namespace client_server
                 if(reader.HasRows)
                 {
                     Console.WriteLine(reader[0]);
-                    byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\Tablou_de_test.zip"); //de inlocuit cu reader[0]
-                    //byteArrayFile = System.IO.File.ReadAllBytes("E:\\Dropbox\\Facultate\\IP\\Proiect\\Client_Server\\muzeu_de_test.zip"); //de inlocuit cu reader[0]
+                    byteArrayFile = System.IO.File.ReadAllBytes(reader[0].ToString());
                 }
             }
-            
+            CloseConnection();
             return byteArrayFile;
+        }
+
+        private static void CloseConnection()
+        {
+            reader.Close();
+            Database.CloseConnection();
         }
 
         /* Probabil vor fii sterse
