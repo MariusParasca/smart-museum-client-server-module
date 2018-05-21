@@ -5,11 +5,12 @@ using System.Net.Sockets;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.IO.Compression;
 
 class Constants
 {
-    public const int type_length = 8;
-    public const int data_length = 1016;
+    public const int type_length = 50;
+    public const int data_length = 974;
 }
 [StructLayout(LayoutKind.Sequential, Size = Constants.type_length + Constants.type_length)]
 internal struct Packet
@@ -35,8 +36,10 @@ namespace Client
         {
             Compresser = new Compresser();
             //       exhibit = new Exhibit();
-            Museum museum2 = new Museum(".\\Resources\\muzeu_de_test");
-            Exhibit exhibit2 = new Exhibit(".\\Resources\\muzeu_de_test\\Tablou_de_test");
+            //Museum museum2 = new Museum(".\\Resources\\muzeu_de_test");
+            //Exhibit exhibit2 = new Exhibit(".\\Resources\\muzeu_de_test\\Tablou_de_test");
+
+            
             try
             {
 
@@ -57,18 +60,18 @@ namespace Client
                 ReceiveZip();
 
                 //SendText("String de test");
-                ReceivePhoto("test.jpg");
+                //ReceivePhoto("test.jpg");
                 ReceiveText();
-                SendPhoto( ".//Resources//test.jpg");
-
+                //SendPhoto( ".//Resources//test.jpg");
+                
                 //Teste
                 Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
                 //museum = new Museum(binaryWriter, binaryReader, "invalid");
                 //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
                 Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Sunset");
-                //exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
+                /*//exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
                 // exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
-
+                */
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
@@ -77,7 +80,7 @@ namespace Client
             {
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
-
+            
         }
 
         public static BinaryReader GetBinaryReader() { return binaryReader; }
@@ -184,7 +187,7 @@ namespace Client
             }
 
         }
-        internal static byte[] ReceiveZip()
+        internal static String ReceiveZip()
         {
 
             try
@@ -198,9 +201,10 @@ namespace Client
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
                 DateTime dateTime = DateTime.Now;
                 //FileStream fs = File.Create( );
-                string filename = ".//Resources//" + dateTime.ToString("dd_MM_yyyy_hh_mm_ss") + ".zip";
-                Stream fs = new FileStream(filename, FileMode.Append);
-                BinaryWriter bw = new BinaryWriter(fs);
+                bool ok = false;
+                //string filename = ".//Resources//" + packet.type + ".zip";
+                Stream fs = null;
+                BinaryWriter bw = null;
 
                 while (cnt < len)
                 {
@@ -219,11 +223,22 @@ namespace Client
                     packet = bytesToPacket(packetBytes);
                     cnt += howBig - Constants.type_length;
 
+                    if(!ok)
+                    {
+                        packet.type = packet.type.Replace("\0", String.Empty);
+                        string filename = ".//Resources//" + packet.type + ".zip";
+                        fs = new FileStream(filename, FileMode.Append);
+                        bw = new BinaryWriter(fs);
+                        ok = true;
+                    }
+
                     bw.Write(packet.data);
                     bw.Flush();
                     Console.WriteLine("[" + DateTime.Now + "] Packet received!");
                 }
-                return data;
+                fs.Close();
+                bw.Close();
+                return packet.type;
             }
             catch (Exception e)
             {
@@ -302,8 +317,8 @@ namespace Client
             {
 
                 byte[] packetBytes = Encoding.UTF8.GetBytes(packet.type);
-                Array.Resize<byte>(ref packetBytes, 8 + packet.data.Length);
-                Array.Copy(packet.data, 0, packetBytes, 8, packet.data.Length);
+                Array.Resize<byte>(ref packetBytes, Constants.type_length + packet.data.Length);
+                Array.Copy(packet.data, 0, packetBytes, Constants.type_length, packet.data.Length);
                 return packetBytes;
             }
             catch (Exception e)
@@ -312,6 +327,7 @@ namespace Client
                 return null;
             }
         }
+  
         private static void Send(string type, byte[] data)
         {
             try
@@ -335,13 +351,13 @@ namespace Client
                     binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
                     binaryWriter.Write(packetBytes, 0, size);
                     Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
-                     checkSum = CalculateChecksum(packetBytes);
+                    checkSum = CalculateChecksum(packetBytes);
                     Console.WriteLine(checkSum);
                     binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
                     binaryWriter.Flush();
                     cnt += x;
                 }
-              
+
 
             }
 

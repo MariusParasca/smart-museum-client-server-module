@@ -13,8 +13,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 class Constants
 {
-    public const int type_length = 8;
-    public const int data_length = 1016;
+    public const int type_length = 50;
+    public const int data_length = 974;
 }
 [StructLayout(LayoutKind.Sequential, Size = Constants.type_length + Constants.type_length)]
 internal struct Packet
@@ -93,14 +93,14 @@ namespace Server
                       SendPhoto(socket, ".//Resources//meme.jpg");
                       SendText(socket, "asd");
                       ReceivePhoto(socket, "final_Test.jpg");*/
-                    SendZip(socket, "[Muzeu]", ".//Resources//muzeu_de_test.zip");
+                    SendZip(socket, "muzeu_de_test", ".//Resources//muzeu_de_test1.zip");
                   //  socket.Close();
                     
-                    SendPhoto(socket, ".//Resources//meme.jpg");
+                    //SendPhoto(socket, ".//Resources//meme.jpg");
                     SendText(socket, "asd");
-                    ReceivePhoto(socket, "final_Test.jpg");
+                    //ReceivePhoto(socket, "final_Test.jpg");
                     //  socket.Close();
-
+                    
                     //}
                     for(int i = 0; i < 1; i++)
                     {
@@ -108,16 +108,17 @@ namespace Server
                         String path = Museum.GetPath("SmartMuseumDB.Museums", museumName);
                         //byte[] package = Museum.GetPackage("SmartMuseumDB.Museums", museumName);
                         //Packet packet = bytesToPacket(package);
-                        SendZip(socket, "[Muzeu]", path);
+                        SendZip(socket, museumName, path);
                     }
+                    
                     for (int i = 0; i < 1; i++)
                     {
                         String exhibitName = ReceiveText(socket); //primirea numelui exponatului
                         String path = Museum.GetPath("SmartMuseumDB.Exhibits", exhibitName);
                         //byte[] package = Museum.GetPackage("SmartMuseumDB.Exhibits", exhibitName);
                         //Packet packet = bytesToPacket(package);
-                        SendZip(socket, "[Exponat]", path);
-                    }
+                        SendZip(socket, exhibitName, path);
+                    }/**/
                 }
                 myList.Stop();
 
@@ -249,8 +250,8 @@ namespace Server
             {
 
                 byte[] packetBytes = Encoding.UTF8.GetBytes(packet.type);
-                Array.Resize<byte>(ref packetBytes, 8 + packet.data.Length);
-                Array.Copy(packet.data, 0, packetBytes, 8, packet.data.Length);
+                Array.Resize<byte>(ref packetBytes, Constants.type_length + packet.data.Length);
+                Array.Copy(packet.data, 0, packetBytes, Constants.type_length, packet.data.Length);
                 return packetBytes;
             }
             catch (Exception e)
@@ -296,6 +297,7 @@ namespace Server
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
         }
+
         private static void SendZip(Socket socket, string type, string filePath)
         {
             try
@@ -321,7 +323,7 @@ namespace Server
                     size = packetBytes.Length;
                     socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
                     socket.Send(packetBytes, size, SocketFlags.None);
-                    Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
+                    Console.WriteLine("[" + type + "] Packet sent! ");
                     checkSum = CalculateChecksum(packetBytes);
                     socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
                     cnt += x;
@@ -375,6 +377,8 @@ namespace Server
                     bw.Flush();
                     Console.WriteLine("[" + DateTime.Now + "] Packet received!");
                 }
+                fs.Close();
+                bw.Close();
                 return data;
             }
             catch (Exception e)

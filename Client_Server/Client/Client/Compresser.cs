@@ -4,6 +4,15 @@ namespace Client
 {
     class Compresser
     {
+
+        public static void DecompressZip(string zipPath, string destinationPath)
+        {
+            if (!Directory.Exists(destinationPath))
+            {
+                ZipFile.ExtractToDirectory(zipPath, destinationPath);
+            }
+        }
+
         public static byte[] Compress(byte[] data)
         {
             MemoryStream output = new MemoryStream();

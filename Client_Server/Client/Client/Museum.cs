@@ -14,6 +14,8 @@ namespace Client
         BinaryWriter outStream;
         BinaryReader inStream;
 
+        public List<Exhibit> GetExhibits() { return exhibits; }
+
         public Museum(BinaryWriter outStream, BinaryReader inStream, String name)
         {
             if (name == null || outStream == null || inStream == null)
@@ -25,8 +27,9 @@ namespace Client
             this.outStream = outStream;
             this.inStream = inStream;
             exhibits = new List<Exhibit>();
-            String path = ".\\Resources\\" + name.Replace(' ', '_');
+            String path = ".\\Resources\\" + name;
             GetMuseum(path);
+            CreateExhibits(path);
         }
 
         public Museum(String pathToMuseum)
@@ -46,7 +49,8 @@ namespace Client
             try
             {
                 Client.SendText(this.name);
-                byte[] museumPackage = Client.ReceiveZip();
+                String museumPackage = Client.ReceiveZip();
+                Compresser.DecompressZip(pathToMuseum + ".zip", pathToMuseum);
                 /*
                 bool ok = Client.CheckPacketError(museumPackage);
                 if (!ok)

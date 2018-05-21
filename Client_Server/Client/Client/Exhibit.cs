@@ -31,6 +31,7 @@ namespace Client
             imagePaths = new List<String>();
             String path = ".\\Resources\\" + name;
             GetExhibit(path);
+            CreateExhibit(path);
         }
 
         public Exhibit(String exhibitFolder)
@@ -50,7 +51,8 @@ namespace Client
             try
             {
                 Client.SendText(name);
-                byte[] exhibitPackage = Client.ReceiveZip();
+                String exhibitPackage = Client.ReceiveZip();
+                Compresser.DecompressZip(pathToExhibit + ".zip", pathToExhibit);
                 /*bool ok = Client.CheckPacketError(exhibitPackage);
                 if (!ok)
                 {
