@@ -1,5 +1,7 @@
 package ClientJava;
 
+import GUI.Frames.AdminAppFrame;
+
 public class Main {
     public static void main(String [] args) {
         if(Client.getInstance().open("127.0.0.1", 8001)) {
@@ -13,7 +15,7 @@ public class Main {
             //Client.getInstance().receiveInt();
            // Client.getInstance().sendZip("C:\\Users\\lucai\\Desktop\\.zip");
             //Client.getInstance().sendText("Ana are mere");
-          //  new AdminAppFrame().setVisible(true);
+           new AdminAppFrame().setVisible(true);
        }
     }
 }

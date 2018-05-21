@@ -1,5 +1,7 @@
 package Models;
 
+import ClientJava.Client;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -20,10 +22,11 @@ public class Login  {
         this.username = username;
         this.password = password;
 
-        text = "[login-admin]"+ "<"+username+">"+"<"+password+">";
-        // send(out, text);
-       //Client.getInstance().sendText(text);
-
+        text = username+"!@/"+password;
+        Client.getInstance().sendText(text, "[login]");
+       // String museumName = Client.getInstance().recieveText();
+        //Client.getInstance().setMuseumName(museumName);
+        //System.out.println(Client.getInstance().getMuseumName());
     }
 
 

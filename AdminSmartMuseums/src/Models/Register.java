@@ -40,7 +40,7 @@ public class Register {
 
 
         String text = "[register-admin]" + this.receiverEmailID + " " + museumName + " " +  password;
-        Client.getInstance().sendText(text);
+        Client.getInstance().sendText(text, "[register]");
 
 
         Properties props = new Properties();

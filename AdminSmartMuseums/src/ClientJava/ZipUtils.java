@@ -14,8 +14,8 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtils {
 
     private List <String> fileList;
-    private static final String OUTPUT_ZIP_FILE = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits.zip";
-    private static final String SOURCE_FOLDER = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits"; // SourceFolder path
+    private  String OUTPUT_ZIP_FILE;
+    private  String SOURCE_FOLDER;
 
     public ZipUtils() {
         fileList = new ArrayList < String > ();

@@ -21,6 +21,8 @@ public class Client {
     private final int type_length = 50;
     private final int data_length = 974;
 
+    private String museumName = null;
+
 
     private Client (){ }
 
@@ -125,9 +127,13 @@ public class Client {
         }
         return sum;
     }
-    public void sendText(String string) {
+    public void sendText(String string, String tipPachet) {
         byte[] bytes = string.getBytes();
-        send(bytes);
+
+        byte[] type = new byte[type_length];
+        int length = tipPachet.getBytes().length;
+        System.arraycopy(tipPachet.getBytes(), 0, type, 0, length);
+        send(bytes, type);
     }
 
     byte[] IntToByteArray( int data ) {
@@ -143,15 +149,17 @@ public class Client {
     }
 
 
-    public void send(byte[] bytes) {
+    public void send(byte[] bytes, byte[] type) {
         try {
             int nrBytes = bytes.length;
             int sum = 0;
             sendInt(nrBytes);
             int crt = 0;
             int len = nrBytes;
+            //for(byte b: type) {
+              //  System.out.print(b + " ");
+            //}
             byte[] pachet = new byte[data_length + type_length];
-            byte[] type = IntToByteArray(type_length);
             System.arraycopy(type, 0, pachet, 0, type_length);
             while(crt < nrBytes) {
                 if(len >= data_length + type_length) {
@@ -177,11 +185,12 @@ public class Client {
         }
     }
 
-    public void sendZip(String path) {
+    public void sendZip(String path, String tipPachet) {
         try {
             byte[] array = Files.readAllBytes(new File(path).toPath());
+            byte[] type = tipPachet.getBytes();
             System.out.println(array.length);
-            send(array);
+            send(array, type);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -197,5 +206,13 @@ public class Client {
 
     public DataOutputStream getOut() {
         return out;
+    }
+
+    public String getMuseumName() {
+        return museumName;
+    }
+
+    public void setMuseumName(String museumName) {
+        this.museumName = museumName;
     }
 }

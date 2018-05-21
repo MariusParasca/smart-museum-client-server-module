@@ -169,7 +169,7 @@ public class InsertPanel extends JPanel {
                 { JOptionPane.showMessageDialog(null,"Exhibit created successfully");
 
                     ExhibitFiles exhibitFiles = new ExhibitFiles();
-                    exhibitFiles.createDirectory("C:\\", nameText.getText());
+                    exhibitFiles.createDirectory("C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits", nameText.getText());
 
                     //create json file
                     ExhibitJSON exhibitJSON = new ExhibitJSON(nameText.getText(), exhibitFiles.getPath());
@@ -193,8 +193,8 @@ public class InsertPanel extends JPanel {
                       //  ex.printStackTrace();
                     //}
 
-                    String OUTPUT_ZIP_FILE = exhibitFiles.getPath() + ".zip";
-                    String SOURCE_FOLDER = exhibitFiles.getPath(); // SourceFolder path
+                    String OUTPUT_ZIP_FILE = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits\\"+ nameText.getText() +".zip";
+                    String SOURCE_FOLDER = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits\\" + nameText.getText();  // SourceFolder path
 
                     com.company.ZipUtils appZip = new com.company.ZipUtils();
                     appZip.generateFileList(new File(SOURCE_FOLDER));
