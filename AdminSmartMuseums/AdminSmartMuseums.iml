@@ -21,7 +21,6 @@
     <orderEntry type="library" name="javax.mail-1.4.6" level="project" />
     <orderEntry type="library" name="javax.mail-1.6.1" level="project" />
     <orderEntry type="library" name="mail" level="project" />
-    <orderEntry type="library" name="mailapi-1.3" level="project" />
     <orderEntry type="library" name="mysql-connector-java-5.1.461" level="project" />
     <orderEntry type="module-library" exported="">
       <library name="JUnit5.0">
@@ -30,10 +29,10 @@
           <root url="jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.0.0/junit-platform-commons-1.0.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../New folder/apiguardian-api-1.0.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../New folder/json-simple-1.1.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../New folder/junit-jupiter-api-5.0.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../New folder/junit-platform-commons-1.0.0.jar!/" />
+          <root url="jar://G:/New folder/apiguardian-api-1.0.0.jar!/" />
+          <root url="jar://G:/New folder/json-simple-1.1.jar!/" />
+          <root url="jar://G:/New folder/junit-jupiter-api-5.0.0.jar!/" />
+          <root url="jar://G:/New folder/junit-platform-commons-1.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -82,7 +81,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../JUNIT/opentest4j-1.0.0.jar!/" />
+          <root url="jar://G:/JUNIT/opentest4j-1.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -91,7 +90,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../JUNIT/apiguardian-api-1.0.0.jar!/" />
+          <root url="jar://G:/JUNIT/apiguardian-api-1.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -100,7 +99,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../JUNIT/junit-jupiter-api-5.0.0.jar!/" />
+          <root url="jar://G:/JUNIT/junit-jupiter-api-5.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -109,7 +108,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../JUNIT/junit-platform-commons-1.0.0.jar!/" />
+          <root url="jar://G:/JUNIT/junit-platform-commons-1.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -118,12 +117,13 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../.." />
+          <root url="file://G:/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../.." recursive="false" />
+        <jarDirectory url="file://G:/" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
   </component>
 </module>

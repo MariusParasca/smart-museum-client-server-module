@@ -18,7 +18,7 @@ public class InsertFrame extends JFrame {
     private void init(){
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(new Dimension(500, 500));
+        setSize(new Dimension(500, 550));
         setLayout(new BorderLayout());
         insertPanel = new InsertPanel(this);
         add(insertPanel, BorderLayout.CENTER);

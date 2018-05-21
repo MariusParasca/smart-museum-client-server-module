@@ -3,12 +3,10 @@ package GUI.Panels;
 import ClientJava.Client;
 import GUI.Frames.AfterLoginFrame;
 import GUI.Frames.LoginFrame;
-import Models.Login;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -96,13 +94,13 @@ public class LoginPanel extends JPanel {
                 }
                   else
             {
-                try {
-
-
-                       Login log = new Login(usernameText.getText(), passText.getText());
-                   } catch (IOException e1) {
-                       e1.printStackTrace();
-                    }
+//                try {
+//
+//
+//                       Login log = new Login(usernameText.getText(), passText.getText());
+//                   } catch (IOException e1) {
+//                       e1.printStackTrace();
+//                    }
 
                     AfterLoginFrame afterLoginFrame = new AfterLoginFrame();
                     afterLoginFrame.setVisible(true);
