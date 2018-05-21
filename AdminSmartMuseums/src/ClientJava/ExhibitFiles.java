@@ -3,7 +3,11 @@ package ClientJava;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class ExhibitFiles {
     private String path;
@@ -13,6 +17,26 @@ public class ExhibitFiles {
         this.pathImg = this.path+"\\img";
         new File(this.path).mkdirs();
         new File(this.pathImg).mkdirs();
+    }
+
+    public static void addToZipFile(String filePath) throws FileNotFoundException, IOException {
+        try {
+            File file = new File(filePath);
+            FileOutputStream fos = new FileOutputStream(filePath + ".zip");
+            ZipOutputStream zos = new ZipOutputStream(fos);
+
+            zos.putNextEntry(new ZipEntry(file.getName()));
+
+            //byte[] bytes = Files.readAllBytes(Paths.get("./exhibits/" + filePath));
+            byte[] bytes = new byte[111111];
+            int len;
+            FileInputStream in = new FileInputStream(filePath);
+            while ((len = in.read(bytes)) > 0) {
+                zos.write(bytes, 0, len);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void addImages(ArrayList<File> photos, String path) {

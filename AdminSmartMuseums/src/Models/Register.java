@@ -1,11 +1,11 @@
 package Models;
 
 import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.Properties;
 
 public class Register {
 
@@ -19,18 +19,22 @@ public class Register {
 
     public String randomString (){
         SecureRandom secureRandom = new SecureRandom();
-        byte[] token = new byte[10];
+        byte[] token = new byte[5];
         secureRandom.nextBytes(token);
         return new BigInteger(1, token).toString(16);
     }
     public Register(String rcv, String Subject) {
+        // Create password
+        String password = randomString();
 
         // Receiver Email Address
-        // Subject
         this.receiverEmailID=rcv;
+
+        // Subject
         this.emailSubject = Subject;
+
         // Body
-        this.emailBody = "Your username:" + randomString() + " and password: "+ randomString();
+        this.emailBody = "Your username is " + rcv + " and password: "+ password;
 
 
         Properties props = new Properties();

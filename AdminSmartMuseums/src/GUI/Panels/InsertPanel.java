@@ -17,10 +17,12 @@ public class InsertPanel extends JPanel {
 
     private InsertFrame insertFrame;
     JLabel name = new JLabel(" Name of exhibit");
-    JLabel description = new JLabel(" Short description");
+    JLabel description = new JLabel(" Short description in Romanian");
+    JLabel descriptionEng = new JLabel(" Short description English");
     JLabel links = new JLabel(" Video links");
     JTextField nameText = new JTextField();
     JTextField descText = new JTextField();
+    JTextField descEnglishText = new JTextField();
     JTextField linkText = new JTextField();
     JButton uploadPhoto = new JButton("Upload photo");
     JButton uploadAudio = new JButton("Upload Audio");
@@ -29,7 +31,9 @@ public class InsertPanel extends JPanel {
     JPanel insert = new JPanel();
     JPanel buttons = new JPanel();
 
-    private ArrayList<File> photos = new ArrayList<File>();
+
+
+    ArrayList<File> photos = new ArrayList<File>();
     private File audioFile = null;
     public InsertPanel(InsertFrame insertFrame) {
 
@@ -71,6 +75,7 @@ public class InsertPanel extends JPanel {
 
         initLabel(name);
         initLabel(description);
+        initLabel(descriptionEng);
         initLabel(links);
         initButtons(uploadPhoto);
         initButtons(submit);
@@ -80,6 +85,8 @@ public class InsertPanel extends JPanel {
         insert.add(nameText);
         insert.add(description);
         insert.add(descText);
+        insert.add(descriptionEng);
+        insert.add(descEnglishText);
         insert.add(links);
         insert.add(linkText);
         add(insert, BorderLayout.NORTH);
@@ -93,21 +100,34 @@ public class InsertPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                JFileChooser file = new JFileChooser();
-                file.setCurrentDirectory(new File(System.getProperty("user.home")));
+                JFileChooser chooser = new JFileChooser();
+                chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+
+                // multi selection configure
+                int mode = chooser.getFileSelectionMode();
+                boolean multi = chooser.isMultiSelectionEnabled();
+                chooser.setMultiSelectionEnabled( true );
+                chooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
+
                 //filter the files
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("*.Images", "jpg","gif","png");
-                file.addChoosableFileFilter(filter);
-                int result = file.showSaveDialog(null);
+                chooser.addChoosableFileFilter(filter);
+
+
+                int result = chooser.showSaveDialog(null);
+                // selectedFiles is an array of files
+                File[] selectedFiles;
 
                 if(result == JFileChooser.APPROVE_OPTION){
-                    File selectedFile = file.getSelectedFile();
-                    String path = selectedFile.getAbsolutePath();
-                    String fileName = selectedFile.getName();
-                    photos.add(selectedFile);
-                    System.out.println(selectedFile.getAbsolutePath());
-                }
+                    selectedFiles = chooser.getSelectedFiles();
+                    chooser.setMultiSelectionEnabled(multi);
+                    chooser.setFileSelectionMode( mode );
 
+                    for (int i=0;i<selectedFiles.length;i++) {
+                        // add the file on i position to the ArrayList  photos that will be sent to the server
+                        photos.add(selectedFiles[i]);
+                        System.out.println(selectedFiles[i].getAbsolutePath());
+                    }}
 
                 else if(result == JFileChooser.CANCEL_OPTION){
                     System.out.println("No File Select");
@@ -147,33 +167,33 @@ public class InsertPanel extends JPanel {
 
                 if(nameText.getText().trim().length() != 0 &&  descText.getText().trim().length() != 0 && linkText.getText().trim().length() !=0)
 
-                    { JOptionPane.showMessageDialog(null,"Exhibit created successfully");
+                { JOptionPane.showMessageDialog(null,"Exhibit created successfully");
 
-                        ExhibitFiles exhibitFiles = new ExhibitFiles();
-                        exhibitFiles.createDirectory("C:\\", nameText.getText());
+                    ExhibitFiles exhibitFiles = new ExhibitFiles();
+                    exhibitFiles.createDirectory("C:\\", nameText.getText());
 
-                        //create json file
-                        ExhibitJSON exhibitJSON = new ExhibitJSON(nameText.getText(), exhibitFiles.getPath());
-                        exhibitJSON.add(nameText.getText(), descText.getText(), descText.getText(), linkText.getText());
-                        exhibitJSON.save();
+                    //create json file
+                    ExhibitJSON exhibitJSON = new ExhibitJSON(nameText.getText(), exhibitFiles.getPath());
+                    exhibitJSON.add(nameText.getText(), descText.getText(), descText.getText(), linkText.getText());
+                    exhibitJSON.save();
 
-                        exhibitFiles.addImages(photos, exhibitFiles.getPath());
-                        if(!audioFile.equals(null))
-                            try {
-                                exhibitFiles.addAudio(audioFile, exhibitFiles.getPath()+"\\");
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
+                    exhibitFiles.addImages(photos, exhibitFiles.getPath());
+                    if(!audioFile.equals(null))
+                        try {
+                            exhibitFiles.addAudio(audioFile, exhibitFiles.getPath()+"\\");
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
 
-                        //exhibitJSON.add(nameText.getText(), );
-                        //String text = "[insert-exhibit]" + "<"+nameText.getText()+">"+"<"+descText.getText()+">"+"<"+linkText.getText()+">";
-                        //Client.getInstance().sendText(text);
-                        insertFrame.setVisible(false);
+                    //exhibitJSON.add(nameText.getText(), );
+                    //String text = "[insert-exhibit]" + "<"+nameText.getText()+">"+"<"+descText.getText()+">"+"<"+linkText.getText()+">";
+                    //Client.getInstance().sendText(text);
+                    insertFrame.setVisible(false);
 
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(null,"Complete all fields ");
-                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(null,"Complete all fields ");
+                }
 
 
             }

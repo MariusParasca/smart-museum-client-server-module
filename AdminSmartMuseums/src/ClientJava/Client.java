@@ -73,17 +73,27 @@ public class Client {
     }
 
     //Primim de la server un mesaj text.
-    public String recieveString() {
+    public String recieveText() {
         try{
             int nrBytes = receiveInt();
-            byte[] b = new byte[nrBytes];
-            in.read(b);
+            byte[] b = new byte[1024+nrBytes];
+            byte[] pachet = new byte[1024];
+            int crt = 0;
+            while(crt < nrBytes) {
+                int len = receiveInt();
+                in.read(pachet);
+                System.arraycopy(pachet, 0, b, crt, len);
+                crt += len;
+                int chechs = receiveInt();
+            }
+
             String text = new String(b);
             return text;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return "Mesajul nu a fost primit.";
+
     }
 
     public void sendInt(int number) {
@@ -94,18 +104,27 @@ public class Client {
             b[2] = (byte) ((number >> 16) & 0xFF);
             b[3] = (byte) ((number >> 24) & 0xFF);
             out.write(b);
+            out.flush();
             System.out.println("Numarul "  + number + " a fost trimis");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
+    public int checkSum(byte[] bytes) {
+        int sum = 0;
+        for(byte b : bytes) {
+            //System.out.print(b + " ");
+            if(b < 0) {
+                sum += 256 + b;
+            } else {
+                sum += b;
+            }
+        }
+        return sum;
+    }
     public void sendText(String string) {
-
-            int sum = 0;
-            byte[] bytes = string.getBytes();
-            send(bytes);
-
+        byte[] bytes = string.getBytes();
+        send(bytes);
     }
 
     public void send(byte[] bytes) {
@@ -113,38 +132,25 @@ public class Client {
             int nrBytes = bytes.length;
             int sum = 0;
             sendInt(nrBytes);
-            System.out.println(nrBytes);
             int crt = 0;
             int len = nrBytes;
+            byte[] pachet = new byte[1024];
             while(crt < nrBytes) {
-
                 if(len >= 1024) {
-                    byte[] pachet = new byte[1024];
                     System.arraycopy(bytes, crt, pachet, 0, 1024);
                     sendInt(1024);
-                    sum = 0;
-                    for(byte b : pachet) {
-                        sum += b;
-                    }
-                    System.out.println( " ");
-                    sendInt(sum);
                     out.write(pachet);
+                    out.flush();
                     crt += 1024;
                     len -= 1024;
-                    System.out.println("Reeee" + crt + "  " + len);
+                    sendInt(checkSum(pachet));
                 } else {
-                    byte[] pachet = new byte[len];
                     System.arraycopy(bytes, crt, pachet, 0, len);
-                    sendInt(len);
-                    System.out.println(len);
-                    sum = 0;
-                    for(byte b : pachet){
-                        sum += b;
-                    }
-                    sendInt(sum);
+                    sendInt(1024);
                     out.write(pachet);
+                    out.flush();
                     crt += len;
-                    System.out.println("Reeee" + crt );
+                    sendInt(checkSum(pachet));
                 }
 
             }
@@ -152,6 +158,7 @@ public class Client {
             ex.printStackTrace();
         }
     }
+
     public void sendZip(String path) {
         try {
             byte[] array = Files.readAllBytes(new File(path).toPath());
