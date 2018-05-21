@@ -86,7 +86,7 @@ public class RegisterPanel  extends JPanel {
                 if(museumText.getText().trim().length() != 0 &&  emailText.getText().trim().length() != 0 )
                     if(validate(emailText.getText()))
                     {
-                        Register reg=new Register(emailText.getText(),"Smart Museums ");
+                        Register reg=new Register(emailText.getText(), museumText.getText(), "Smart Museums ");
 //                System.out.print("Email sent");
                         JFrame loginFrame=new LoginFrame();
                         loginFrame.setVisible(true);

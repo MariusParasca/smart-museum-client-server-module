@@ -34,6 +34,7 @@ public class ExhibitFiles {
             while ((len = in.read(bytes)) > 0) {
                 zos.write(bytes, 0, len);
             }
+            zos.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }

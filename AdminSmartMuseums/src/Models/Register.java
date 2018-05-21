@@ -1,5 +1,7 @@
 package Models;
 
+import ClientJava.Client;
+
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -23,7 +25,7 @@ public class Register {
         secureRandom.nextBytes(token);
         return new BigInteger(1, token).toString(16);
     }
-    public Register(String rcv, String Subject) {
+    public Register(String rcv, String museumName, String Subject) {
         // Create password
         String password = randomString();
 
@@ -35,6 +37,10 @@ public class Register {
 
         // Body
         this.emailBody = "Your username is " + rcv + " and password: "+ password;
+
+
+        String text = "[register-admin]" + this.receiverEmailID + " " + museumName + " " +  password;
+        Client.getInstance().sendText(text);
 
 
         Properties props = new Properties();

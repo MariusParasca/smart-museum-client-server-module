@@ -17,8 +17,10 @@ public class Client {
     private int port;
     private DataOutputStream out;
     private DataInputStream in;
-
     private static Client instance = new Client();
+    private final int type_length = 50;
+    private final int data_length = 974;
+
 
     private Client (){ }
 
@@ -76,15 +78,16 @@ public class Client {
     public String recieveText() {
         try{
             int nrBytes = receiveInt();
-            byte[] b = new byte[1024+nrBytes];
-            byte[] pachet = new byte[1024];
+            byte[] b = new byte[data_length+type_length+nrBytes];
+            byte[] pachet = new byte[data_length+type_length];
             int crt = 0;
             while(crt < nrBytes) {
                 int len = receiveInt();
                 in.read(pachet);
-                System.arraycopy(pachet, 0, b, crt, len);
+                System.arraycopy(pachet, type_length, b, crt, len-type_length);
                 crt += len;
                 int chechs = receiveInt();
+                //trebuie terminata
             }
 
             String text = new String(b);
@@ -127,6 +130,19 @@ public class Client {
         send(bytes);
     }
 
+    byte[] IntToByteArray( int data ) {
+
+        byte[] result = new byte[type_length];
+
+        result[0] = (byte) ((data & 0xFF000000) >> 24);
+        result[1] = (byte) ((data & 0x00FF0000) >> 16);
+        result[2] = (byte) ((data & 0x0000FF00) >> 8);
+        result[3] = (byte) ((data & 0x000000FF) >> 0);
+
+        return result;
+    }
+
+
     public void send(byte[] bytes) {
         try {
             int nrBytes = bytes.length;
@@ -134,25 +150,27 @@ public class Client {
             sendInt(nrBytes);
             int crt = 0;
             int len = nrBytes;
-            byte[] pachet = new byte[1024];
+            byte[] pachet = new byte[data_length + type_length];
+            byte[] type = IntToByteArray(type_length);
+            System.arraycopy(type, 0, pachet, 0, type_length);
             while(crt < nrBytes) {
-                if(len >= 1024) {
-                    System.arraycopy(bytes, crt, pachet, 0, 1024);
-                    sendInt(1024);
+                if(len >= data_length + type_length) {
+                    System.arraycopy(bytes, crt, pachet, type_length, data_length);
+                    sendInt(data_length + type_length);
                     out.write(pachet);
                     out.flush();
-                    crt += 1024;
-                    len -= 1024;
+                    crt += data_length + type_length;
+                    len -= data_length + type_length;
                     sendInt(checkSum(pachet));
                 } else {
-                    System.arraycopy(bytes, crt, pachet, 0, len);
-                    sendInt(1024);
+                    //System.arraycopy(bytes, crt, pachet, , len);
+                    System.arraycopy(bytes, crt, pachet, type_length, len);
+                    sendInt(data_length + type_length);
                     out.write(pachet);
                     out.flush();
                     crt += len;
                     sendInt(checkSum(pachet));
                 }
-
             }
         } catch (IOException ex) {
             ex.printStackTrace();

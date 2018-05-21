@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class InsertPanel extends JPanel {
@@ -178,16 +177,28 @@ public class InsertPanel extends JPanel {
                     exhibitJSON.save();
 
                     exhibitFiles.addImages(photos, exhibitFiles.getPath());
-                    if(!audioFile.equals(null))
+                    /*if(!audioFile.equals(null))
                         try {
                             exhibitFiles.addAudio(audioFile, exhibitFiles.getPath()+"\\");
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
-
+*/
                     //exhibitJSON.add(nameText.getText(), );
                     //String text = "[insert-exhibit]" + "<"+nameText.getText()+">"+"<"+descText.getText()+">"+"<"+linkText.getText()+">";
                     //Client.getInstance().sendText(text);
+                    //try {
+                      //  exhibitFiles.addToZipFile("C:\\Users\\lucai\\Desktop\\git\\Fisa cerintelor Client-Server.pdf");
+                    //} catch (IOException ex) {
+                      //  ex.printStackTrace();
+                    //}
+
+                    String OUTPUT_ZIP_FILE = exhibitFiles.getPath() + ".zip";
+                    String SOURCE_FOLDER = exhibitFiles.getPath(); // SourceFolder path
+
+                    com.company.ZipUtils appZip = new com.company.ZipUtils();
+                    appZip.generateFileList(new File(SOURCE_FOLDER));
+                    appZip.zipIt(OUTPUT_ZIP_FILE);
                     insertFrame.setVisible(false);
 
                 }

@@ -1,4 +1,6 @@
-package ClientJava;
+package com.company;
+
+//Import all needed packages
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,13 +14,11 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtils {
 
     private List <String> fileList;
-    private String OUTPUT_ZIP_FILE;
-    private String SOURCE_FOLDER; // SourceFolder path
+    private static final String OUTPUT_ZIP_FILE = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits.zip";
+    private static final String SOURCE_FOLDER = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits"; // SourceFolder path
 
-    public ZipUtils(String SOURCE_FOLDER, String OUTPUT_ZIP_FILE ) {
+    public ZipUtils() {
         fileList = new ArrayList < String > ();
-        this.OUTPUT_ZIP_FILE = OUTPUT_ZIP_FILE;
-        this.SOURCE_FOLDER = SOURCE_FOLDER;
     }
 
     public void zipIt(String zipFile) {
