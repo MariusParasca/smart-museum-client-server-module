@@ -134,15 +134,6 @@ namespace Client
                 return packet;
             }
         }
-        public static void ReceivePhoto(String fileName)
-        {
-            byte[] data = Receive();
-            using (var ms = new MemoryStream(data))
-            {
-                Image.FromStream(ms).Save(".\\Resources\\" + fileName);
-                Console.WriteLine("[PHOTO] Received \n");
-            }
-        }
         internal static byte[] Receive()
         {
 
@@ -303,14 +294,7 @@ namespace Client
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
-        public static void SendPhoto(String imagePath)
-        {
-            Bitmap bitmap = new Bitmap(imagePath);
-            byte[] imageBytes = ImageToByteArray(bitmap);
-            Send("[Image]", imageBytes);
-            Console.WriteLine("[" + DateTime.Now + "] Image Sent!");
-        }
-
+    
         internal static byte[] packetToBytes(Packet packet)
         {
             try
@@ -367,15 +351,7 @@ namespace Client
             }
         }
 
-        private static byte[] ImageToByteArray(Image imageIn)
-        {
-            using (var ms = new MemoryStream())
-            {
-                imageIn.Save(ms, imageIn.RawFormat);
-                return ms.ToArray();
-            }
-        }
-
+     
        
     }
 

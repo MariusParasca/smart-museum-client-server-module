@@ -14,7 +14,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 class Constants
 {
     public const int type_length = 50;
-    public const int data_length = 974;
+    public const int data_length = 1024;
 }
 [StructLayout(LayoutKind.Sequential, Size = Constants.type_length + Constants.type_length)]
 internal struct Packet
@@ -59,8 +59,8 @@ namespace Server
                 myList.Start();
                 while (running)
                 {
-                    
-                   
+
+
                     Log();
                     Console.WriteLine("[" + DateTime.Now + "] The server is running at port 8001...");
                     Console.WriteLine("[" + DateTime.Now + "] The local End point is  :" + myList.LocalEndpoint);
@@ -69,6 +69,7 @@ namespace Server
                     Socket socket = myList.AcceptSocket();
 
                     Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + socket.RemoteEndPoint);
+
 
                     /*
                     SendInt(s, 10);
@@ -93,32 +94,66 @@ namespace Server
                       SendPhoto(socket, ".//Resources//meme.jpg");
                       SendText(socket, "asd");
                       ReceivePhoto(socket, "final_Test.jpg");*/
-                    SendZip(socket, "muzeu_de_test", ".//Resources//muzeu_de_test1.zip");
-                  //  socket.Close();
-                    
-                    //SendPhoto(socket, ".//Resources//meme.jpg");
-                    SendText(socket, "asd");
-                    //ReceivePhoto(socket, "final_Test.jpg");
-                    //  socket.Close();
-                    
-                    //}
-                    for(int i = 0; i < 1; i++)
+                    /*               SendZip(socket, "muzeu_de_test", ".//Resources//muzeu_de_test1.zip");
+                                 //  socket.Close();
+
+                                   //SendPhoto(socket, ".//Resources//meme.jpg");
+                                   SendText(socket, "asd");
+                                   //ReceivePhoto(socket, "final_Test.jpg");
+                                   //  socket.Close();
+
+                                   //}
+                                   for(int i = 0; i < 1; i++)
+                                   {
+                                       String museumName = ReceiveText(socket); //primirea numelui muzeului
+                                       String path = Museum.GetPath("SmartMuseumDB.Museums", museumName);
+                                       //byte[] package = Museum.GetPackage("SmartMuseumDB.Museums", museumName);
+                                       //Packet packet = bytesToPacket(package);
+                                       SendZip(socket, museumName, path);
+                                   }
+
+                                   for (int i = 0; i < 1; i++)
+                                   {
+                                       String exhibitName = ReceiveText(socket); //primirea numelui exponatului
+                                       String path = Museum.GetPath("SmartMuseumDB.Exhibits", exhibitName);
+                                       //byte[] package = Museum.GetPackage("SmartMuseumDB.Exhibits", exhibitName);
+                                       //Packet packet = bytesToPacket(package);
+                                       SendZip(socket, exhibitName, path);
+                                   }/**/
+
+                    Packet packet = new Packet();
+                    BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
+                    int len = binaryReader.ReadInt32();
+                    packet.data = new byte[Constants.data_length];
+                    int cnt = 0;
+                    byte[] data = new byte[len + Constants.data_length];
+                    byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
+                    int howBig = binaryReader.ReadInt32();
+                    int read = binaryReader.Read(packetBytes, 0, howBig);
+                    int myCheckSum = CalculateChecksum(packetBytes);
+                    int checkSum = binaryReader.ReadInt32();
+                    if (myCheckSum != checkSum)
                     {
-                        String museumName = ReceiveText(socket); //primirea numelui muzeului
-                        String path = Museum.GetPath("SmartMuseumDB.Museums", museumName);
-                        //byte[] package = Museum.GetPackage("SmartMuseumDB.Museums", museumName);
-                        //Packet packet = bytesToPacket(package);
-                        SendZip(socket, museumName, path);
+                        packet.type = "[Error]";
+                        packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
+                        Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
+
                     }
-                    
-                    for (int i = 0; i < 1; i++)
+                    else
                     {
-                        String exhibitName = ReceiveText(socket); //primirea numelui exponatului
-                        String path = Museum.GetPath("SmartMuseumDB.Exhibits", exhibitName);
-                        //byte[] package = Museum.GetPackage("SmartMuseumDB.Exhibits", exhibitName);
-                        //Packet packet = bytesToPacket(package);
-                        SendZip(socket, exhibitName, path);
-                    }/**/
+                        packet = bytesToPacket(packetBytes);
+                        Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
+                        cnt += howBig - Constants.type_length;
+                        if (packet.type == "[EndT]")
+                            break;
+
+                        Console.WriteLine("[" + DateTime.Now + "] Packet received!");
+                    }
+                    if (packet.type.ToLower().StartsWith("[set-museum]") || packet.type.ToLower().StartsWith("[set-exhibit]"))
+                        ReceiveZip(socket, len, packet, howBig);
+                    else
+                        ReceiveText(socket, len, packet, howBig);
+
                 }
                 myList.Stop();
 
@@ -131,11 +166,72 @@ namespace Server
             }
 
         }
-        public static string ReceiveText(Socket socket)
+        internal static string ReceiveText(Socket socket, int len, Packet packet, int cat)
         {
-            byte[] data = Receive(socket);
+            string type = packet.type;
+            byte[] data = Receive(socket, len, packet, cat);
             string str = bArrayToString(data, data.Length);
-            Console.WriteLine("[" + DateTime.Now + "] Packet received!  " + str);
+            switch (type.ToLower())
+            {
+                case "[login]":
+                    { break; }// trebuie sa trimitem un raspuns 
+                 case "[register]":
+                    { break; }// trebuie sa adaugam in db datele
+                case "[delete-museum]":
+                    {
+
+                        string path = Museum.GetPath("Museum", str);
+                        if (!File.Exists(path))
+                        {
+                            byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
+                            Send(socket, "[Error]", err);
+
+                        }
+                        else
+                        {
+                            ;//trebuie sters muzeul din db si de pe disk
+                        }
+
+                        break;
+                    }
+
+                case "[get-museum]":
+                    {
+
+                        string path = Museum.GetPath("Museum", str);
+                        if (!File.Exists(path))
+                        {
+                            byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
+                            Send(socket, "[Error]", err);
+
+                        }
+                        else
+                          SendZip(socket, "[Museum]", Museum.GetPath("Museum", str));
+
+                        break;
+                    }
+                case "[get-exhibit]":
+                    {
+                        string path = Museum.GetPath("Exhibit", str);
+                        if (!File.Exists(path))
+                        {
+                            byte[] err = Encoding.ASCII.GetBytes("Exhibit invalid path");
+                            Send(socket, "[Error]", err);
+
+                        }
+                        else
+                            SendZip(socket, "[Exhibit]", Museum.GetPath("Exhibit", str));
+
+                        break; }
+                case "[get-exhibit-list]":
+                    {
+                        string exhibits = Museum.GetExhibitList(str);
+                        SendText(socket, exhibits);
+                        break;
+                    }
+
+
+            }
             return str;
         }
         private static Packet bytesToPacket(byte[] arr)
@@ -161,32 +257,25 @@ namespace Server
                 return packet;
             }
         }
-        public static void ReceivePhoto(Socket socket, String fileName)
-        {
-            byte[] data = Receive(socket);
-            using (var ms = new MemoryStream(data))
-            {
-                Image.FromStream(ms).Save(".\\Resources\\" + fileName);
-                Console.WriteLine("[PHOTO] Received \n");
-            }
-        }
-        internal static byte[] Receive(Socket socket)
+        internal static byte[] Receive(Socket socket, int len, Packet packet, int cat)
         {
 
             Log();
             try
             {
-                Packet packet = new Packet();
                 BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
-                int len = binaryReader.ReadInt32();
                 packet.data = new byte[Constants.data_length];
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
+                Array.Copy(packetBytes, Constants.type_length, data, cnt, cat - Constants.type_length);
+                cnt += cat;
                 while (cnt < len)
                 {
                     int howBig = binaryReader.ReadInt32();
                     int read = binaryReader.Read(packetBytes, 0, howBig);
+                    cnt += howBig - Constants.type_length;
+
                     int myCheckSum = CalculateChecksum(packetBytes);
                     int checkSum = binaryReader.ReadInt32();
                     if (myCheckSum != checkSum)
@@ -198,11 +287,12 @@ namespace Server
                     }
                     packet = bytesToPacket(packetBytes);
                     Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
-                    cnt += howBig - Constants.type_length;
-                    if (packet.type == "[EndT]")
+                     if (packet.type == "[EndT]")
                         break;
 
                     Console.WriteLine("[" + DateTime.Now + "] Packet received!");
+                 
+
                 }
                 return data;
             }
@@ -236,13 +326,6 @@ namespace Server
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
-        public static void SendPhoto(Socket socket, String imagePath)
-        {
-            Bitmap bitmap = new Bitmap(imagePath);
-            byte[] imageBytes = ImageToByteArray(bitmap);
-            Send(socket, "[Image]", imageBytes);
-            Console.WriteLine("[" + DateTime.Now + "] Image Sent");
-        }
         private static byte[] packetToBytes(Packet packet)
         {
             Log();
@@ -337,14 +420,12 @@ namespace Server
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
         }
-        internal static String ReceiveZip(Socket socket)
+        internal static String ReceiveZip(Socket socket, int len, Packet packet, int cat)
         {
 
             try
             {
-                Packet packet = new Packet();
                 BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
-                int len = binaryReader.ReadInt32();
                 //hh:mm:ss
                 packet.data = new byte[Constants.data_length];
                 int cnt = 0;
@@ -356,6 +437,8 @@ namespace Server
                 //string filename = ".//Resources//" + packet.type + ".zip";
                 Stream fs = null;
                 BinaryWriter bw = null;
+                Array.Copy(packetBytes, Constants.type_length, data, cnt, cat - Constants.type_length);
+                cnt += cat;
 
                 while (cnt < len)
                 {
