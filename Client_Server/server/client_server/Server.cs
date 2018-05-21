@@ -52,6 +52,8 @@ namespace Server
             Compresser = new Compresser();
             running = true;
             endPacket.type = "[EndT]";
+            Museum.GetExhibitList("Muzeu de test");
+            Museum.CreateGeoLocationFile();
             try
             {
                 IPAddress ipAd = IPAddress.Parse("127.0.0.1");
