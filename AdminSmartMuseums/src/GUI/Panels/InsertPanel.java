@@ -34,8 +34,7 @@ public class InsertPanel extends JPanel {
 
 
     ArrayList<File> photos = new ArrayList<>();
-    ArrayList<File> audio = new ArrayList<>();
-
+    private File audioFile = null;
     public InsertPanel(InsertFrame insertFrame) {
 
         this.insertFrame = insertFrame;
@@ -131,52 +130,36 @@ public class InsertPanel extends JPanel {
                     }}
 
                 else if(result == JFileChooser.CANCEL_OPTION){
-                    System.out.println("No File Selected");
+                    System.out.println("No File Select");
                 }
             }
         });
 
 
 
-        uploadPhoto.addActionListener(new ActionListener() {
+        uploadAudio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                JFileChooser chooser = new JFileChooser();
-                chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-
-                // multi selection configure
-                int mode = chooser.getFileSelectionMode();
-                boolean multi = chooser.isMultiSelectionEnabled();
-                chooser.setMultiSelectionEnabled( true );
-                chooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
-
+                JFileChooser file = new JFileChooser();
+                file.setCurrentDirectory(new File(System.getProperty("user.home")));
                 //filter the files
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("*.audio", "mp3");
-                chooser.addChoosableFileFilter(filter);
-
-
-                int result = chooser.showSaveDialog(null);
-                // selectedFiles is an array of files
-                File[] selectedFiles;
+                file.addChoosableFileFilter(filter);
+                int result = file.showSaveDialog(null);
 
                 if(result == JFileChooser.APPROVE_OPTION){
-                    selectedFiles = chooser.getSelectedFiles();
-                    chooser.setMultiSelectionEnabled(multi);
-                    chooser.setFileSelectionMode( mode );
+                    File selectedFile = file.getSelectedFile();
+                    String path = selectedFile.getAbsolutePath();
+                    audioFile = selectedFile;
+                }
 
-                    for (int i=0;i<selectedFiles.length;i++) {
-                        // add the file on i position to the ArrayList  photos that will be sent to the server
-                        audio.add(selectedFiles[i]);
-                        System.out.println(selectedFiles[i].getAbsolutePath());
-                    }}
 
                 else if(result == JFileChooser.CANCEL_OPTION){
-                    System.out.println("No File Selected");
+                    System.out.println("No File Select");
                 }
             }
         });
-
 
         submit.addActionListener(new ActionListener() {
 
@@ -195,9 +178,9 @@ public class InsertPanel extends JPanel {
                         exhibitJSON.save();
 
                         exhibitFiles.addImages(photos, exhibitFiles.getPath());
-                        if(!audio.equals(null))
+                        if(!audioFile.equals(null))
                             try {
-                                exhibitFiles.addAudio(audio, exhibitFiles.getPath()+"\\");
+                                exhibitFiles.addAudio(audioFile, exhibitFiles.getPath()+"\\");
                             } catch (IOException ex) {
                                 ex.printStackTrace();
                             }

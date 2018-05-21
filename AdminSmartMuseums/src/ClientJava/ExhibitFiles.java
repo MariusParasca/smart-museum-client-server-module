@@ -29,7 +29,7 @@ public class ExhibitFiles {
         }
     }
 
-    public void addAudio(ArrayList<File> audioFile, String dest) throws IOException {
+    public void addAudio(File audioFile, String dest) throws IOException {
         InputStream is = null;
         OutputStream os = null;
         try {
