@@ -176,9 +176,17 @@ namespace Server
             switch (type.ToLower())
             {
                 case "[login]":
-                    { break; }// trebuie sa trimitem un raspuns 
+                    {
+                        string sep = "!@/";
+                        string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
+                        string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
+                        break; }// trebuie sa trimitem un raspuns 
                  case "[register]":
-                    { break; }// trebuie sa adaugam in db datele
+                    {
+                        string sep = "!@/";
+                        string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
+                        string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
+                        break; }// trebuie sa adaugam in db datele
                 case "[delete-museum]":
                     {
 
