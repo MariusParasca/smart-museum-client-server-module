@@ -62,14 +62,14 @@ namespace client_server
             jsonInfo.Append("] } }");
             CloseConnection();
 
-            using (FileStream fileStream = File.Create("geoLocations.json"))
+            using (FileStream fileStream = File.Create(".//Resources//geoLocations.json"))
             {
                 Byte[] info = new UTF8Encoding(true).GetBytes(jsonInfo.ToString());
                 fileStream.Write(info, 0, info.Length);
             }
          }
 
-        /*public static String GetExhibitList(String museum) // probabil nu o sa mai trebuiasca
+        public static String GetExhibitList(String museum) // probabil nu o sa mai trebuiasca
         {
             if(museum == null)
             {
@@ -79,17 +79,16 @@ namespace client_server
             StringBuilder itemList = new StringBuilder();
             ExecuteQuery("SELECT e.name " +
                         " FROM SmartMuseumDB.Museums m INNER JOIN SmartMuseumDB.Exhibits e ON m.id = e.idMuseum " +
-                        " WHERE museumName = @val1", new String[] { museum });
+                        " WHERE m.name = @val1", new String[] { museum });
             while (reader.Read())
             {
                 itemList.Append(reader[0] + ",");
             }
             itemList.Remove(itemList.Length - 1, 1);
-            reader.Close();
             Console.WriteLine(itemList.ToString());
-
+            CloseConnection();
             return itemList.ToString();
-        }*/
+        }
 
         public static String GetPath(String tableName, String queryParameter)
         {
