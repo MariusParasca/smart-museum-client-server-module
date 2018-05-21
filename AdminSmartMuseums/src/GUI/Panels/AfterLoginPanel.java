@@ -38,6 +38,7 @@ public class AfterLoginPanel extends JPanel {
 
         Object columnNames[] = { "Exhibit"};
         JTable table = new JTable(rowData, columnNames);
+        // aici ar trebui sa se populeze tabelul cu exponatele din muzeu
 
         JScrollPane scrollPane = new JScrollPane(table);
         frame.add(scrollPane, BorderLayout.CENTER);
