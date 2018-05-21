@@ -337,7 +337,7 @@ namespace Server
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
         }
-        internal static byte[] ReceiveZip(Socket socket)
+        internal static String ReceiveZip(Socket socket)
         {
 
             try
@@ -352,9 +352,10 @@ namespace Server
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
                 DateTime dateTime = DateTime.Now;
                 //FileStream fs = File.Create( );
-                string filename = ".//Resources//" + dateTime.ToString("dd_MM_yyyy_hh_mm_ss") + ".zip";
-                Stream fs = new FileStream(filename, FileMode.Append);
-                BinaryWriter bw = new BinaryWriter(fs);
+                bool ok = false;
+                //string filename = ".//Resources//" + packet.type + ".zip";
+                Stream fs = null;
+                BinaryWriter bw = null;
 
                 while (cnt < len)
                 {
@@ -373,13 +374,22 @@ namespace Server
                     packet = bytesToPacket(packetBytes);
                     cnt += howBig - Constants.type_length;
 
+                    if (!ok)
+                    {
+                        packet.type = packet.type.Replace("\0", String.Empty);
+                        string filename = ".//Resources//" + packet.type + ".zip";
+                        fs = new FileStream(filename, FileMode.Append);
+                        bw = new BinaryWriter(fs);
+                        ok = true;
+                    }
+
                     bw.Write(packet.data);
                     bw.Flush();
                     Console.WriteLine("[" + DateTime.Now + "] Packet received!");
                 }
                 fs.Close();
                 bw.Close();
-                return data;
+                return packet.type;
             }
             catch (Exception e)
             {
@@ -389,7 +399,6 @@ namespace Server
             }
 
         }
-
         private static byte[] ImageToByteArray(System.Drawing.Image imageIn)
         {
             using (var ms = new MemoryStream())
