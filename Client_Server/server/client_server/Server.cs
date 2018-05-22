@@ -153,6 +153,7 @@ namespace Server
 
                         Console.WriteLine("[" + DateTime.Now + "] Packet received!");
                     }
+                    packet.type.Replace("\0", string.Empty);
                     if (packet.type.ToLower().StartsWith("[set-museum]") || packet.type.ToLower().StartsWith("[set-exhibit]"))
                         ReceiveZip(socket, len, packet, howBig);
                     else
@@ -175,6 +176,8 @@ namespace Server
             string type = packet.type;
             byte[] data = Receive(socket, len, packet, cat);
             string str = bArrayToString(data, data.Length);
+            type.Replace("\0", string.Empty);
+            str.Replace("\0", string.Empty);
             switch (type.ToLower())
             {
                 case "[login]":
