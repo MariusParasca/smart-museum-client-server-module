@@ -11,7 +11,7 @@ namespace client_server
     public class Museum
     {
         private static MySqlConnection conn;
-        private static MySqlDataReader reader;
+        private static  MySqlDataReader reader;
         private static MySqlCommand command;
         public static void CreateGeoLocationFile()
         {

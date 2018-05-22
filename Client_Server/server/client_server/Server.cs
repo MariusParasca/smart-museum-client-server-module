@@ -37,7 +37,7 @@ namespace Server
         {
             DateTime dateTime = DateTime.Today;
             string logFileName = ".\\Logs\\" + dateTime.ToString("dd_MM_yyyy") + ".log";
-            if( sw == null)
+            if (sw == null)
                 sw = File.AppendText(logFileName);
             sw.AutoFlush = true;
             Console.SetOut(sw);
@@ -173,106 +173,94 @@ namespace Server
         }
         internal static string ReceiveText(Socket socket, int len, Packet packet, int cat)
         {
-            string type = packet.type;
+            string type = packet.type.Replace("\0", string.Empty);
             byte[] data = Receive(socket, len, packet, cat);
             string str = bArrayToString(data, data.Length);
-            type.Replace("\0", string.Empty);
-            str.Replace("\0", string.Empty);
-            if(type.Equals("[login]"))
+            str = str.Replace("\0", string.Empty);
+            if (type.Equals("[login]"))
             {
                 string sep = "!@/";
                 string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
                 string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
                 if (Museum.Login(user, password))
                 {
-                    //trimite raspuns cu da
+                    string museum = ""; //trebuie luat din db muzeul pentru userul asta
+                    SendText(socket, Museum.GetExhibitList(museum));
                 }
                 else
                 {
-                    //trimite raspuns cu nu
+                    SendText(socket, "Invalid user or password! Please try again!");
                 }
 
             }
-            switch (type.ToLower())
+            else
+                if (type.Equals("[register]"))
             {
-                case "[login]":
-                    {
-                        string sep = "!@/";
-                        string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
-                        string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
-                        if(Museum.Login(user, password))
-                        {
-                            //trimite raspuns cu da
-                        }
-                        else
-                        {
-                            //trimite raspuns cu nu
-                        }
-                        break; }// trebuie sa trimitem un raspuns 
-                 case "[register]":
-                    {
-                        string sep = "!@/";
-                        string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
-                        string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
-                        Museum.Register(user, password); // fara a trimite un raspuns daca s-a inserat cu success
-                        break; }
-                case "[delete-museum]":
-                    {
+                string sep = "!@/";
+                string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
+                string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
+                Museum.Register(user, password); // fara a trimite un raspuns daca s-a inserat cu success
 
-                        string path = Museum.GetPath("Museum", str);
-                        if (!File.Exists(path))
-                        {
-                            byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
-                            Send(socket, "[Error]", err);
+            }
+            else
 
-                        }
-                        else
-                        {
-                            ;//trebuie sters muzeul din db si de pe disk
-                        }
+                if (type.Equals("[delete-museum]"))
+            {
+                string path = Museum.GetPath("Museum", str);
+                if (!File.Exists(path))
+                {
+                    byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
+                    Send(socket, "[Error]", err);
 
-                        break;
-                    }
+                }
+                else
+                    File.Delete(@path);
+            }
+            else
 
-                case "[get-museum]":
-                    {
+                if (type.Equals("[get-museum]"))
+            {
 
-                        string path = Museum.GetPath("Museum", str);
-                        if (!File.Exists(path))
-                        {
-                            byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
-                            Send(socket, "[Error]", err);
+                string path = Museum.GetPath("Museum", str);
+                if (!File.Exists(path))
+                {
+                    byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
+                    Send(socket, "[Error]", err);
 
-                        }
-                        else
-                          SendZip(socket, "[Museum]", Museum.GetPath("Museum", str));
-
-                        break;
-                    }
-                case "[get-exhibit]":
-                    {
-                        string path = Museum.GetPath("Exhibit", str);
-                        if (!File.Exists(path))
-                        {
-                            byte[] err = Encoding.ASCII.GetBytes("Exhibit invalid path");
-                            Send(socket, "[Error]", err);
-
-                        }
-                        else
-                            SendZip(socket, "[Exhibit]", Museum.GetPath("Exhibit", str));
-
-                        break; }
-                case "[get-exhibit-list]":
-                    {
-                        string exhibits = Museum.GetExhibitList(str);
-                        SendText(socket, exhibits);
-                        break;
-                    }
+                }
+                else
+                    SendZip(socket, "[Museum]", Museum.GetPath("Museum", str));
 
 
             }
+            else
+                if (type.Equals("[get-exhibit]"))
+            {
+                string path = Museum.GetPath("Exhibit", str);
+                if (!File.Exists(path))
+                {
+                    byte[] err = Encoding.ASCII.GetBytes("Exhibit invalid path");
+                    Send(socket, "[Error]", err);
+
+                }
+                else
+                    SendZip(socket, "[Exhibit]", Museum.GetPath("Exhibit", str));
+
+
+            }
+            else
+                if (type.Equals("[get-exhibit-list]"))
+            {
+                string exhibits = Museum.GetExhibitList(str);
+                SendText(socket, exhibits);
+
+            }
+
+
+
             return str;
         }
+
         private static Packet bytesToPacket(byte[] arr)
         {
             try
@@ -302,14 +290,15 @@ namespace Server
             Log();
             try
             {
-                BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
-                packet.data = new byte[Constants.data_length];
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
-                data = packetToBytes(packet);
+                packetBytes = packetToBytes(packet);
                 Array.Copy(packetBytes, Constants.type_length, data, cnt, cat - Constants.type_length);
                 cnt += cat;
+                BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
+                packet.data = new byte[Constants.data_length];
+
                 while (cnt < len)
                 {
                     int howBig = binaryReader.ReadInt32();
@@ -327,11 +316,11 @@ namespace Server
                     }
                     packet = bytesToPacket(packetBytes);
                     Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
-                     if (packet.type == "[EndT]")
+                    if (packet.type == "[EndT]")
                         break;
 
                     Console.WriteLine("[" + DateTime.Now + "] Packet received!");
-                 
+
 
                 }
                 return data;
@@ -362,7 +351,7 @@ namespace Server
         {
             Log();
             byte[] data = Encoding.UTF8.GetBytes(text);
-            Send(socket,"[Text]", data);
+            Send(socket, "[Text]", data);
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
@@ -411,7 +400,7 @@ namespace Server
 
                     cnt += x;
                 }
-         
+
 
             }
 
@@ -433,7 +422,7 @@ namespace Server
                 int cnt = 0;
                 int x = 0;
                 int size = 0, checkSum = 0;
-                int len =(int)new FileInfo(filePath).Length;
+                int len = (int)new FileInfo(filePath).Length;
                 FileStream fs = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 socket.Send(BitConverter.GetBytes(len), 4, SocketFlags.None);
                 while (cnt < len)
@@ -522,7 +511,8 @@ namespace Server
             }
 
         }
-     
+
+
 
     }
 }
