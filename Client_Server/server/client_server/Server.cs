@@ -178,6 +178,21 @@ namespace Server
             string str = bArrayToString(data, data.Length);
             type.Replace("\0", string.Empty);
             str.Replace("\0", string.Empty);
+            if(type.Equals("[login]"))
+            {
+                string sep = "!@/";
+                string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
+                string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
+                if (Museum.Login(user, password))
+                {
+                    //trimite raspuns cu da
+                }
+                else
+                {
+                    //trimite raspuns cu nu
+                }
+
+            }
             switch (type.ToLower())
             {
                 case "[login]":
@@ -506,25 +521,7 @@ namespace Server
             }
 
         }
-        private static byte[] ImageToByteArray(System.Drawing.Image imageIn)
-        {
-            using (var ms = new MemoryStream())
-            {
-                imageIn.Save(ms, imageIn.RawFormat);
-                return ms.ToArray();
-            }
-        }
-
-        private static byte[] addLength(byte[] baseArray, int len)
-        {
-
-            byte[] lenBytes = BitConverter.GetBytes(len);
-            byte[] rv = new byte[lenBytes.Length + len];
-            Buffer.BlockCopy(lenBytes, 0, rv, 0, lenBytes.Length);
-            Buffer.BlockCopy(baseArray, 0, rv, lenBytes.Length, len);
-            return rv;
-        }
-
+     
 
     }
 }
