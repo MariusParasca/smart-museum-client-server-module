@@ -45,8 +45,8 @@ namespace Server
         }
         public static void Main()
         {
-            //Museum.CreateGeoLocationFile();
-            //Museum.GetExhibitList("Muzeu de test");
+            Museum.CreateGeoLocationFile();
+            Museum.GetExhibitList("Muzeu de test");
             //Museum.GetPackage("SmartMuseumDB.Museums", "Muzeu de test");
             SFTP sftp = new SFTP();
             Compresser = new Compresser();
@@ -307,6 +307,7 @@ namespace Server
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
+                data = packetToBytes(packet);
                 Array.Copy(packetBytes, Constants.type_length, data, cnt, cat - Constants.type_length);
                 cnt += cat;
                 while (cnt < len)
