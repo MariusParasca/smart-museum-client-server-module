@@ -54,6 +54,8 @@ namespace Server
             endPacket.type = "[EndT]";
             Museum.GetExhibitList("Muzeu de test");
             Museum.CreateGeoLocationFile();
+            Museum.Login("Muzeu de test", "parola");
+            //Museum.register("Muzeu de test2", "parola");
             try
             {
                 IPAddress ipAd = IPAddress.Parse("127.0.0.1");
@@ -180,13 +182,22 @@ namespace Server
                         string sep = "!@/";
                         string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
                         string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
+                        if(Museum.Login(user, password))
+                        {
+                            //trimite raspuns cu da
+                        }
+                        else
+                        {
+                            //trimite raspuns cu nu
+                        }
                         break; }// trebuie sa trimitem un raspuns 
                  case "[register]":
                     {
                         string sep = "!@/";
                         string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
                         string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
-                        break; }// trebuie sa adaugam in db datele
+                        Museum.Register(user, password); // fara a trimite un raspuns daca s-a inserat cu success
+                        break; }
                 case "[delete-museum]":
                     {
 

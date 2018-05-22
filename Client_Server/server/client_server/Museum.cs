@@ -115,6 +115,48 @@ namespace client_server
             return "noExist";
         }
 
+        public static bool Login(String username, String password)
+        {
+            if (username == null || password == null)
+            {
+                Console.WriteLine("Username or password is null");
+                return false;
+            }
+            username = username.Replace("\0", String.Empty);
+            password = password.Replace("\0", String.Empty);
+            ExecuteQuery("SELECT id FROM SmartMuseumDB.users WHERE username = @val1 AND password = @val2",
+                         new String[] { username, password });
+            if(reader != null)
+            {
+                reader.Read();
+                if (reader.HasRows)
+                {
+                    CloseConnection();
+                    return true;
+                }
+                else
+                {
+                    CloseConnection();
+                    return false;
+                }
+            }
+            CloseConnection();
+            return false;
+        }
+
+        public static void Register(String username, String password)
+        {
+            if (username == null || password == null)
+            {
+                Console.WriteLine("Username or password is null");
+                return;
+            }
+            username = username.Replace("\0", String.Empty);
+            password = password.Replace("\0", String.Empty);
+            ExecuteQuery("INSERT INTO SmartMuseumDB.users VALUES(null, @val1, @val2)",
+                         new String[] { username, password });
+        }
+
         public static byte[] GetPackage(String tableName, String queryParameter)
         {
             if(tableName == null || queryParameter == null)
