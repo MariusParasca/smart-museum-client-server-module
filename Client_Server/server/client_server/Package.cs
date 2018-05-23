@@ -61,15 +61,22 @@ namespace client_server
             jsonInfo.Remove(jsonInfo.Length - 1, 1);
             jsonInfo.Append("] } }");
             CloseConnection();
-
-            using (FileStream fileStream = File.Create(".//Resources//geoLocations.json"))
+            try
             {
-                Byte[] info = new UTF8Encoding(true).GetBytes(jsonInfo.ToString());
-                fileStream.Write(info, 0, info.Length);
+                using (FileStream fileStream = File.Create(".//Resources//geoLocations.json"))
+                {
+                    Byte[] info = new UTF8Encoding(true).GetBytes(jsonInfo.ToString());
+                    fileStream.Write(info, 0, info.Length);
+                }
             }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            
          }
 
-        public static String GetExhibitList(String museum) // probabil nu o sa mai trebuiasca
+        public static String GetExhibitList(String museum)
         {
             if(museum == null)
             {
@@ -89,6 +96,20 @@ namespace client_server
             CloseConnection();
             return itemList.ToString();
         }
+        private static String GetSingleResult()
+        {
+            if (reader != null)
+            {
+                reader.Read();
+                if (reader.HasRows)
+                {
+                    String result = reader[0].ToString();
+                    Console.WriteLine(result);
+                    return result;
+                }
+            }
+            return "noExist";
+        }
 
         public static String GetPath(String tableName, String queryParameter)
         {
@@ -100,19 +121,9 @@ namespace client_server
             queryParameter = queryParameter.Replace("\0", String.Empty);
             byte[] byteArrayFile = new byte[] { };
             ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new String[] { queryParameter });
-            if (reader != null)
-            {
-                reader.Read();
-                if (reader.HasRows)
-                {
-                    Console.WriteLine(reader[0]);
-                    String path = reader[0].ToString();
-                    CloseConnection();
-                    return path;
-                }
-            }
+            String path = GetSingleResult();
             CloseConnection();
-            return "noExist";
+            return path;
         }
 
         public static bool Login(String username, String password)
@@ -155,7 +166,73 @@ namespace client_server
             password = password.Replace("\0", String.Empty);
             ExecuteQuery("INSERT INTO SmartMuseumDB.users VALUES(null, @val1, @val2)",
                          new String[] { username, password });
+            CloseConnection();
         }
+
+        private static string GetMuseumId(String name)
+        {
+            if (name == null)
+            {
+                Console.WriteLine("name");
+                return "";
+            }
+
+            name = name.Replace("\0", String.Empty);
+            ExecuteQuery("SELECT id FROM SmartMuseumDB.Museums WHERE name = @val1", new String[] { name });
+            String museumId = GetSingleResult();
+            CloseConnection();
+            return museumId;
+        }
+
+        public static void InsertExhibits(String museumName, String author, 
+                                          String[] exhibits, String[] paths)
+        {
+            if (museumName == null || exhibits == null)
+            {
+                Console.WriteLine("museumName or exhibits is null");
+                return;
+            }
+            if(exhibits.Length == 0)
+            {
+                Console.WriteLine("Exhibits array is empty");
+                return;
+            }
+            if(exhibits.Length != paths.Length)
+            {
+                Console.WriteLine("There are not the same number of elements in the arrays");
+                return;
+            }
+
+            museumName = museumName.Replace("\0", String.Empty);
+            String museumId = GetMuseumId(museumName);
+            if(museumId.Equals("noExist"))
+            {
+                Console.WriteLine("Invalid museum name");
+                return;
+            }
+            for(int i = 0; i < exhibits.Length; i++)
+            {
+                ExecuteQuery(
+                    "INSERT INTO SmartMuseumDB.Exhibits VALUES(null, @val1, @val2, @val3, @val4)",
+                    new String[] { museumId, author, museumName, paths[i] });
+                CloseConnection();
+            }
+        }
+
+        public static void InsertMuseum(String name, double latitude, 
+                                        double longitude, double radius, String path)
+        {
+            if (name == null || path == null)
+            {
+                Console.WriteLine("name or path is null");
+                return;
+            }
+            ExecuteQuery("INSERT INTO SmartMuseumDB.Museums VALUES(null, @val1, @val2, @val3, @val4, @val5)",
+                         new String[] { name, latitude.ToString(), longitude.ToString(), radius.ToString(), path });
+            CloseConnection();
+        }
+
+
         private static void CloseConnection()
         {
             reader.Close();

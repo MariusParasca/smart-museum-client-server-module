@@ -53,7 +53,11 @@ namespace Server
             Package.GetExhibitList("Muzeu de test");
             Package.CreateGeoLocationFile();
             Package.Login("Muzeu de test", "parola");
-            //Museum.register("Muzeu de test2", "parola");
+            Package.GetMuseumId("Muzeu de tesst");
+            /*Package.InsertExhibits("Muzeu de test", "test",
+                new String[] { "test1", "test2" }, new String[] { "path1", "path2" });
+            Package.InsertMuseum("test", 2.342, 3.423, 2.34, "path");
+            Package.register("Muzeu de test2", "parola");*/
             try
             {
                 IPAddress ipAd = IPAddress.Parse("127.0.0.1");
