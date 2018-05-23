@@ -9,7 +9,10 @@ namespace Client
         {
             if (!Directory.Exists(destinationPath))
             {
+                //Asta este pentru Visual Studio
                 ZipFile.ExtractToDirectory(zipPath, destinationPath);
+                //Asta este pentru Unity
+                //ZipUtil.Unzip(zipPath, destinationPath);
             }
         }
 
