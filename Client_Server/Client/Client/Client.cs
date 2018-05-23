@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 
 class Constants
 {
@@ -39,7 +40,7 @@ namespace Client
             //Museum museum2 = new Museum(".\\Resources\\muzeu_de_test");
             //Exhibit exhibit2 = new Exhibit(".\\Resources\\muzeu_de_test\\Tablou_de_test");
 
-            
+            GetPacketNameFromPacketType("[Museum]-muzeu_de_test");
             try
             {
 
@@ -57,18 +58,18 @@ namespace Client
                 //ReceivePhoto("test.jpg");
                 //ReceiveText();
                 // SendPhoto( ".//Resources//test.jpg");
-                ReceiveZip();
+                //ReceiveZip();
 
                 //SendText("String de test");
                 //ReceivePhoto("test.jpg");
-                ReceiveText();
+                //ReceiveText();
                 //SendPhoto( ".//Resources//test.jpg");
                 
                 //Teste
-                Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
+                //Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
                 //museum = new Museum(binaryWriter, binaryReader, "invalid");
                 //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
-                Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Sunset");
+                Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Tablou_de_test");
                 /*//exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
                 // exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
                 */
@@ -214,10 +215,10 @@ namespace Client
                     packet = bytesToPacket(packetBytes);
                     cnt += howBig - Constants.type_length;
 
-                    if(!ok)
+                    if(!ok && !packet.type.Equals("[Error]"))
                     {
                         packet.type = packet.type.Replace("\0", String.Empty);
-                        string filename = ".//Resources//" + packet.type + ".zip";
+                        string filename = ".//Resources//" + GetPacketNameFromPacketType(packet.type) + ".zip";
                         fs = new FileStream(filename, FileMode.Append);
                         bw = new BinaryWriter(fs);
                         ok = true;
@@ -288,9 +289,9 @@ namespace Client
         }
 
 
-        public static void SendText(String text)
+        public static void SendText(String packetType, String text)
         {
-            Send("[Text]",  Encoding.UTF8.GetBytes(text));
+            Send("[" + packetType + "]",  Encoding.UTF8.GetBytes(text));
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
@@ -351,8 +352,19 @@ namespace Client
             }
         }
 
-     
-       
+        public static string GetPacketNameFromPacketType(String path)
+        {
+            Regex regex = new Regex(".+-([\\w\\s]+\\w)", RegexOptions.IgnoreCase);
+            Match match = regex.Match(path);
+            if (match.Success)
+            {
+                return match.Groups[1].ToString();
+            }
+            return null;
+        }
+
+
+
     }
 
 

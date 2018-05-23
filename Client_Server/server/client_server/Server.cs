@@ -10,11 +10,12 @@ using System.IO;
 using client_server;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 
 class Constants
 {
     public const int type_length = 50;
-    public const int data_length = 1024;
+    public const int data_length = 974;
 }
 [StructLayout(LayoutKind.Sequential, Size = Constants.type_length + Constants.type_length)]
 internal struct Packet
@@ -45,9 +46,6 @@ namespace Server
         }
         public static void Main()
         {
-            Museum.CreateGeoLocationFile();
-            Museum.GetExhibitList("Muzeu de test");
-            //Museum.GetPackage("SmartMuseumDB.Museums", "Muzeu de test");
             SFTP sftp = new SFTP();
             Compresser = new Compresser();
             running = true;
@@ -221,7 +219,7 @@ namespace Server
                 if (type.Equals("[get-museum]"))
             {
 
-                string path = Museum.GetPath("Museum", str);
+                string path = Museum.GetPath("SmartMuseumDB.Museums", str);
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
@@ -229,14 +227,14 @@ namespace Server
 
                 }
                 else
-                    SendZip(socket, "[Museum]", Museum.GetPath("Museum", str));
+                    SendZip(socket, "[Museum]-" + GetPacketNameFromPath(path), path);
 
 
             }
             else
                 if (type.Equals("[get-exhibit]"))
             {
-                string path = Museum.GetPath("Exhibit", str);
+                string path = Museum.GetPath("SmartMuseumDB.Exhibits", str);
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Exhibit invalid path");
@@ -244,7 +242,7 @@ namespace Server
 
                 }
                 else
-                    SendZip(socket, "[Exhibit]", Museum.GetPath("Exhibit", str));
+                    SendZip(socket, "[Exhibit]-" + GetPacketNameFromPath(path), path);
 
 
             }
@@ -512,7 +510,16 @@ namespace Server
 
         }
 
-
+        public static string GetPacketNameFromPath(String path)
+        {
+            Regex regex = new Regex("\\\\([\\w\\s]+)\\.\\w+", RegexOptions.IgnoreCase);
+            Match match = regex.Match(path);
+            if (match.Success)
+            {
+                return match.Groups[1].ToString();
+            }
+            return null;
+        }
 
     }
 }

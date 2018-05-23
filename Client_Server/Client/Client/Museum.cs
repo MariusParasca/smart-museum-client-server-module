@@ -48,7 +48,7 @@ namespace Client
         {
             try
             {
-                Client.SendText(this.name);
+                Client.SendText("get-museum", this.name);
                 String museumPackage = Client.ReceiveZip();
                 Compresser.DecompressZip(pathToMuseum + ".zip", pathToMuseum);
                 /*

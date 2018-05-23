@@ -50,7 +50,7 @@ namespace Client
         {
             try
             {
-                Client.SendText(name);
+                Client.SendText("get-exhibit", name);
                 String exhibitPackage = Client.ReceiveZip();
                 Compresser.DecompressZip(pathToExhibit + ".zip", pathToExhibit);
                 /*bool ok = Client.CheckPacketError(exhibitPackage);
