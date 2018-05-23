@@ -50,9 +50,9 @@ namespace Server
             Compresser = new Compresser();
             running = true;
             endPacket.type = "[EndT]";
-            Museum.GetExhibitList("Muzeu de test");
-            Museum.CreateGeoLocationFile();
-            Museum.Login("Muzeu de test", "parola");
+            Package.GetExhibitList("Muzeu de test");
+            Package.CreateGeoLocationFile();
+            Package.Login("Muzeu de test", "parola");
             //Museum.register("Muzeu de test2", "parola");
             try
             {
@@ -180,10 +180,10 @@ namespace Server
                 string sep = "!@/";
                 string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
                 string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
-                if (Museum.Login(user, password))
+                if (Package.Login(user, password))
                 {
                     string museum = ""; //trebuie luat din db muzeul pentru userul asta
-                    SendText(socket, Museum.GetExhibitList(museum));
+                    SendText(socket, Package.GetExhibitList(museum));
                 }
                 else
                 {
@@ -197,14 +197,14 @@ namespace Server
                 string sep = "!@/";
                 string user = str.Split(sep.ToCharArray(), StringSplitOptions.None)[0];
                 string password = str.Split(sep.ToCharArray(), StringSplitOptions.None)[1];
-                Museum.Register(user, password); // fara a trimite un raspuns daca s-a inserat cu success
+                Package.Register(user, password); // fara a trimite un raspuns daca s-a inserat cu success
 
             }
             else
 
                 if (type.Equals("[delete-museum]"))
             {
-                string path = Museum.GetPath("Museum", str);
+                string path = Package.GetPath("Museum", str);
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
@@ -219,7 +219,7 @@ namespace Server
                 if (type.Equals("[get-museum]"))
             {
 
-                string path = Museum.GetPath("SmartMuseumDB.Museums", str);
+                string path = Package.GetPath("SmartMuseumDB.Museums", str);
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
@@ -234,7 +234,7 @@ namespace Server
             else
                 if (type.Equals("[get-exhibit]"))
             {
-                string path = Museum.GetPath("SmartMuseumDB.Exhibits", str);
+                string path = Package.GetPath("SmartMuseumDB.Exhibits", str);
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Exhibit invalid path");
@@ -249,7 +249,7 @@ namespace Server
             else
                 if (type.Equals("[get-exhibit-list]"))
             {
-                string exhibits = Museum.GetExhibitList(str);
+                string exhibits = Package.GetExhibitList(str);
                 SendText(socket, exhibits);
 
             }

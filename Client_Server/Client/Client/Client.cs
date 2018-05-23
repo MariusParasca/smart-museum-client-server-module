@@ -66,10 +66,10 @@ namespace Client
                 //SendPhoto( ".//Resources//test.jpg");
                 
                 //Teste
-                //Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
+                Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
                 //museum = new Museum(binaryWriter, binaryReader, "invalid");
                 //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
-                Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Tablou_de_test");
+                //Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Tablou_de_test");
                 /*//exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
                 // exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
                 */
@@ -81,7 +81,6 @@ namespace Client
             {
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
-            
         }
 
         public static BinaryReader GetBinaryReader() { return binaryReader; }

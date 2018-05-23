@@ -14,17 +14,17 @@ namespace client_server.Tests
         [TestMethod()]
         public void CreateGeoLocationFileTest()
         {
-            Museum.CreateGeoLocationFile();
+            Package.CreateGeoLocationFile();
         }
 
         [TestMethod()]
         public void GetPackageTest()
         {
-            Museum.GetPackage(null, null);
-            Museum.GetPackage("SmartMuseumDB.Exhibits", "Test");
-            Museum.GetPackage("SmartMuseumDB.invalid", "Test");
-            Museum.GetPackage("SmartMuseumDB.invalid", "invalid");
-            Museum.GetPackage("SmartMuseumDB.Exhibits", "invalid");
+            Package.GetPackage(null, null);
+            Package.GetPackage("SmartMuseumDB.Exhibits", "Test");
+            Package.GetPackage("SmartMuseumDB.invalid", "Test");
+            Package.GetPackage("SmartMuseumDB.invalid", "invalid");
+            Package.GetPackage("SmartMuseumDB.Exhibits", "invalid");
         }
     }
 }

@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace client_server
 {
-    public class Museum
+    public class Package
     {
         private static MySqlConnection conn;
-        private static  MySqlDataReader reader;
+        private static MySqlDataReader reader;
         private static MySqlCommand command;
         public static void CreateGeoLocationFile()
         {
@@ -156,7 +156,12 @@ namespace client_server
             ExecuteQuery("INSERT INTO SmartMuseumDB.users VALUES(null, @val1, @val2)",
                          new String[] { username, password });
         }
-
+        private static void CloseConnection()
+        {
+            reader.Close();
+            Database.CloseConnection();
+        }
+        /*
         public static byte[] GetPackage(String tableName, String queryParameter)
         {
             if(tableName == null || queryParameter == null)
@@ -180,13 +185,8 @@ namespace client_server
             return byteArrayFile;
         }
 
-        private static void CloseConnection()
-        {
-            reader.Close();
-            Database.CloseConnection();
-        }
 
-        /* Probabil vor fii sterse
+         //Probabil vor fii sterse
         public static byte[] GetExhibit(String exhibit)
         {
             byte[] byteArrayFile;

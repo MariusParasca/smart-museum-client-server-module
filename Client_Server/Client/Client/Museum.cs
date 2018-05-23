@@ -7,13 +7,9 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    public class Museum
+    public class Museum : Package
     {
         List<Exhibit> exhibits;
-        String name;
-        BinaryWriter outStream;
-        BinaryReader inStream;
-
         public List<Exhibit> GetExhibits() { return exhibits; }
 
         public Museum(BinaryWriter outStream, BinaryReader inStream, String name)
@@ -28,7 +24,7 @@ namespace Client
             this.inStream = inStream;
             exhibits = new List<Exhibit>();
             String path = ".\\Resources\\" + name;
-            GetMuseum(path);
+            GetPackage("get-museum", path);
             CreateExhibits(path);
         }
 
@@ -42,39 +38,6 @@ namespace Client
             exhibits = new List<Exhibit>();
             this.name = pathToMuseum.Split('\\').Last();
             CreateExhibits(pathToMuseum); // trebuie dat path-ul muzeului
-        }
-
-        private void GetMuseum(String pathToMuseum) // trebuie modificata
-        {
-            try
-            {
-                Client.SendText("get-museum", this.name);
-                String museumPackage = Client.ReceiveZip();
-                Compresser.DecompressZip(pathToMuseum + ".zip", pathToMuseum);
-                /*
-                bool ok = Client.CheckPacketError(museumPackage);
-                if (!ok)
-                {
-                    Console.WriteLine("Invalid museum name");
-                }
-                else
-                {
-                    //trebuie modificat path-ul aferent
-                    using (FileStream fs = File.Create(pathToMuseum + ".zip")) //probabil fara extensia .zip
-                    {
-                        fs.Write(museumPackage, 0, museumPackage.Length);
-                    }
-
-                    //trebuie despachetat  zip-ul si apoi apelata createExhibits(path-ul folderului)
-                    CreateExhibits(pathToMuseum); // folder hardcodat
-                    Console.WriteLine("Package(museum) received");
-                }      */          
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
-            }
-
         }
 
         private void CreateExhibits(String museumFolder)

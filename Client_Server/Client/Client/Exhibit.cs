@@ -9,15 +9,12 @@ using Newtonsoft.Json;
 
 namespace Client
 {
-    public class Exhibit
+    public class Exhibit : Package
     {
         private List<String> imagePaths;
-        private String name = null;
         private String pathToAudioFile = null;
         private ExhibitInfo jsonInfo;
-        private BinaryWriter outStream;
-        private BinaryReader inStream;
-
+        
         public Exhibit(BinaryWriter outStream, BinaryReader inStream, String name)
         {
             if (name == null || outStream == null || inStream == null)
@@ -30,7 +27,7 @@ namespace Client
             this.inStream = inStream;
             imagePaths = new List<String>();
             String path = ".\\Resources\\" + name;
-            GetExhibit(path);
+            GetPackage("get-exhibit", path);
             CreateExhibit(path);
         }
 
@@ -46,36 +43,7 @@ namespace Client
             CreateExhibit(exhibitFolder);
         }
 
-        private void GetExhibit(String pathToExhibit)  // Aceasta metoda trebuie modificata
-        {
-            try
-            {
-                Client.SendText("get-exhibit", name);
-                String exhibitPackage = Client.ReceiveZip();
-                Compresser.DecompressZip(pathToExhibit + ".zip", pathToExhibit);
-                /*bool ok = Client.CheckPacketError(exhibitPackage);
-                if (!ok)
-                {
-                    Console.WriteLine("Invalid exhibit name");
-                }
-                else
-                {
-                    using (FileStream fs = File.Create(pathToExhibit + ".zip"))
-                    {
-                        fs.Write(exhibitPackage, 0, exhibitPackage.Length);
-                    }
-                    //trebuie despachetat  zip-ul si apoi apelata CreateExhibit(path-ul folderului)
-                    CreateExhibit(pathToExhibit); // folder hardcodat
-                    Console.WriteLine("Package(exhibit) received");
-                }*/
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
-            }
-        }
-
-        private void CreateExhibit(String exhibitFolder) // modifica in privat
+        private void CreateExhibit(String exhibitFolder) 
         {
             try
             {
@@ -92,7 +60,7 @@ namespace Client
             }
         }
 
-        private void AddImagePaths(String imgDirectory) // modifica in privat
+        private void AddImagePaths(String imgDirectory)
         {
             try
             {
@@ -110,7 +78,7 @@ namespace Client
 
         }
 
-        private void AddImagePath(String imagePath) // modifica in privat
+        private void AddImagePath(String imagePath)
         {
             imagePaths.Add(imagePath);
         }
@@ -153,16 +121,6 @@ namespace Client
                 Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
             }
         }
-
-        /*
-        public void show()
-        {
-            Console.WriteLine("[JSON] Titlu:" + jsonInfo.title + "\n");
-            Console.WriteLine("[JSON] DescriereRo:" + jsonInfo.descriptionRo + "\n");
-            Console.WriteLine("[JSON] DescriereEn:" + jsonInfo.descriptionEn + "\n");
-            Console.WriteLine("[JSON] Link Video:" + jsonInfo.linkVideo + "\n");
-        }
-        */
         public String GetTitle()
         {
             if (jsonInfo == null)
