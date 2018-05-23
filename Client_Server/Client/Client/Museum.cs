@@ -24,7 +24,7 @@ namespace Client
             this.inStream = inStream;
             exhibits = new List<Exhibit>();
             String path = ".\\Resources\\" + name;
-            GetPackage("get-museum", path);
+            GetPackage("get-museum", path, null);
             CreateExhibits(path);
         }
 

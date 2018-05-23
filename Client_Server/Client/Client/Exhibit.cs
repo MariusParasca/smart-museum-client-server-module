@@ -15,19 +15,21 @@ namespace Client
         private String pathToAudioFile = null;
         private ExhibitInfo jsonInfo;
         
-        public Exhibit(BinaryWriter outStream, BinaryReader inStream, String name)
+        public Exhibit(BinaryWriter outStream, BinaryReader inStream, String museumName, String exhibitName) // trebuie modificata
         {
-            if (name == null || outStream == null || inStream == null)
+            if (exhibitName == null || museumName == null || outStream == null || inStream == null)
             {
                 Console.WriteLine("name or outStream or inStream is null");
                 return;
             }
-            this.name = name;
+            this.name = exhibitName;
             this.outStream = outStream;
             this.inStream = inStream;
             imagePaths = new List<String>();
-            String path = ".\\Resources\\" + name;
-            GetPackage("get-exhibit", path);
+            //String path = ".\\Resources\\" + name;
+            CreateFolder(".\\Resources\\" + museumName);
+            String path = ".\\Resources\\" + museumName + "\\" + exhibitName;
+            GetPackage("get-exhibit", path, museumName);
             CreateExhibit(path);
         }
 
@@ -41,6 +43,14 @@ namespace Client
             imagePaths = new List<String>();
             this.name = exhibitFolder.Split('\\').Last();
             CreateExhibit(exhibitFolder);
+        }
+
+        private void CreateFolder(String path)
+        {
+            if(!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
         }
 
         private void CreateExhibit(String exhibitFolder) 

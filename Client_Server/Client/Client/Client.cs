@@ -64,9 +64,12 @@ namespace Client
                 //ReceivePhoto("test.jpg");
                 //ReceiveText();
                 //SendPhoto( ".//Resources//test.jpg");
-                
+
                 //Teste
                 Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
+                //Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "TestMuseum", "TestPackage2");
+
+
                 //museum = new Museum(binaryWriter, binaryReader, "invalid");
                 //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
                 //Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Tablou_de_test");
@@ -178,7 +181,7 @@ namespace Client
             }
 
         }
-        internal static String ReceiveZip()
+        internal static String ReceiveZip(String folderName)
         {
 
             try
@@ -217,7 +220,16 @@ namespace Client
                     if(!ok && !packet.type.Equals("[Error]"))
                     {
                         packet.type = packet.type.Replace("\0", String.Empty);
-                        string filename = ".//Resources//" + GetPacketNameFromPacketType(packet.type) + ".zip";
+                        string filename;
+                        if (folderName == null)
+                        {
+                            filename = ".//Resources//" + GetPacketNameFromPacketType(packet.type) + ".zip";
+                        }
+                        else
+                        {
+                            filename = ".//Resources//" + folderName + "//" +
+                                GetPacketNameFromPacketType(packet.type) + ".zip";
+                        }
                         fs = new FileStream(filename, FileMode.Append);
                         bw = new BinaryWriter(fs);
                         ok = true;
