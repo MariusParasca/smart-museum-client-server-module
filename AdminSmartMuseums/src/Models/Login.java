@@ -24,9 +24,9 @@ public class Login  {
 
         text = username+"!@/"+password;
         Client.getInstance().sendText(text, "[login]");
-       // String museumName = Client.getInstance().recieveText();
-        //Client.getInstance().setMuseumName(museumName);
-        //System.out.println(Client.getInstance().getMuseumName());
+        String museumName = Client.getInstance().recieveText();
+        Client.getInstance().setMuseumName(museumName);
+        System.out.println("Muzeul este: " + Client.getInstance().getMuseumName());
     }
 
 

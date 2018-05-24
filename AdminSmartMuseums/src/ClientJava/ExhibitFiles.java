@@ -64,7 +64,7 @@ public class ExhibitFiles {
             System.out.println(audioPath);
 
             os = new FileOutputStream(dest+audioName+".mp3");
-            byte[] buffer = new byte[102400];
+            byte[] buffer = new byte[10240000];
             int length;
             while ((length = is.read(buffer)) > 0) {
                 os.write(buffer, 0, length);

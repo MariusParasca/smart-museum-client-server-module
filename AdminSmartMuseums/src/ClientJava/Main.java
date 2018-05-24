@@ -13,9 +13,10 @@ public class Main {
             //System.out.println("Textul este" + Client.getInstance().recieveText());
             //System.out.println(Client.getInstance().recieveText());
             //Client.getInstance().receiveInt();
-           // Client.getInstance().sendZip("C:\\Users\\lucai\\Desktop\\.zip");
-            //Client.getInstance().sendText("Ana are mere");
-           new AdminAppFrame().setVisible(true);
+            //Client.getInstance().sendZip("C:\\Users\\lucai\\Desktop\\AdminSmartMuseums.zip", "[set-exhibit]");
+            //Client.getInstance().getExhibitList("Muzeu de test");
+            //Client.getInstance().sendText("Ana are mere", "[login]");
+            new AdminAppFrame().setVisible(true);
        }
     }
 }

@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 public class Client {
     private Socket socket;
@@ -22,7 +23,7 @@ public class Client {
     private final int data_length = 974;
 
     private String museumName = null;
-
+    private String path = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits";
 
     private Client (){ }
 
@@ -129,7 +130,6 @@ public class Client {
     }
     public void sendText(String string, String tipPachet) {
         byte[] bytes = string.getBytes();
-
         byte[] type = new byte[type_length];
         int length = tipPachet.getBytes().length;
         System.arraycopy(tipPachet.getBytes(), 0, type, 0, length);
@@ -188,12 +188,24 @@ public class Client {
     public void sendZip(String path, String tipPachet) {
         try {
             byte[] array = Files.readAllBytes(new File(path).toPath());
-            byte[] type = tipPachet.getBytes();
+
+            byte[] type = new byte[type_length];
+            int length = tipPachet.getBytes().length;
+            System.arraycopy(tipPachet.getBytes(), 0, type, 0, length);
             System.out.println(array.length);
             send(array, type);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String[] getExhibitList(String museumName) {
+        sendText(museumName, "[get-exhibit-list]");
+        String exhibitsString = recieveText();
+        String[] exhibitsList = exhibitsString.split(",");
+        for (String exhibit : exhibitsList)
+            System.out.println(exhibit);
+        return exhibitsList;
     }
 
     public String getServerName() {
@@ -214,5 +226,13 @@ public class Client {
 
     public void setMuseumName(String museumName) {
         this.museumName = museumName;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

@@ -1,5 +1,6 @@
 package GUI.Panels;
 
+import ClientJava.Client;
 import ClientJava.ExhibitFiles;
 import ClientJava.ExhibitJSON;
 import GUI.Frames.InsertFrame;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class InsertPanel extends JPanel {
@@ -169,7 +171,8 @@ public class InsertPanel extends JPanel {
                 { JOptionPane.showMessageDialog(null,"Exhibit created successfully");
 
                     ExhibitFiles exhibitFiles = new ExhibitFiles();
-                    exhibitFiles.createDirectory("C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits", nameText.getText());
+                    String path = Client.getInstance().getPath();
+                    exhibitFiles.createDirectory(path, nameText.getText());
 
                     //create json file
                     ExhibitJSON exhibitJSON = new ExhibitJSON(nameText.getText(), exhibitFiles.getPath());
@@ -177,27 +180,23 @@ public class InsertPanel extends JPanel {
                     exhibitJSON.save();
 
                     exhibitFiles.addImages(photos, exhibitFiles.getPath());
-                    /*if(!audioFile.equals(null))
+
+                    if(audioFile != null) {
                         try {
-                            exhibitFiles.addAudio(audioFile, exhibitFiles.getPath()+"\\");
+                            exhibitFiles.addAudio(audioFile, exhibitFiles.getPath());
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
-*/
-                    //exhibitJSON.add(nameText.getText(), );
-                    //String text = "[insert-exhibit]" + "<"+nameText.getText()+">"+"<"+descText.getText()+">"+"<"+linkText.getText()+">";
-                    //Client.getInstance().sendText(text);
-                    //try {
-                      //  exhibitFiles.addToZipFile("C:\\Users\\lucai\\Desktop\\git\\Fisa cerintelor Client-Server.pdf");
-                    //} catch (IOException ex) {
-                      //  ex.printStackTrace();
-                    //}
+                    }
 
-                    String OUTPUT_ZIP_FILE = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits\\"+ nameText.getText() +".zip";
-                    String SOURCE_FOLDER = "C:\\Users\\lucai\\Desktop\\IP\\git\\AdminSmartMuseums\\exhibits\\" + nameText.getText();  // SourceFolder path
 
-                    com.company.ZipUtils appZip = new com.company.ZipUtils();
-                    appZip.generateFileList(new File(SOURCE_FOLDER));
+                    System.out.println(path+"\\" + nameText.getText());
+                    String OUTPUT_ZIP_FILE = path+"\\"+ nameText.getText() +".zip";
+                    String SOURCE_FOLDER = path+"\\" + nameText.getText();  // SourceFolder path
+
+                    com.company.ZipUtils appZip = new com.company.ZipUtils(SOURCE_FOLDER, OUTPUT_ZIP_FILE);
+                    File file = new File(SOURCE_FOLDER);
+                    appZip.generateFileList(file);
                     appZip.zipIt(OUTPUT_ZIP_FILE);
                     insertFrame.setVisible(false);
 

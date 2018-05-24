@@ -98,26 +98,26 @@ public class LoginPanel extends JPanel {
             {
                     try {
                        Login log = new Login(usernameText.getText(), passText.getText());
+                       /*
                        String museumName = Client.getInstance().getMuseumName();
+                       byte[] b1 = museumName.getBytes();
+                       String muzeu = new String(b1, "ASCII");
+                       byte[] b3 = muzeu.getBytes();
+                       byte[] b2 = "Nu exista".getBytes();
 
-                       //byte[] b1 = museumName.getBytes();
-                       //String muzeu = new String(b1, "ASCII");
-                       //byte[] b3 = muzeu.getBytes();
-                       //byte[] b2 = "Nu exista".getBytes();
+                       int equal = 1;
+                       for(int i = 0;i < b2.length; i++)
+                          if(b2[i] != b3[i])
+                              equal = 0;
 
-                       //int equal = 1;
-                       //for(int i = 0;i < b2.length; i++)
-                         // if(b2[i] != b3[i])
-                           //   equal = 0;
-
-                       //if(equal == 1) {
-                         ///  System.out.println("Nu exista!");
-                       //} else {
+                       if(equal == 1) {
+                           System.out.println("Invalid user or password! Please try again!");
+                       } else { */
                            AfterLoginFrame afterLoginFrame = new AfterLoginFrame();
                            afterLoginFrame.setVisible(true);
                        //}
-                   } catch (IOException e1) {
-                       e1.printStackTrace();
+                   } catch (IOException ex) {
+                       ex.printStackTrace();
                     }
 
                     loginframe.setVisible(false);

@@ -17,8 +17,10 @@ public class ZipUtils {
     private  String OUTPUT_ZIP_FILE;
     private  String SOURCE_FOLDER;
 
-    public ZipUtils() {
+    public ZipUtils(String SOURCE_FOLDER, String OUTPUT_ZIP_FILE) {
         fileList = new ArrayList < String > ();
+        this.SOURCE_FOLDER = SOURCE_FOLDER;
+        this.OUTPUT_ZIP_FILE = OUTPUT_ZIP_FILE;
     }
 
     public void zipIt(String zipFile) {
