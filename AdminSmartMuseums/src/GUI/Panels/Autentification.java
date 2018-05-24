@@ -1,6 +1,5 @@
 package GUI.Panels;
 
-import ClientJava.Client;
 import GUI.Frames.AdminAppFrame;
 import GUI.Frames.LoginFrame;
 import GUI.Frames.RegisterFrame;
@@ -15,8 +14,10 @@ public class Autentification extends JPanel{
     private final AdminAppFrame adminAppFrame;
     JButton registerButton = new JButton("Register");
     JButton loginButton = new JButton("Login");
-    JLabel welcomeMessage= new JLabel(" Bine ai venit in aplicatia unde poti adauga date despre muzeul tau");
+    JLabel welcomeMessage= new JLabel(" Welcome to the app where you can configure your museum exhibits");
     JPanel buttonPanel = new JPanel();
+
+
     public Autentification(AdminAppFrame adminAppFrame) {
         this.adminAppFrame = adminAppFrame;
         init();
@@ -36,7 +37,7 @@ public class Autentification extends JPanel{
 
     }
     private void init(){
-        // setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+
 
         this.setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(70, 50, 10, 60));

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class InsertPanel extends JPanel {
 
     private InsertFrame insertFrame;
-    JLabel name = new JLabel(" Name of exhibit");
+    JLabel name = new JLabel(" Exhibit name");
     JLabel description = new JLabel(" Short description in Romanian");
     JLabel descriptionEng = new JLabel(" Short description English");
     JLabel links = new JLabel(" Video links");
@@ -23,8 +23,8 @@ public class InsertPanel extends JPanel {
     JTextField descText = new JTextField();
     JTextField descEnglishText = new JTextField();
     JTextField linkText = new JTextField();
-    JButton uploadPhoto = new JButton("Upload photo");
-    JButton uploadAudio = new JButton("Upload Audio");
+    JButton uploadPhoto = new JButton("Upload photos");
+    JButton uploadAudio = new JButton("Upload audio");
 
     JButton submit = new JButton("Create exhibit");
     JPanel insert = new JPanel();
@@ -67,9 +67,10 @@ public class InsertPanel extends JPanel {
 
         //setAlignmentX(Component.RIGHT_ALIGNMENT);
 
-        nameText.setMaximumSize(new Dimension(450, 25));
-        descText.setMaximumSize(new Dimension(450, 25));
-        linkText.setMaximumSize(new Dimension(450, 25));
+        nameText.setMaximumSize(new Dimension(500, 30));
+        descText.setMaximumSize(new Dimension(500, 30));
+        descEnglishText.setMaximumSize(new Dimension(500, 30));
+        linkText.setMaximumSize(new Dimension(500, 30));
 
 
         initLabel(name);

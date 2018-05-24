@@ -3,12 +3,10 @@ package GUI.Panels;
 import ClientJava.Client;
 import GUI.Frames.AfterLoginFrame;
 import GUI.Frames.LoginFrame;
-import Models.Login;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,26 +95,26 @@ public class LoginPanel extends JPanel {
                   else
             {
                     try {
-                      Login log = new Login(usernameText.getText(), passText.getPassword());
-                       String museumName = Client.getInstance().getMuseumName();
-
-                       //byte[] b1 = museumName.getBytes();
-                       //String muzeu = new String(b1, "ASCII");
-                       //byte[] b3 = muzeu.getBytes();
-                       //byte[] b2 = "Nu exista".getBytes();
-
-                       //int equal = 1;
-                       //for(int i = 0;i < b2.length; i++)
-                         // if(b2[i] != b3[i])
-                           //   equal = 0;
-
-                       //if(equal == 1) {
-                         ///  System.out.println("Nu exista!");
-                       //} else {
+//                      Login log = new Login(usernameText.getText(), passText.getPassword());
+//                       String museumName = Client.getInstance().getMuseumName();
+//
+//                       //byte[] b1 = museumName.getBytes();
+//                       //String muzeu = new String(b1, "ASCII");
+//                       //byte[] b3 = muzeu.getBytes();
+//                       //byte[] b2 = "Nu exista".getBytes();
+//
+//                       //int equal = 1;
+//                       //for(int i = 0;i < b2.length; i++)
+//                         // if(b2[i] != b3[i])
+//                           //   equal = 0;
+//
+//                       //if(equal == 1) {
+//                         ///  System.out.println("Nu exista!");
+//                       //} else {
                            AfterLoginFrame afterLoginFrame = new AfterLoginFrame();
                            afterLoginFrame.setVisible(true);
                        //}
-                   } catch (IOException e1) {
+                   } catch (Exception e1) {
                        e1.printStackTrace();
                     }
 
