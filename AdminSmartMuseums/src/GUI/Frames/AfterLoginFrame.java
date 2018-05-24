@@ -10,7 +10,7 @@ public class AfterLoginFrame extends Frame {
     AfterLoginPanel afterLoginPanel;
 
     public AfterLoginFrame() throws HeadlessException {
-        super("Upload informations");
+        super("Configure your museum");
         init();
     }
 

@@ -20,7 +20,7 @@ public class LoginPanel extends JPanel {
     JLabel password = new JLabel(" Password");
     JLabel info = new JLabel("");
     JTextField usernameText = new JTextField();
-    JTextField passText = new JTextField();
+    JPasswordField passText = new JPasswordField();
     JButton login = new JButton("Login");
 
 
