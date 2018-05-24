@@ -10,7 +10,7 @@ import java.net.Socket;
 public class Login  {
 
     private String username;
-    private String password;
+    private char[] password;
     private String text;
 
     private final static String SERVER_ADDRESS = "127.0.0.1";
@@ -18,7 +18,7 @@ public class Login  {
     private static OutputStream out;
     private static PrintStream ps;
     private static Socket socket;
-    public Login(String username, String password) throws IOException {
+    public Login(String username, char[] password) throws IOException {
         this.username = username;
         this.password = password;
 
