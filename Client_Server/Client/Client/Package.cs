@@ -13,25 +13,27 @@ namespace Client
         protected BinaryReader inStream;
         protected String name = null;
 
-        protected void GetPackage(String packetType, String pathToPackage, String folderName)
+        protected bool GetPackage(String packetType, String pathToPackage, String folderName)
         {
             try
             {
                 Client.SendText(packetType, this.name);
                 if(Client.ReceiveZip(folderName) == null)
                 {
-                    Console.WriteLine("Invalid package name");
+                    Console.WriteLine("Invalid package name or other error");
+                    return false;
                 }
                 else
                 {
                     Compresser.DecompressZip(pathToPackage + ".zip", pathToPackage);
+                    return true;
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
             }
-
+            return false;
         }
 
     }

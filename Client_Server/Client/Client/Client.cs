@@ -40,7 +40,7 @@ namespace Client
             //Museum museum2 = new Museum(".\\Resources\\muzeu_de_test");
             //Exhibit exhibit2 = new Exhibit(".\\Resources\\muzeu_de_test\\Tablou_de_test");
 
-            GetPacketNameFromPacketType("[Museum]-muzeu_de_test");
+            //GetPacketNameFromPacketType("[Museum]-muzeu_de_test");
             try
             {
 
@@ -73,9 +73,10 @@ namespace Client
                 //museum = new Museum(binaryWriter, binaryReader, "invalid");
                 //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
                 //Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Tablou_de_test");
-                /*//exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
-                // exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
-                */
+                //exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
+                
+                //exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "TestMuseum", "//fasfa.fsdfs3/';[]fsda");
+                
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
@@ -217,9 +218,14 @@ namespace Client
                     packet = bytesToPacket(packetBytes);
                     cnt += howBig - Constants.type_length;
 
-                    if(!ok && !packet.type.Equals("[Error]"))
+                    packet.type = packet.type.Replace("\0", String.Empty);
+                    if (packet.type.Equals("[Error]"))
                     {
-                        packet.type = packet.type.Replace("\0", String.Empty);
+                        return null;
+                    }
+
+                    if(!ok)
+                    {
                         string filename;
                         if (folderName == null)
                         {
