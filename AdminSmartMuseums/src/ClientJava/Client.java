@@ -156,9 +156,6 @@ public class Client {
             sendInt(nrBytes);
             int crt = 0;
             int len = nrBytes;
-            //for(byte b: type) {
-              //  System.out.print(b + " ");
-            //}
             byte[] pachet = new byte[data_length + type_length];
             System.arraycopy(type, 0, pachet, 0, type_length);
             while(crt < nrBytes) {
@@ -166,20 +163,21 @@ public class Client {
                     System.arraycopy(bytes, crt, pachet, type_length, data_length);
                     sendInt(data_length + type_length);
                     out.write(pachet);
-                    out.flush();
-                    crt += data_length + type_length;
-                    len -= data_length + type_length;
+                    crt += data_length;
+                    len -= data_length;
+                    System.out.print(len);
                     sendInt(checkSum(pachet));
                 } else {
                     //System.arraycopy(bytes, crt, pachet, , len);
+
                     System.arraycopy(bytes, crt, pachet, type_length, len);
                     sendInt(data_length + type_length);
                     out.write(pachet);
-                    out.flush();
                     crt += len;
                     sendInt(checkSum(pachet));
                 }
             }
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }

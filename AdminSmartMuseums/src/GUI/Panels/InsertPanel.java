@@ -199,6 +199,9 @@ public class InsertPanel extends JPanel {
                     File file = new File(SOURCE_FOLDER);
                     appZip.generateFileList(file);
                     appZip.zipIt(OUTPUT_ZIP_FILE);
+                    Client.getInstance().open("127.0.0.1", 8001);
+                    Client.getInstance().sendZip(OUTPUT_ZIP_FILE, "[set-exhibit]");
+                    Client.getInstance().close();
                     insertFrame.setVisible(false);
 
                 }

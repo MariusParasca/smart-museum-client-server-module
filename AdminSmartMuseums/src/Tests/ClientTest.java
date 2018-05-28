@@ -14,14 +14,23 @@ public class ClientTest {
 
     @Test
     public void getServerName() {
-        Client.getInstance().open("127.0.0.1", 100);
+        Client.getInstance().open("127.0.0.1", 8001);
         assertEquals("127.0.0.1", Client.getInstance().getServerName());
     }
 
     @Test
     public void getPort() {
-        Client.getInstance().open("127.0.0.1", 100);
-        assertEquals(100, Client.getInstance().getPort());
+        Client.getInstance().open("127.0.0.1", 8001);
+        assertEquals(8001, Client.getInstance().getPort());
     }
 
+    @Test
+    public void connectionRefused() {
+        assertEquals(false, Client.getInstance().open("127.0.0.1", 100));
+    }
+
+    @Test
+    public void connectionAccepted() {
+        assertEquals(true, Client.getInstance().open("127.0.0.1", 8001));
+    }
 }

@@ -6,10 +6,9 @@ import java.awt.*;
 
 public class AfterLoginFrame extends Frame {
 
-
     AfterLoginPanel afterLoginPanel;
 
-    public AfterLoginFrame() throws HeadlessException {
+    public AfterLoginFrame(String museumName) throws HeadlessException {
         super("Configure your museum");
         init();
     }
