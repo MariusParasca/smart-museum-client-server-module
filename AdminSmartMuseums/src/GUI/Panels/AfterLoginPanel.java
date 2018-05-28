@@ -19,6 +19,7 @@ public class AfterLoginPanel extends JPanel {
 
     private AfterLoginFrame afterLoginFrame;
 
+    private String museumName = "Muzeu de test";
     JButton insertButton = new JButton("Insert ");
     JButton deleteButton = new JButton("Delete");
     JPanel buttonPanel = new JPanel();
@@ -50,83 +51,84 @@ public class AfterLoginPanel extends JPanel {
     public void tableShow(){
 
         JFrame frame = new JFrame();
-        String exhibitList [] = Client.getInstance().getExhibitList(login.museumName);
+
+        Client.getInstance().open("127.0.0.1", 8001);
+        //String museumName = Client.getInstance().getMuseumName();
+        String exhibitList [] = Client.getInstance().getExhibitList(museumName);
         int row =0;
+
         // aici ar trebui sa se populeze tabelul cu exponatele din muzeu
         for ( int exhibit =0; exhibit < exhibitList.length;exhibit ++) {
 
             tableModel.insertRow( exhibit, new String[]{exhibitList[exhibit]});
 
         }
-        tableModel.insertRow(1, new String[]{"bla"});
+        //tableModel.insertRow(1, new String[]{"bla"});
         JScrollPane scrollPane = new JScrollPane(table);
         frame.add(scrollPane, BorderLayout.CENTER);
         frame.setSize(400,500);
         frame.setVisible(true);
 
-
-
     }
-   private  void init(){
+    private  void init(){
 
-       this.setLayout(new BorderLayout());
+        this.setLayout(new BorderLayout());
 
-       setBorder(BorderFactory.createEmptyBorder(100, 50, 10, 60));
-       buttonPanel.setBorder(BorderFactory.createEmptyBorder(70, 50, 10, 60));
+        setBorder(BorderFactory.createEmptyBorder(100, 50, 10, 60));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(70, 50, 10, 60));
 
-       initButtons( insertButton);
+        initButtons( insertButton);
 
-       initButtons(deleteButton);
+        initButtons(deleteButton);
 
-       buttonPanel.add(insertButton, BorderLayout.WEST);
+        buttonPanel.add(insertButton, BorderLayout.WEST);
 
-       buttonPanel.add(deleteButton, BorderLayout.EAST);
-       add(buttonPanel, BorderLayout.CENTER);
-       insertButton.addActionListener(new ActionListener() {
+        buttonPanel.add(deleteButton, BorderLayout.EAST);
+        add(buttonPanel, BorderLayout.CENTER);
+        insertButton.addActionListener(new ActionListener() {
 
-           public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
 
-               InsertFrame insertFrame=new InsertFrame();
-               insertFrame.setVisible(true);
+                InsertFrame insertFrame=new InsertFrame();
+                insertFrame.setVisible(true);
 
-           }
+            }
 
-       });
-
-
+        });
 
 
 
 
-       //
-       deleteButton.addActionListener(new ActionListener() {
-
-           public void actionPerformed(ActionEvent e) {
-               tableShow();
 
 
-           }
+        //
+        deleteButton.addActionListener(new ActionListener() {
 
-       });
+            public void actionPerformed(ActionEvent e) {
+                tableShow();
+            }
+
+        });
 
 
-       table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-           @Override
-           public void valueChanged(ListSelectionEvent event) {
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
                 int  index = table.getSelectedRow();
-               if (table.getSelectedRow() > -1) {
-                   int input = JOptionPane.showConfirmDialog(null, "Do you want to delete this exhibit?");
-                   if(input == 0) {
+                if (table.getSelectedRow() > -1) {
+                    int input = JOptionPane.showConfirmDialog(null, "Do you want to delete this exhibit?");
+                    if(input == 0) {
 
-                       // request la server sa se stearga exponatul cu numele getSelectedRow().get
-                       tableModel.removeRow(table.getSelectedRow());
-                      // Client.getInstance().sendText(table.getModel().getValueAt(index, 0));
-                   }
-                   else { }
-                  
-               }
-           }
-       });
-   }
+                        // request la server sa se stearga exponatul cu numele getSelectedRow().get
+                        tableModel.removeRow(table.getSelectedRow());
+                        Client.getInstance().sendText(table.getModel().getValueAt(index, 0).toString(), "[get-exhibit-list]");
+                        //System.out.println(table.getModel().getValueAt(index, 0).toString());
+                    }
+                    else { }
+
+                }
+            }
+        });
+    }
 
 }
