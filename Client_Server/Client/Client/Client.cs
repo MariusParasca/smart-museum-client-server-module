@@ -48,7 +48,7 @@ namespace Client
                 Console.WriteLine("Connecting.....");
                 tcpclnt.Connect("18.191.129.149", 8081);
                 //   tcpclnt.Connect("127.0.0.1", 8081);
-                System.IO.Directory.CreateDirectory(".//Resouces");
+            //    Directory.CreateDirectory(".//Resources");
                 Console.WriteLine("Connected");
                 binaryWriter = new BinaryWriter(tcpclnt.GetStream());
 
@@ -167,15 +167,12 @@ namespace Client
             {
                 Packet packet = new Packet();
                 int len = binaryReader.ReadInt32();
-                //hh:mm:ss
                 packet.data = new byte[Constants.data_length];
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
                 DateTime dateTime = DateTime.Now;
-                //FileStream fs = File.Create( );
                 bool ok = false;
-                //string filename = ".//Resources//" + packet.type + ".zip";
                 Stream fs = null;
                 BinaryWriter bw = null;
                 int pc = 0;
@@ -198,14 +195,6 @@ namespace Client
                     }
                     packet = bytesToPacket(packetBytes);
                     cnt += howBig - Constants.type_length;
-                    
-                    packet.type = packet.type.Replace("\0", string.Empty);
-                    if (packet.type.Equals("[Error]"))
-                    {
-                        return null;
-                    }
-
-                    if (!ok)
                     packet.type = packet.type.Replace("\0", String.Empty);
                     if (packet.type.Equals("[Error]"))
                     {
