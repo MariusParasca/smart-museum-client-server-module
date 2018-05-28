@@ -3,12 +3,10 @@ package GUI.Panels;
 import ClientJava.Client;
 import GUI.Frames.AfterLoginFrame;
 import GUI.Frames.LoginFrame;
-import Models.Login;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -96,8 +94,7 @@ public class LoginPanel extends JPanel {
                 }
                   else
             {
-                    try {
-                       Login log = new Login(usernameText.getText(), passText.getText());
+                //Login log = new Login(usernameText.getText(), passText.getText());
                        /*
                        String museumName = Client.getInstance().getMuseumName();
                        byte[] b1 = museumName.getBytes();
@@ -113,14 +110,11 @@ public class LoginPanel extends JPanel {
                        if(equal == 1) {
                            System.out.println("Invalid user or password! Please try again!");
                        } else { */
-                           AfterLoginFrame afterLoginFrame = new AfterLoginFrame();
-                           afterLoginFrame.setVisible(true);
-                       //}
-                   } catch (IOException ex) {
-                       ex.printStackTrace();
-                    }
+                AfterLoginFrame afterLoginFrame = new AfterLoginFrame();
+                afterLoginFrame.setVisible(true);
+                //}
 
-                    loginframe.setVisible(false);
+                loginframe.setVisible(false);
                 }
             }
 

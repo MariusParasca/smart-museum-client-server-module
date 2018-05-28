@@ -1,21 +1,37 @@
 package GUI.Panels;
 
+import ClientJava.Client;
 import GUI.Frames.AfterLoginFrame;
 import GUI.Frames.InsertFrame;
+import Models.Login;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AfterLoginPanel extends JPanel {
 
+    private Login login;
+
     private AfterLoginFrame afterLoginFrame;
 
     JButton insertButton = new JButton("Insert ");
-    JButton updateButton = new JButton("Update");
     JButton deleteButton = new JButton("Delete");
     JPanel buttonPanel = new JPanel();
+
+
+    //
+    Object rowData[][] = new Object[27][1];
+    Object columnNames[] = { "Exhibit"};
+    DefaultTableModel tableModel = new DefaultTableModel(rowData, columnNames);
+    JTable table = new JTable(tableModel);
+    //
+
+
     public AfterLoginPanel(AfterLoginFrame afterloginFrame) {
 
         this.afterLoginFrame = afterloginFrame;
@@ -30,16 +46,19 @@ public class AfterLoginPanel extends JPanel {
         button.setFont(new Font("Arial", Font.BOLD, 15));
     }
 
+
     public void tableShow(){
 
         JFrame frame = new JFrame();
-        Object rowData[][] = new Object[27][1];
-
-
-        Object columnNames[] = { "Exhibit"};
-        JTable table = new JTable(rowData, columnNames);
+        String exhibitList [] = Client.getInstance().getExhibitList(login.museumName);
+        int row =0;
         // aici ar trebui sa se populeze tabelul cu exponatele din muzeu
+        for ( int exhibit =0; exhibit < exhibitList.length;exhibit ++) {
 
+            tableModel.insertRow( exhibit, new String[]{exhibitList[exhibit]});
+
+        }
+        tableModel.insertRow(1, new String[]{"bla"});
         JScrollPane scrollPane = new JScrollPane(table);
         frame.add(scrollPane, BorderLayout.CENTER);
         frame.setSize(400,500);
@@ -56,11 +75,11 @@ public class AfterLoginPanel extends JPanel {
        buttonPanel.setBorder(BorderFactory.createEmptyBorder(70, 50, 10, 60));
 
        initButtons( insertButton);
-       initButtons(updateButton);
+
        initButtons(deleteButton);
 
        buttonPanel.add(insertButton, BorderLayout.WEST);
-       buttonPanel.add(updateButton, BorderLayout.CENTER);
+
        buttonPanel.add(deleteButton, BorderLayout.EAST);
        add(buttonPanel, BorderLayout.CENTER);
        insertButton.addActionListener(new ActionListener() {
@@ -75,26 +94,38 @@ public class AfterLoginPanel extends JPanel {
        });
 
 
-       updateButton.addActionListener(new ActionListener() {
+
+
+
+
+       //
+       deleteButton.addActionListener(new ActionListener() {
 
            public void actionPerformed(ActionEvent e) {
+               tableShow();
 
-              tableShow();
 
            }
 
        });
 
-       deleteButton.addActionListener(new ActionListener() {
 
-           public void actionPerformed(ActionEvent e) {
+       table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+           @Override
+           public void valueChanged(ListSelectionEvent event) {
+                int  index = table.getSelectedRow();
+               if (table.getSelectedRow() > -1) {
+                   int input = JOptionPane.showConfirmDialog(null, "Do you want to delete this exhibit?");
+                   if(input == 0) {
 
-
-
-              tableShow();
-
+                       // request la server sa se stearga exponatul cu numele getSelectedRow().get
+                       tableModel.removeRow(table.getSelectedRow());
+                      // Client.getInstance().sendText(table.getModel().getValueAt(index, 0));
+                   }
+                   else { }
+                  
+               }
            }
-
        });
    }
 
