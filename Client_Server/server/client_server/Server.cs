@@ -124,7 +124,7 @@ namespace Server
             Package.Login("Muzeu de test", "parola");
             try
             {
-                IPAddress ipAddress = Dns.Resolve("localhost").AddressList[0];//172.30.0.211
+                IPAddress ipAddress = Dns.Resolve("172.30.0.211").AddressList[0];//172.30.0.211
                 Console.WriteLine("IP: " + ipAddress);
                 int port = 8081;
                 int counter = 0;
@@ -140,6 +140,7 @@ namespace Server
                     Console.WriteLine("[{0}] {1}", DateTime.Now, " Waiting for a connection.....");
 
                      clientSocket = myList.AcceptTcpClient();
+                    clientSocket.NoDelay = true;
                     handleClient client = new handleClient();
                     client.startClient(clientSocket, Convert.ToString(counter));
                     var clientPort = ((IPEndPoint)clientSocket.Client.RemoteEndPoint).Port;
@@ -355,7 +356,7 @@ namespace Server
             catch (Exception e)
             {
                 Log();
-                Console.WriteLine("[Client-{0}] [{1}] Error..... {} {}", clNo, DateTime.Now, e.GetType().ToString(), e.StackTrace);
+                Console.WriteLine("[Client-{0}] [{1}] Error..... {2} {3}", clNo, DateTime.Now, e.GetType().ToString(), e.StackTrace);
                 return null;
             }
         }
@@ -434,10 +435,15 @@ namespace Server
 
             }
 
+            catch (SocketException e)
+            {
+                Log();
+                Console.WriteLine("[Client-{0}]-[{1}] {2} {3} {4} {5}", clNo, DateTime.Now, "Error.....", e.GetType().ToString() ,e.StackTrace , e.ErrorCode);
+            }
             catch (Exception e)
             {
                 Log();
-                Console.WriteLine("[Client-{0}]-[{1}] {2}", clNo, DateTime.Now, "Error..... {0} {1} {2}", e.GetType().ToString() ,e.StackTrace , ((SocketException)e).ErrorCode);
+                Console.WriteLine("[Client-{0}]-[{1}] {2} {3} {4}", clNo, DateTime.Now, "Error.....", e.GetType().ToString(), e.StackTrace);
             }
         }
         internal static string ReceiveZip(NetworkStream networkStream, int len, Packet packet, int cat, string clNo)

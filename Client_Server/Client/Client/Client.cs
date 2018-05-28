@@ -46,7 +46,7 @@ namespace Client
                 endPacket.type = "[EndT]";
                 endPacket.data = new byte[1];
                 Console.WriteLine("Connecting.....");
-                tcpclnt.Connect("localhost", 8081);//18.191.129.149
+                tcpclnt.Connect("18.191.129.149", 8081);//18.191.129.149
                 //   tcpclnt.Connect("127.0.0.1", 8081);
             //    Directory.CreateDirectory(".//Resources");
                 Console.WriteLine("Connected");
@@ -222,7 +222,7 @@ namespace Client
                     bw.Write(packet.data);
                     bw.Flush();
                     Console.WriteLine("[" + DateTime.Now + "] Packet received! size: {0}, checksum: {1}", read, checkSum);
-                    System.Threading.Thread.Sleep(5);
+                    System.Threading.Thread.Sleep(50);
                 }
                 fs.Close();
                 bw.Close();
