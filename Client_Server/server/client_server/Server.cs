@@ -10,6 +10,7 @@ using client_server;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 class Constants
 {
@@ -44,6 +45,71 @@ namespace Server
             Console.SetOut(sw);
 
         }
+        public class handleClient
+        {
+            TcpClient clientSocket;
+            string clNo;
+            public void startClient(TcpClient inClientSocket, string clineNo)
+            {
+                clientSocket = inClientSocket;
+                clNo = clineNo;
+                Thread ctThread = new Thread(doChat);
+                ctThread.Start();
+            }
+            private void doChat()
+            {
+                int requestCount = 0;
+                byte[] bytesFrom = new byte[10025];
+                requestCount = 0;
+
+                while (true)
+                {
+                    try
+                    {
+                        requestCount = requestCount + 1;
+                        NetworkStream networkStream = clientSocket.GetStream();
+
+                        Packet packet = new Packet();
+                        BinaryReader binaryReader = new BinaryReader(clientSocket.GetStream());
+                        int len = binaryReader.ReadInt32();
+                        packet.data = new byte[Constants.data_length];
+                        int cnt = 0;
+                        byte[] data = new byte[len + Constants.data_length];
+                        byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
+                        int howBig = binaryReader.ReadInt32();
+                        int read = binaryReader.Read(packetBytes, 0, howBig);
+                        int myCheckSum = CalculateChecksum(packetBytes);
+                        int checkSum = binaryReader.ReadInt32();
+                        if (myCheckSum != checkSum)
+                        {
+                            packet.type = "[Error]";
+                            packet.data = Encoding.ASCII.GetBytes("[server] Checksum does not match!" + myCheckSum + " " + checkSum);
+                            Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
+
+                        }
+                        else
+                        {
+                            packet = bytesToPacket(packetBytes);
+                            Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
+                            cnt += howBig - Constants.type_length;
+                            if (packet.type == "[EndT]")
+                                break;
+
+                            Console.WriteLine("[" + DateTime.Now + "] Packet received!");
+                        }
+                        packet.type.Replace("\0", string.Empty);
+                        if (packet.type.ToLower().StartsWith("[set-museum]") || packet.type.ToLower().StartsWith("[set-exhibit]"))
+                            ReceiveZip(networkStream, len, packet, howBig);
+                        else
+                            ReceiveText(networkStream, len, packet, howBig);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(" >> " + ex.ToString());
+                    }
+                }
+            }
+        }
         public static void Main()
         {
             SFTP sftp = new SFTP();
@@ -55,71 +121,28 @@ namespace Server
             Package.GetExhibitList("Muzeu de test");
             Package.CreateGeoLocationFile();
             Package.Login("Muzeu de test", "parola");
-            /*Package.GetMuseumId("Muzeu de tesst");
-            Package.InsertExhibits("Muzeu de test", "test",
-                new String[] { "test1", "test2" }, new String[] { "path1", "path2" });
-            Package.InsertMuseum("test", 2.342, 3.423, 2.34, "path");
-            Package.register("Muzeu de test2", "parola");*/
             try
             {
-                  IPAddress ipAddress = Dns.Resolve("172.30.0.211").AddressList[0];
-          //      IPAddress ipAddress = Dns.Resolve("localhost").AddressList[0];
-            
+                IPAddress ipAddress = Dns.Resolve("172.30.0.211").AddressList[0];
                 Console.WriteLine("IP: " + ipAddress);
                 int port = 8081;
+                int counter = 0;
                 TcpListener myList = new TcpListener(ipAddress, port);
-                //myList.AllowNatTraversal()
+                TcpClient clientSocket = default(TcpClient);
                 myList.Start();
                 while (running)
                 {
-
-
+                    counter++;
                     Log();
                     Console.WriteLine("[" + DateTime.Now + "] The server is running at port "+ port +" ...");
                     Console.WriteLine("[" + DateTime.Now + "] The local End point is  :" + myList.LocalEndpoint);
                     Console.WriteLine("[" + DateTime.Now + "] Waiting for a connection.....");
 
-                    Socket socket = myList.AcceptSocket();
-
-                    Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + socket.RemoteEndPoint);
-
-
-                 
-
-                    Packet packet = new Packet();
-                    BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
-                    int len = binaryReader.ReadInt32();
-                    packet.data = new byte[Constants.data_length];
-                    int cnt = 0;
-                    byte[] data = new byte[len + Constants.data_length];
-                    byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
-                    int howBig = binaryReader.ReadInt32();
-                    int read = binaryReader.Read(packetBytes, 0, howBig);
-                    int myCheckSum = CalculateChecksum(packetBytes);
-                    int checkSum = binaryReader.ReadInt32();
-                    if (myCheckSum != checkSum)
-                    {
-                        packet.type = "[Error]";
-                        packet.data = Encoding.ASCII.GetBytes("[server] Checksum does not match!" + myCheckSum + " " + checkSum);
-                        Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
-
-                    }
-                    else
-                    {
-                        packet = bytesToPacket(packetBytes);
-                        Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
-                        cnt += howBig - Constants.type_length;
-                        if (packet.type == "[EndT]")
-                            break;
-
-                        Console.WriteLine("[" + DateTime.Now + "] Packet received!");
-                    }
-                    packet.type.Replace("\0", string.Empty);
-                    if (packet.type.ToLower().StartsWith("[set-museum]") || packet.type.ToLower().StartsWith("[set-exhibit]"))
-                        ReceiveZip(socket, len, packet, howBig);
-                    else
-                        ReceiveText(socket, len, packet, howBig);
-
+                     clientSocket = myList.AcceptTcpClient();
+                    handleClient client = new handleClient();
+                    client.startClient(clientSocket, Convert.ToString(counter));
+                    var clientPort = ((IPEndPoint)clientSocket.Client.RemoteEndPoint).Port;
+                    Console.WriteLine("[" + DateTime.Now + "]Connection accepted from {0}", ((IPEndPoint)clientSocket.Client.RemoteEndPoint));
                 }
                 myList.Stop();
 
@@ -132,10 +155,10 @@ namespace Server
             }
 
         }
-        internal static string ReceiveText(Socket socket, int len, Packet packet, int cat)
+        internal static string ReceiveText(NetworkStream networkStream, int len, Packet packet, int cat)
         {
             string type = packet.type.Replace("\0", string.Empty);
-            byte[] data = Receive(socket, len, packet, cat);
+            byte[] data = Receive(networkStream, len, packet, cat);
             string str = bArrayToString(data, data.Length);
             str = str.Replace("\0", string.Empty);
             if (type.Equals("[login]"))
@@ -146,11 +169,11 @@ namespace Server
                 if (Package.Login(user, password))
                 {
                     string museum = ""; //trebuie luat din db muzeul pentru userul asta
-                    SendText(socket, Package.GetExhibitList(museum));
+                    SendText(networkStream, Package.GetExhibitList(museum));
                 }
                 else
                 {
-                    SendText(socket, "Invalid user or password! Please try again!");
+                    SendText(networkStream, "Invalid user or password! Please try again!");
                 }
 
             }
@@ -171,7 +194,7 @@ namespace Server
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
-                    Send(socket, "[Error]", err);
+                    Send(networkStream, "[Error]", err);
 
                 }
                 else
@@ -186,11 +209,11 @@ namespace Server
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
-                    Send(socket, "[Error]", err);
+                    Send(networkStream, "[Error]", err);
 
                 }
                 else
-                    SendZip(socket, "[Museum]-" + GetPacketNameFromPath(path), path);
+                    SendZip(networkStream, "[Museum]-" + GetPacketNameFromPath(path), path);
 
 
             }
@@ -201,11 +224,11 @@ namespace Server
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Exhibit invalid path");
-                    Send(socket, "[Error]", err);
+                    Send(networkStream, "[Error]", err);
 
                 }
                 else
-                    SendZip(socket, "[Exhibit]-" + GetPacketNameFromPath(path), path);
+                    SendZip(networkStream, "[Exhibit]-" + GetPacketNameFromPath(path), path);
 
 
             }
@@ -213,7 +236,7 @@ namespace Server
                 if (type.Equals("[get-exhibit-list]"))
             {
                 string exhibits = Package.GetExhibitList(str);
-                SendText(socket, exhibits);
+                SendText(networkStream, exhibits);
 
             }
 
@@ -245,7 +268,7 @@ namespace Server
                 return packet;
             }
         }
-        internal static byte[] Receive(Socket socket, int len, Packet packet, int cat)
+        internal static byte[] Receive(NetworkStream networkStream, int len, Packet packet, int cat)
         {
 
             Log();
@@ -257,7 +280,7 @@ namespace Server
                 packetBytes = packetToBytes(packet);
                 Array.Copy(packetBytes, Constants.type_length, data, cnt, cat - Constants.type_length);
                 cnt += cat;
-                BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
+                BinaryReader binaryReader = new BinaryReader(networkStream);
                 packet.data = new byte[Constants.data_length];
 
                 while (cnt < len)
@@ -309,11 +332,11 @@ namespace Server
             return str;
         }
 
-        public static void SendText(Socket socket, String text)
+        public static void SendText(NetworkStream networkStream, string text)
         {
             Log();
             byte[] data = Encoding.UTF8.GetBytes(text);
-            Send(socket, "[Text]", data);
+            Send(networkStream, "[Text]", data);
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
@@ -335,19 +358,20 @@ namespace Server
                 return null;
             }
         }
-        private static void Send(Socket socket, string type, byte[] data)
+        private static void Send(NetworkStream networkStream, string type, byte[] data)
         {
             try
             {
                 Packet packet = new Packet();
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
+                BinaryWriter binaryWriter = new BinaryWriter(networkStream);
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
                 packet.data = new byte[Constants.data_length];
                 int cnt = 0;
                 int x = 0;
                 int size = 0, checkSum = 0;
                 int len = data.Length;
-                socket.Send(BitConverter.GetBytes(len), 4, SocketFlags.None);
+                binaryWriter.Write(BitConverter.GetBytes(len), 0, 4);
                 while (cnt < len)
                 {
                     x = Math.Min(Constants.data_length, len - cnt);
@@ -355,13 +379,13 @@ namespace Server
                     Array.Copy(data, cnt, packet.data, 0, x);
                     packetBytes = packetToBytes(packet);
                     size = packetBytes.Length;
-                    socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
-                    socket.Send(packetBytes, size, SocketFlags.None);
+                    binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
+                    binaryWriter.Write(packetBytes, 0, size);
                     Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
                     checkSum = CalculateChecksum(packetBytes);
                     Console.WriteLine(checkSum);
-                    socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
-
+                    binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
+                    binaryWriter.Flush();
                     cnt += x;
                 }
 
@@ -375,7 +399,7 @@ namespace Server
             }
         }
 
-        private static void SendZip(Socket socket, string type, string filePath)
+        private static void SendZip(NetworkStream networkStream, string type, string filePath)
         {
             try
             {
@@ -389,7 +413,9 @@ namespace Server
                 int size = 0, checkSum = 0;
                 int len = (int)new FileInfo(filePath).Length;
                 FileStream fs = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                socket.Send(BitConverter.GetBytes(len), 4, SocketFlags.None);
+                BinaryWriter binaryWriter = new BinaryWriter(networkStream);
+
+                binaryWriter.Write(BitConverter.GetBytes(len), 0, 4);
                 while (cnt < len)
                 {
                     x = Math.Min(Constants.data_length, len - cnt);
@@ -398,12 +424,13 @@ namespace Server
                     Array.Copy(data, 0, packet.data, 0, x);
                     packetBytes = packetToBytes(packet);
                     size = packetBytes.Length;
-                    socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
-                    socket.Send(packetBytes, size, SocketFlags.None);
+                    binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
+                    binaryWriter.Write(packetBytes, 0, size);
                     Console.WriteLine("[{0}] Packet sent! {1}", type, size);
                     checkSum = CalculateChecksum(packetBytes);
                     Console.WriteLine(checkSum);
-                    socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
+                    binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
+                    binaryWriter.Flush();
                     cnt += x;
                 }
 
@@ -416,13 +443,12 @@ namespace Server
                 Console.WriteLine("Error..... {0} {1} {2}", e.GetType().ToString() ,e.StackTrace , ((SocketException)e).ErrorCode);
             }
         }
-        internal static string ReceiveZip(Socket socket, int len, Packet packet, int cat)
+        internal static string ReceiveZip(NetworkStream networkStream, int len, Packet packet, int cat)
         {
 
             try
             {
-                BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));
-                //hh:mm:ss
+                BinaryReader binaryReader = new BinaryReader(networkStream);
                 packet.data = new byte[Constants.data_length];
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
