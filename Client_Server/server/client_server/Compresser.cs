@@ -1,9 +1,21 @@
 ﻿using System.IO;
 using System.IO.Compression;
-namespace client_server
+namespace Server
 {
     class Compresser
     {
+
+        public static void DecompressZip(string zipPath, string destinationPath)
+        {
+            if (!Directory.Exists(destinationPath))
+            {
+                //Asta este pentru Visual Studio
+                ZipFile.ExtractToDirectory(zipPath, destinationPath);
+                //Asta este pentru Unity
+                //ZipUtil.Unzip(zipPath, destinationPath);
+            }
+        }
+
         public static byte[] Compress(byte[] data)
         {
             MemoryStream output = new MemoryStream();
@@ -21,9 +33,8 @@ namespace client_server
             using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
             {
                 dstream.CopyTo(output);
-                return output.ToArray();
             }
-            
+            return output.ToArray();
         }
     }
 }

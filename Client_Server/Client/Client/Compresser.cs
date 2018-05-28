@@ -1,40 +1,40 @@
-﻿using System.IO;
-using System.IO.Compression;
-namespace Client
-{
-    class Compresser
+﻿    using System.IO;
+    using System.IO.Compression;
+    namespace Client
     {
-
-        public static void DecompressZip(string zipPath, string destinationPath)
+        class Compresser
         {
-            if (!Directory.Exists(destinationPath))
-            {
-                //Asta este pentru Visual Studio
-                ZipFile.ExtractToDirectory(zipPath, destinationPath);
-                //Asta este pentru Unity
-                //ZipUtil.Unzip(zipPath, destinationPath);
-            }
-        }
 
-        public static byte[] Compress(byte[] data)
-        {
-            MemoryStream output = new MemoryStream();
-            using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
+            public static void DecompressZip(string zipPath, string destinationPath)
             {
-                dstream.Write(data, 0, data.Length);
+                if (!Directory.Exists(destinationPath))
+                {
+                    //Asta este pentru Visual Studio
+                    ZipFile.ExtractToDirectory(zipPath, destinationPath);
+                    //Asta este pentru Unity
+                    //ZipUtil.Unzip(zipPath, destinationPath);
+                }
             }
-            return output.ToArray();
-        }
 
-        public static byte[] Decompress(byte[] data)
-        {
-            MemoryStream input = new MemoryStream(data);
-            MemoryStream output = new MemoryStream();
-            using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+            public static byte[] Compress(byte[] data)
             {
-                dstream.CopyTo(output);
+                MemoryStream output = new MemoryStream();
+                using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
+                {
+                    dstream.Write(data, 0, data.Length);
+                }
+                return output.ToArray();
             }
-            return output.ToArray();
+
+            public static byte[] Decompress(byte[] data)
+            {
+                MemoryStream input = new MemoryStream(data);
+                MemoryStream output = new MemoryStream();
+                using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+                {
+                    dstream.CopyTo(output);
+                }
+                return output.ToArray();
+            }
         }
     }
-}

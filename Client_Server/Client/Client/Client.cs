@@ -2,10 +2,8 @@
 using System.Text;
 using System.IO;
 using System.Net.Sockets;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.IO.Compression;
 using System.Text.RegularExpressions;
 
 class Constants
@@ -23,10 +21,10 @@ internal struct Packet
 }
 namespace Client
 {
-     
+
     public class Client
     {
-        
+
         private static Exhibit exhibit;
         private static Compresser Compresser;
         private static BinaryReader binaryReader;
@@ -40,7 +38,7 @@ namespace Client
             //Museum museum2 = new Museum(".\\Resources\\muzeu_de_test");
             //Exhibit exhibit2 = new Exhibit(".\\Resources\\muzeu_de_test\\Tablou_de_test");
 
-            GetPacketNameFromPacketType("[Museum]-muzeu_de_test");
+            //GetPacketNameFromPacketType("[Museum]-muzeu_de_test");
             try
             {
 
@@ -48,10 +46,12 @@ namespace Client
                 endPacket.type = "[EndT]";
                 endPacket.data = new byte[1];
                 Console.WriteLine("Connecting.....");
-                tcpclnt.Connect("127.0.0.1", 8001);
+                tcpclnt.Connect("18.191.129.149", 8081);
+             //   tcpclnt.Connect("127.0.0.1", 8081);
+
                 Console.WriteLine("Connected");
                 binaryWriter = new BinaryWriter(tcpclnt.GetStream());
-                
+
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
                 //SendText("String de test");
@@ -73,9 +73,10 @@ namespace Client
                 //museum = new Museum(binaryWriter, binaryReader, "invalid");
                 //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
                 //Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Tablou_de_test");
-                /*//exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
-                // exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//fasfa.fsdfs3/';[]fsda");
-                */
+                //exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
+
+                //exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "TestMuseum", "//fasfa.fsdfs3/';[]fsda");
+
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
@@ -127,7 +128,7 @@ namespace Client
                 packet.type = Encoding.UTF8.GetString(tarr);
                 packet.data = new byte[arr.Length - Constants.type_length];
                 Array.Copy(arr, Constants.type_length, packet.data, 0, arr.Length - Constants.type_length);
-                return packet;  
+                return packet;
             }
             catch (Exception e)
             {
@@ -151,21 +152,21 @@ namespace Client
                 while (cnt < len)
                 {
                     int howBig = binaryReader.ReadInt32();
-                  
+
                     int readed = binaryReader.Read(packetBytes, 0, howBig);
                     int myCheckSum = CalculateChecksum(packetBytes);
                     int checkSum = binaryReader.ReadInt32();
                     if (myCheckSum != checkSum)
                     {
                         packet.type = "[Error]";
-                        packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
+                        packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum );
                         Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
                         return null;
                     }
                     packet = bytesToPacket(packetBytes);
                     Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
                     cnt += howBig - Constants.type_length;
-                  
+
                     if (packet.type == "[EndT]")
                         break;
 
@@ -181,7 +182,7 @@ namespace Client
             }
 
         }
-        internal static String ReceiveZip(String folderName)
+        internal static string ReceiveZip(string folderName)
         {
 
             try
@@ -199,27 +200,35 @@ namespace Client
                 //string filename = ".//Resources//" + packet.type + ".zip";
                 Stream fs = null;
                 BinaryWriter bw = null;
+                int pc = 0;
 
                 while (cnt < len)
                 {
                     int howBig = binaryReader.ReadInt32();
 
-                    int readed = binaryReader.Read(packetBytes, 0, howBig);
+                    int read = binaryReader.Read(packetBytes, 0, howBig);
                     int myCheckSum = CalculateChecksum(packetBytes);
                     int checkSum = binaryReader.ReadInt32();
+                    pc++;
                     if (myCheckSum != checkSum)
                     {
                         packet.type = "[Error]";
                         packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
-                        Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
+                        Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!\n server Checksum {0} myCheckSum {1}, read: {2}, howbig: {3}", checkSum, myCheckSum, read, howBig);
+                        Console.WriteLine();
                         return null;
                     }
                     packet = bytesToPacket(packetBytes);
                     cnt += howBig - Constants.type_length;
-
-                    if(!ok && !packet.type.Equals("[Error]"))
+                    
+                    packet.type = packet.type.Replace("\0", string.Empty);
+                    if (packet.type.Equals("[Error]"))
                     {
-                        packet.type = packet.type.Replace("\0", String.Empty);
+                        return null;
+                    }
+
+                    if (!ok)
+                    {
                         string filename;
                         if (folderName == null)
                         {
@@ -237,7 +246,8 @@ namespace Client
 
                     bw.Write(packet.data);
                     bw.Flush();
-                    Console.WriteLine("[" + DateTime.Now + "] Packet received!");
+                    Console.WriteLine("[" + DateTime.Now + "] Packet received! size: {0}, checksum: {1}", read, checkSum);
+                    System.Threading.Thread.Sleep(50);
                 }
                 fs.Close();
                 bw.Close();
@@ -300,13 +310,13 @@ namespace Client
         }
 
 
-        public static void SendText(String packetType, String text)
+        public static void SendText(string packetType, string text)
         {
-            Send("[" + packetType + "]",  Encoding.UTF8.GetBytes(text));
+            Send("[" + packetType + "]", Encoding.UTF8.GetBytes(text));
             Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
         }
 
-    
+
         internal static byte[] packetToBytes(Packet packet)
         {
             try
@@ -323,7 +333,7 @@ namespace Client
                 return null;
             }
         }
-  
+
         private static void Send(string type, byte[] data)
         {
             try
@@ -363,7 +373,7 @@ namespace Client
             }
         }
 
-        public static string GetPacketNameFromPacketType(String path)
+        public static string GetPacketNameFromPacketType(string path)
         {
             Regex regex = new Regex(".+-([\\w\\s]+\\w)", RegexOptions.IgnoreCase);
             Match match = regex.Match(path);

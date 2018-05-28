@@ -11,16 +11,16 @@ namespace Client
     {
         protected BinaryWriter outStream;
         protected BinaryReader inStream;
-        protected String name = null;
+        protected string name = null;
 
-        protected void GetPackage(String packetType, String pathToPackage, String folderName)
+        protected void GetPackage(string packetType, string pathToPackage, string folderName)
         {
             try
             {
-                Client.SendText(packetType, this.name);
+                Client.SendText(packetType, name);
                 if(Client.ReceiveZip(folderName) == null)
                 {
-                    Console.WriteLine("Invalid package name");
+                    Console.WriteLine("Invalid package name {0}", name);
                 }
                 else
                 {

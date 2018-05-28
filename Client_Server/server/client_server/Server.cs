@@ -5,7 +5,6 @@ using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
-using System.Drawing;
 using System.IO;
 using client_server;
 using System.Runtime.InteropServices;
@@ -28,6 +27,7 @@ internal struct Packet
 
 namespace Server
 {
+
     public class Server
     {
         private static Compresser Compresser;
@@ -60,15 +60,20 @@ namespace Server
             Package.register("Muzeu de test2", "parola");*/
             try
             {
-                IPAddress ipAd = IPAddress.Parse("127.0.0.1");
-                TcpListener myList = new TcpListener(ipAd, 8001);
+                  IPAddress ipAddress = Dns.Resolve("172.30.0.211").AddressList[0];
+          //      IPAddress ipAddress = Dns.Resolve("localhost").AddressList[0];
+            
+                Console.WriteLine("IP: " + ipAddress);
+                int port = 8081;
+                TcpListener myList = new TcpListener(ipAddress, port);
+                //myList.AllowNatTraversal()
                 myList.Start();
                 while (running)
                 {
 
 
                     Log();
-                    Console.WriteLine("[" + DateTime.Now + "] The server is running at port 8001...");
+                    Console.WriteLine("[" + DateTime.Now + "] The server is running at port "+ port +" ...");
                     Console.WriteLine("[" + DateTime.Now + "] The local End point is  :" + myList.LocalEndpoint);
                     Console.WriteLine("[" + DateTime.Now + "] Waiting for a connection.....");
 
@@ -141,7 +146,7 @@ namespace Server
                     if (myCheckSum != checkSum)
                     {
                         packet.type = "[Error]";
-                        packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
+                        packet.data = Encoding.ASCII.GetBytes("[server] Checksum does not match!" + myCheckSum + " " + checkSum);
                         Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
 
                     }
@@ -169,7 +174,7 @@ namespace Server
             catch (Exception e)
             {
                 Log();
-                Console.WriteLine("Error..... " + e.StackTrace);
+                Console.WriteLine("Error..... "+ e.GetType().ToString() + " " + e.StackTrace);
             }
 
         }
@@ -278,7 +283,7 @@ namespace Server
             catch (Exception e)
             {
                 Log();
-                Console.WriteLine(e.ToString());
+                Console.WriteLine("Error..... " + e.GetType().ToString() + " " + e.StackTrace);
                 Packet packet = new Packet();
                 packet.type = "[Error]";
                 // am adaugat linia de cod pentru cazul in care muzeul nu este gasit in baza de date
@@ -329,7 +334,8 @@ namespace Server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Log();
+                Console.WriteLine("Error..... " + e.GetType().ToString() + " " + e.StackTrace);
                 return null;
 
             }
@@ -370,7 +376,8 @@ namespace Server
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error..... " + e.StackTrace);
+                Log();
+                Console.WriteLine("Error..... " + e.GetType().ToString() + " " + e.StackTrace);
                 return null;
             }
         }
@@ -398,6 +405,7 @@ namespace Server
                     socket.Send(packetBytes, size, SocketFlags.None);
                     Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
                     checkSum = CalculateChecksum(packetBytes);
+                    Console.WriteLine(checkSum);
                     socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
 
                     cnt += x;
@@ -408,7 +416,8 @@ namespace Server
 
             catch (Exception e)
             {
-                Console.WriteLine("Error..... " + e.StackTrace);
+                Log();
+                Console.WriteLine("Error..... " + e.GetType().ToString() + " " + e.StackTrace);
             }
         }
 
@@ -437,8 +446,9 @@ namespace Server
                     size = packetBytes.Length;
                     socket.Send(BitConverter.GetBytes(size), 4, SocketFlags.None);
                     socket.Send(packetBytes, size, SocketFlags.None);
-                    Console.WriteLine("[" + type + "] Packet sent! ");
+                    Console.WriteLine("[{0}] Packet sent! {1}", type, size);
                     checkSum = CalculateChecksum(packetBytes);
+                    Console.WriteLine(checkSum);
                     socket.Send(BitConverter.GetBytes(checkSum), 4, SocketFlags.None);
                     cnt += x;
                 }
@@ -448,10 +458,11 @@ namespace Server
 
             catch (Exception e)
             {
-                Console.WriteLine("Error..... " + e.StackTrace);
+                Log();
+                Console.WriteLine("Error..... {0} {1} {2}", e.GetType().ToString() ,e.StackTrace , ((SocketException)e).ErrorCode);
             }
         }
-        internal static String ReceiveZip(Socket socket, int len, Packet packet, int cat)
+        internal static string ReceiveZip(Socket socket, int len, Packet packet, int cat)
         {
 
             try
@@ -507,7 +518,8 @@ namespace Server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Log();
+                Console.WriteLine("Error..... " + e.GetType().ToString() + " " + e.StackTrace);
                 return null;
 
             }

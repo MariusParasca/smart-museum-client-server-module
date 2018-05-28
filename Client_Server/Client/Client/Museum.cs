@@ -12,7 +12,7 @@ namespace Client
         List<Exhibit> exhibits;
         public List<Exhibit> GetExhibits() { return exhibits; }
 
-        public Museum(BinaryWriter outStream, BinaryReader inStream, String name)
+        public Museum(BinaryWriter outStream, BinaryReader inStream, string name)
         {
             if (name == null || outStream == null || inStream == null)
             {
@@ -23,12 +23,12 @@ namespace Client
             this.outStream = outStream;
             this.inStream = inStream;
             exhibits = new List<Exhibit>();
-            String path = ".\\Resources\\" + name;
+            string path = ".\\Resources\\" + name;
             GetPackage("get-museum", path, null);
             CreateExhibits(path);
         }
 
-        public Museum(String pathToMuseum)
+        public Museum(string pathToMuseum)
         {
             if (pathToMuseum == null)
             {
@@ -40,7 +40,7 @@ namespace Client
             CreateExhibits(pathToMuseum); // trebuie dat path-ul muzeului
         }
 
-        private void CreateExhibits(String museumFolder)
+        private void CreateExhibits(string museumFolder)
         {
             string[] directoryEntries;
             try
