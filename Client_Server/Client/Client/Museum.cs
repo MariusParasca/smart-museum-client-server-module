@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Client
 {
@@ -26,7 +24,6 @@ namespace Client
             string path = ".\\Resources\\" + name;
             GetPackage("get-museum", path, null);
             CreateExhibits(path);
-            String path = ".\\Resources\\" + name;
             if (GetPackage("get-museum", path, null))
             {
                 CreateExhibits(path);

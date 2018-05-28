@@ -13,7 +13,6 @@ namespace Client
         protected BinaryReader inStream;
         protected string name = null;
 
-        protected void GetPackage(string packetType, string pathToPackage, string folderName)
         protected bool GetPackage(String packetType, String pathToPackage, String folderName)
         {
             try

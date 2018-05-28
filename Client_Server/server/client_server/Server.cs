@@ -50,6 +50,8 @@ namespace Server
             Compresser = new Compresser();
             running = true;
             endPacket.type = "[EndT]";
+            Directory.CreateDirectory(".//Resources");
+            Directory.CreateDirectory(".//Logs");
             Package.GetExhibitList("Muzeu de test");
             Package.CreateGeoLocationFile();
             Package.Login("Muzeu de test", "parola");
@@ -82,55 +84,7 @@ namespace Server
                     Console.WriteLine("[" + DateTime.Now + "]Connection accepted from " + socket.RemoteEndPoint);
 
 
-                    /*
-                    SendInt(s, 10);
-                    SendString(s, "Ana are mere");
-                    Console.WriteLine("Numarul primit este: " + ReceiveInt(s));
-                    Console.WriteLine("Mesajul primit este: " + ReceiveString(s));
-                    RecieveZip(s);
-                    */
-
-                    /*
-                    String museumName = ReceiveText(s);
-                    String museumPath = db.GetPath(museumName);
-                    sftp.GetMuseumPackage(museumPath);
-                    //Send(s, sftp.GetMuseumPackage(museumPath));
-                       */
-                    // while (socket.Connected)
-                    //{
-                    //   
-                    /*  string str = ReceiveText(socket);
-
-<<<<<<< HEAD
-                      SendPhoto(socket, ".//Resources//meme.jpg");
-                      SendText(socket, "asd");
-                      ReceivePhoto(socket, "final_Test.jpg");*/
-                    /*               SendZip(socket, "muzeu_de_test", ".//Resources//muzeu_de_test1.zip");
-                                 //  socket.Close();
-
-                                   //SendPhoto(socket, ".//Resources//meme.jpg");
-                                   SendText(socket, "asd");
-                                   //ReceivePhoto(socket, "final_Test.jpg");
-                                   //  socket.Close();
-
-                                   //}
-                                   for(int i = 0; i < 1; i++)
-                                   {
-                                       String museumName = ReceiveText(socket); //primirea numelui muzeului
-                                       String path = Museum.GetPath("SmartMuseumDB.Museums", museumName);
-                                       //byte[] package = Museum.GetPackage("SmartMuseumDB.Museums", museumName);
-                                       //Packet packet = bytesToPacket(package);
-                                       SendZip(socket, museumName, path);
-                                   }
-
-                                   for (int i = 0; i < 1; i++)
-                                   {
-                                       String exhibitName = ReceiveText(socket); //primirea numelui exponatului
-                                       String path = Museum.GetPath("SmartMuseumDB.Exhibits", exhibitName);
-                                       //byte[] package = Museum.GetPackage("SmartMuseumDB.Exhibits", exhibitName);
-                                       //Packet packet = bytesToPacket(package);
-                                       SendZip(socket, exhibitName, path);
-                                   }/**/
+                 
 
                     Packet packet = new Packet();
                     BinaryReader binaryReader = new BinaryReader(new NetworkStream(socket));

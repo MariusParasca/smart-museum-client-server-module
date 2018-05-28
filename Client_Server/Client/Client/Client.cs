@@ -47,39 +47,14 @@ namespace Client
                 endPacket.data = new byte[1];
                 Console.WriteLine("Connecting.....");
                 tcpclnt.Connect("18.191.129.149", 8081);
-             //   tcpclnt.Connect("127.0.0.1", 8081);
-
+                //   tcpclnt.Connect("127.0.0.1", 8081);
+                System.IO.Directory.CreateDirectory(".//Resouces");
                 Console.WriteLine("Connected");
                 binaryWriter = new BinaryWriter(tcpclnt.GetStream());
 
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
-                //SendText("String de test");
-                //ReceivePhoto("test.jpg");
-                //ReceiveText();
-                // SendPhoto( ".//Resources//test.jpg");
-                //ReceiveZip();
-
-                //SendText("String de test");
-                //ReceivePhoto("test.jpg");
-                //ReceiveText();
-                //SendPhoto( ".//Resources//test.jpg");
-
-                //Teste
                 Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
-                //Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "TestMuseum", "TestPackage2");
-
-
-                //museum = new Museum(binaryWriter, binaryReader, "invalid");
-                //museum = new Museum(Client.GetBinaryWriter(), Client.GetBinaryReader(), "//invalid"); //testare trimitere invalida
-                //Exhibit exhibit = new Exhibit(binaryWriter, binaryReader, "Tablou_de_test");
-                //exhibit = new Exhibit(binaryWriter, binaryReader, "/fasfa.fsdfs3/';[");
-
-                //exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "TestMuseum", "//fasfa.fsdfs3/';[]fsda");
-
-                
-                //exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "TestMuseum", "//fasfa.fsdfs3/';[]fsda");
-                
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
