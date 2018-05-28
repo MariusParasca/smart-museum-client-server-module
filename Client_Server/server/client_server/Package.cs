@@ -1,10 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace client_server
 {
@@ -19,7 +17,7 @@ namespace client_server
             createJsonFile();
         }
 
-        private static void ExecuteQuery(String query, String[] parameters)
+        private static void ExecuteQuery(string query, string[] parameters)
         {
             try
             {
@@ -28,7 +26,7 @@ namespace client_server
 
                 if(parameters != null)
                 {
-                    String parameter = "@val";
+                    string parameter = "@val";
                     for (int i = 0; i < parameters.Length; i++)
                     {
                         command.Parameters.AddWithValue(parameter + (i + 1), parameters[i]);
@@ -65,7 +63,7 @@ namespace client_server
             {
                 using (FileStream fileStream = File.Create(".//Resources//geoLocations.json"))
                 {
-                    Byte[] info = new UTF8Encoding(true).GetBytes(jsonInfo.ToString());
+                    byte[] info = new UTF8Encoding(true).GetBytes(jsonInfo.ToString());
                     fileStream.Write(info, 0, info.Length);
                 }
             }
@@ -76,7 +74,7 @@ namespace client_server
             
          }
 
-        public static String GetExhibitList(String museum)
+        public static string GetExhibitList(string museum)
         {
             if(museum == null)
             {
@@ -86,7 +84,7 @@ namespace client_server
             StringBuilder itemList = new StringBuilder();
             ExecuteQuery("SELECT e.name " +
                         " FROM SmartMuseumDB.Museums m INNER JOIN SmartMuseumDB.Exhibits e ON m.id = e.idMuseum " +
-                        " WHERE m.name = @val1", new String[] { museum });
+                        " WHERE m.name = @val1", new string[] { museum });
             while (reader.Read())
             {
                 itemList.Append(reader[0] + ",");
@@ -96,14 +94,14 @@ namespace client_server
             CloseConnection();
             return itemList.ToString();
         }
-        private static String GetSingleResult()
+        private static string GetSingleResult()
         {
             if (reader != null)
             {
                 reader.Read();
                 if (reader.HasRows)
                 {
-                    String result = reader[0].ToString();
+                    string result = reader[0].ToString();
                     Console.WriteLine(result);
                     return result;
                 }
@@ -111,32 +109,32 @@ namespace client_server
             return "noExist";
         }
 
-        public static String GetPath(String tableName, String queryParameter)
+        public static string GetPath(string tableName, string queryParameter)
         {
             if (tableName == null || queryParameter == null)
             {
                 Console.WriteLine("Table name or query parameter is null");
                 return null;
             }
-            queryParameter = queryParameter.Replace("\0", String.Empty);
+            queryParameter = queryParameter.Replace("\0", string.Empty);
             byte[] byteArrayFile = new byte[] { };
-            ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new String[] { queryParameter });
-            String path = GetSingleResult();
+            ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new string[] { queryParameter });
+            string path = GetSingleResult();
             CloseConnection();
             return path;
         }
 
-        public static bool Login(String username, String password)
+        public static bool Login(string username, string password)
         {
             if (username == null || password == null)
             {
                 Console.WriteLine("Username or password is null");
                 return false;
             }
-            username = username.Replace("\0", String.Empty);
-            password = password.Replace("\0", String.Empty);
+            username = username.Replace("\0", string.Empty);
+            password = password.Replace("\0", string.Empty);
             ExecuteQuery("SELECT id FROM SmartMuseumDB.users WHERE username = @val1 AND password = @val2",
-                         new String[] { username, password });
+                         new string[] { username, password });
             if(reader != null)
             {
                 reader.Read();
@@ -155,21 +153,21 @@ namespace client_server
             return false;
         }
 
-        public static void Register(String username, String password)
+        public static void Register(string username, string password)
         {
             if (username == null || password == null)
             {
                 Console.WriteLine("Username or password is null");
                 return;
             }
-            username = username.Replace("\0", String.Empty);
-            password = password.Replace("\0", String.Empty);
+            username = username.Replace("\0", string.Empty);
+            password = password.Replace("\0", string.Empty);
             ExecuteQuery("INSERT INTO SmartMuseumDB.users VALUES(null, @val1, @val2)",
-                         new String[] { username, password });
+                         new string[] { username, password });
             CloseConnection();
         }
 
-        private static string GetMuseumId(String name)
+        private static string GetMuseumId(string name)
         {
             if (name == null)
             {
@@ -177,15 +175,15 @@ namespace client_server
                 return "";
             }
 
-            name = name.Replace("\0", String.Empty);
-            ExecuteQuery("SELECT id FROM SmartMuseumDB.Museums WHERE name = @val1", new String[] { name });
-            String museumId = GetSingleResult();
+            name = name.Replace("\0", string.Empty);
+            ExecuteQuery("SELECT id FROM SmartMuseumDB.Museums WHERE name = @val1", new string[] { name });
+            string museumId = GetSingleResult();
             CloseConnection();
             return museumId;
         }
 
-        public static void InsertExhibits(String museumName, String author, 
-                                          String[] exhibits, String[] paths)
+        public static void InsertExhibits(string museumName, string author, 
+                                          string[] exhibits, string[] paths)
         {
             if (museumName == null || exhibits == null)
             {
@@ -203,8 +201,8 @@ namespace client_server
                 return;
             }
 
-            museumName = museumName.Replace("\0", String.Empty);
-            String museumId = GetMuseumId(museumName);
+            museumName = museumName.Replace("\0", string.Empty);
+            string museumId = GetMuseumId(museumName);
             if(museumId.Equals("noExist"))
             {
                 Console.WriteLine("Invalid museum name");
@@ -214,13 +212,13 @@ namespace client_server
             {
                 ExecuteQuery(
                     "INSERT INTO SmartMuseumDB.Exhibits VALUES(null, @val1, @val2, @val3, @val4)",
-                    new String[] { museumId, author, museumName, paths[i] });
+                    new string[] { museumId, author, museumName, paths[i] });
                 CloseConnection();
             }
         }
 
-        public static void InsertMuseum(String name, double latitude, 
-                                        double longitude, double radius, String path)
+        public static void InsertMuseum(string name, double latitude, 
+                                        double longitude, double radius, string path)
         {
             if (name == null || path == null)
             {
@@ -228,7 +226,7 @@ namespace client_server
                 return;
             }
             ExecuteQuery("INSERT INTO SmartMuseumDB.Museums VALUES(null, @val1, @val2, @val3, @val4, @val5)",
-                         new String[] { name, latitude.ToString(), longitude.ToString(), radius.ToString(), path });
+                         new string[] { name, latitude.ToString(), longitude.ToString(), radius.ToString(), path });
             CloseConnection();
         }
 
@@ -239,23 +237,23 @@ namespace client_server
             Database.CloseConnection();
         }
         /*
-        public static byte[] GetPackage(String tableName, String queryParameter)
+        public static byte[] GetPackage(string tableName, string queryParameter)
         {
             if(tableName == null || queryParameter == null)
             {
                 Console.WriteLine("Table name or query parameter is null");
                 return null;
             }
-            queryParameter = queryParameter.Replace("\0", String.Empty);
+            queryParameter = queryParameter.Replace("\0", string.Empty);
             byte[] byteArrayFile = new byte[] {};   
-            ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new String[] { queryParameter });
+            ExecuteQuery("SELECT path FROM " + tableName + " WHERE name = @val1", new string[] { queryParameter });
             if(reader != null)
             {
                 reader.Read();
                 if(reader.HasRows)
                 {
                     Console.WriteLine(reader[0]);
-                    byteArrayFile = System.IO.File.ReadAllBytes(reader[0].ToString());
+                    byteArrayFile = System.IO.File.ReadAllBytes(reader[0].Tostring());
                 }
             }
             CloseConnection();
@@ -264,7 +262,7 @@ namespace client_server
 
 
          //Probabil vor fii sterse
-        public static byte[] GetExhibit(String exhibit)
+        public static byte[] GetExhibit(string exhibit)
         {
             byte[] byteArrayFile;
             ExecuteQuery("SELECT path FROM SmartMuseumDB.Exhibits WHERE name = '" + exhibit + "'");
@@ -273,7 +271,7 @@ namespace client_server
             return byteArrayFile;
         }
 
-        public static byte[] GetMuseum(String museum)
+        public static byte[] GetMuseum(string museum)
         {
             byte[] byteArrayFile;
             ExecuteQuery("SELECT path FROM SmartMuseumDB.Museums where museumName = '" + museum + "'");

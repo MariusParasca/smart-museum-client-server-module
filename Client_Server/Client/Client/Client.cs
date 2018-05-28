@@ -46,7 +46,7 @@ namespace Client
                 endPacket.type = "[EndT]";
                 endPacket.data = new byte[1];
                 Console.WriteLine("Connecting.....");
-                tcpclnt.Connect("18.191.129.149", 8081);
+                tcpclnt.Connect("localhost", 8081);//18.191.129.149
                 //   tcpclnt.Connect("127.0.0.1", 8081);
             //    Directory.CreateDirectory(".//Resources");
                 Console.WriteLine("Connected");
@@ -56,6 +56,7 @@ namespace Client
 
                 Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
                 Console.WriteLine("\nJob done! Now exit!");
+                Send(endPacket.type, packetToBytes(endPacket));
                 tcpclnt.Close();
             }
 

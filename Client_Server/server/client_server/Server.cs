@@ -122,7 +122,7 @@ namespace Server
             Package.Login("Muzeu de test", "parola");
             try
             {
-                IPAddress ipAddress = Dns.Resolve("172.30.0.211").AddressList[0];
+                IPAddress ipAddress = Dns.Resolve("localhost").AddressList[0];//172.30.0.211
                 Console.WriteLine("IP: " + ipAddress);
                 int port = 8081;
                 int counter = 0;
@@ -168,11 +168,11 @@ namespace Server
                 if (Package.Login(user, password))
                 {
                     string museum = ""; //trebuie luat din db muzeul pentru userul asta
-                    SendText(networkStream, Package.GetExhibitList(museum));
+                    SendText(networkStream, Package.GetExhibitList(museum), clNo);
                 }
                 else
                 {
-                    SendText(networkStream, "Invalid user or password! Please try again!");
+                    SendText(networkStream, "Invalid user or password! Please try again!", clNo);
                 }
 
             }
@@ -193,7 +193,7 @@ namespace Server
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
-                    Send(networkStream, "[Error]", err);
+                    Send(networkStream, "[Error]", err, clNo);
 
                 }
                 else
@@ -208,11 +208,11 @@ namespace Server
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Museum invalid path");
-                    Send(networkStream, "[Error]", err);
+                    Send(networkStream, "[Error]", err, clNo);
 
                 }
                 else
-                    SendZip(networkStream, "[Museum]-" + GetPacketNameFromPath(path), path);
+                    SendZip(networkStream, "[Museum]-" + GetPacketNameFromPath(path), path, clNo);
 
 
             }
@@ -223,11 +223,11 @@ namespace Server
                 if (!File.Exists(path))
                 {
                     byte[] err = Encoding.ASCII.GetBytes("Exhibit invalid path");
-                    Send(networkStream, "[Error]", err);
+                    Send(networkStream, "[Error]", err, clNo);
 
                 }
                 else
-                    SendZip(networkStream, "[Exhibit]-" + GetPacketNameFromPath(path), path);
+                    SendZip(networkStream, "[Exhibit]-" + GetPacketNameFromPath(path), path, clNo);
 
 
             }
@@ -235,7 +235,7 @@ namespace Server
                 if (type.Equals("[get-exhibit-list]"))
             {
                 string exhibits = Package.GetExhibitList(str);
-                SendText(networkStream, exhibits);
+                SendText(networkStream, exhibits,clNo);
 
             }
 
@@ -276,7 +276,7 @@ namespace Server
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
-                packetBytes = packetToBytes(packet);
+                packetBytes = packetToBytes(packet, clNo);
                 Array.Copy(packetBytes, Constants.type_length, data, cnt, cat - Constants.type_length);
                 cnt += cat;
                 BinaryReader binaryReader = new BinaryReader(networkStream);
@@ -294,7 +294,7 @@ namespace Server
                     {
                         packet.type = "[Error]";
                         packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
-                        Console.WriteLine("[" + DateTime.Now + "] [Error] Checksum does not match!");
+                        Console.WriteLine("[Client-{0}]-[{1}] {2}", clNo, DateTime.Now, "[Error] Checksum does not match!");
                         return null;
                     }
                     packet = bytesToPacket(packetBytes, clNo);
@@ -302,7 +302,7 @@ namespace Server
                     if (packet.type == "[EndT]")
                         break;
 
-                    Console.WriteLine("[" + DateTime.Now + "] Packet received!");
+                  //  Console.WriteLine("[" + DateTime.Now + "] Packet received!");
 
 
                 }
@@ -311,7 +311,7 @@ namespace Server
             catch (Exception e)
             {
                 Log();
-                Console.WriteLine("Error..... " + e.GetType().ToString() + " " + e.StackTrace);
+                Console.WriteLine("[Client-{0}]-[{1}] {2}", clNo, DateTime.Now, "Error..... " + e.GetType().ToString() + " " + e.StackTrace);
                 return null;
 
             }
@@ -331,33 +331,33 @@ namespace Server
             return str;
         }
 
-        public static void SendText(NetworkStream networkStream, string text)
+        public static void SendText(NetworkStream networkStream, string text, string clNo)
         {
             Log();
             byte[] data = Encoding.UTF8.GetBytes(text);
-            Send(networkStream, "[Text]", data);
-            Console.WriteLine("[" + DateTime.Now + "] Text Sent!");
+            Send(networkStream, "[Text]", data, clNo);
+            Console.WriteLine("[Client-{0}]-[{1}] {2}", clNo, DateTime.Now, "Text Sent!");
         }
 
-        private static byte[] packetToBytes(Packet packet)
+        private static byte[] packetToBytes(Packet packet, string clNo)
         {
             Log();
             try
             {
 
                 byte[] packetBytes = Encoding.UTF8.GetBytes(packet.type);
-                Array.Resize<byte>(ref packetBytes, Constants.type_length + packet.data.Length);
+                Array.Resize(ref packetBytes, Constants.type_length + packet.data.Length);
                 Array.Copy(packet.data, 0, packetBytes, Constants.type_length, packet.data.Length);
                 return packetBytes;
             }
             catch (Exception e)
             {
                 Log();
-                Console.WriteLine("Error..... " + e.GetType().ToString() + " " + e.StackTrace);
+                Console.WriteLine("[Client-{0}] [{1}] Error..... {} {}", clNo, DateTime.Now, e.GetType().ToString(), e.StackTrace);
                 return null;
             }
         }
-        private static void Send(NetworkStream networkStream, string type, byte[] data)
+        private static void Send(NetworkStream networkStream, string type, byte[] data, string clNo)
         {
             try
             {
@@ -376,13 +376,11 @@ namespace Server
                     x = Math.Min(Constants.data_length, len - cnt);
                     packet.type = type;
                     Array.Copy(data, cnt, packet.data, 0, x);
-                    packetBytes = packetToBytes(packet);
+                    packetBytes = packetToBytes(packet, clNo);
                     size = packetBytes.Length;
                     binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
                     binaryWriter.Write(packetBytes, 0, size);
-                    Console.WriteLine("[" + DateTime.Now + "] Packet sent! ");
                     checkSum = CalculateChecksum(packetBytes);
-                    Console.WriteLine(checkSum);
                     binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
                     binaryWriter.Flush();
                     cnt += x;
@@ -394,11 +392,11 @@ namespace Server
             catch (Exception e)
             {
                 Log();
-                Console.WriteLine("Error..... " + e.GetType().ToString() + " " + e.StackTrace);
+                Console.WriteLine("[Client-{0}]-[{1}] {2}", clNo, DateTime.Now, "Error..... " + e.GetType().ToString() + " " + e.StackTrace);
             }
         }
 
-        private static void SendZip(NetworkStream networkStream, string type, string filePath)
+        private static void SendZip(NetworkStream networkStream, string type, string filePath, string clNo)
         {
             try
             {
@@ -421,13 +419,11 @@ namespace Server
                     packet.type = type;
                     int read = fs.Read(data, 0, Constants.data_length);
                     Array.Copy(data, 0, packet.data, 0, x);
-                    packetBytes = packetToBytes(packet);
+                    packetBytes = packetToBytes(packet, clNo);
                     size = packetBytes.Length;
                     binaryWriter.Write(BitConverter.GetBytes(size), 0, 4);
                     binaryWriter.Write(packetBytes, 0, size);
-                    Console.WriteLine("[{0}] Packet sent! {1}", type, size);
                     checkSum = CalculateChecksum(packetBytes);
-                    Console.WriteLine(checkSum);
                     binaryWriter.Write(BitConverter.GetBytes(checkSum), 0, 4);
                     binaryWriter.Flush();
                     cnt += x;
@@ -439,7 +435,7 @@ namespace Server
             catch (Exception e)
             {
                 Log();
-                Console.WriteLine("Error..... {0} {1} {2}", e.GetType().ToString() ,e.StackTrace , ((SocketException)e).ErrorCode);
+                Console.WriteLine("[Client-{0}]-[{1}] {2}", clNo, DateTime.Now, "Error..... {0} {1} {2}", e.GetType().ToString() ,e.StackTrace , ((SocketException)e).ErrorCode);
             }
         }
         internal static string ReceiveZip(NetworkStream networkStream, int len, Packet packet, int cat, string clNo)
@@ -470,7 +466,7 @@ namespace Server
                     {
                         packet.type = "[Error]";
                         packet.data = Encoding.ASCII.GetBytes("Checksum does not match!" + myCheckSum + " " + checkSum);
-                        Console.WriteLine("[client-{0}] [{1}] [Error] Checksum does not match!", clNo, DateTime.Now);
+                        Console.WriteLine("[Client-{0}] [{1}] [Error] Checksum does not match!", clNo, DateTime.Now);
                         return null;
                     }
                     packet = bytesToPacket(packetBytes, clNo);
