@@ -77,6 +77,9 @@ namespace Client
 
                 //exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "TestMuseum", "//fasfa.fsdfs3/';[]fsda");
 
+                
+                //exhibit = new Exhibit(Client.GetBinaryWriter(), Client.GetBinaryReader(), "TestMuseum", "//fasfa.fsdfs3/';[]fsda");
+                
                 Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
@@ -228,6 +231,13 @@ namespace Client
                     }
 
                     if (!ok)
+                    packet.type = packet.type.Replace("\0", String.Empty);
+                    if (packet.type.Equals("[Error]"))
+                    {
+                        return null;
+                    }
+
+                    if(!ok)
                     {
                         string filename;
                         if (folderName == null)

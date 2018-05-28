@@ -26,6 +26,11 @@ namespace Client
             string path = ".\\Resources\\" + name;
             GetPackage("get-museum", path, null);
             CreateExhibits(path);
+            String path = ".\\Resources\\" + name;
+            if (GetPackage("get-museum", path, null))
+            {
+                CreateExhibits(path);
+            }
         }
 
         public Museum(string pathToMuseum)

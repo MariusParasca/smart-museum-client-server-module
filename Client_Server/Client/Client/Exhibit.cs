@@ -31,6 +31,10 @@ namespace Client
             String path = ".\\Resources\\" + museumName + "\\" + exhibitName;
             GetPackage("get-exhibit", path, museumName);
             CreateExhibit(path);
+            if(GetPackage("get-exhibit", path, museumName))
+            {
+                CreateExhibit(path);
+            }
         }
 
         public Exhibit(String exhibitFolder)

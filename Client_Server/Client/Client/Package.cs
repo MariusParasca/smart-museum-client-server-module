@@ -14,6 +14,7 @@ namespace Client
         protected string name = null;
 
         protected void GetPackage(string packetType, string pathToPackage, string folderName)
+        protected bool GetPackage(String packetType, String pathToPackage, String folderName)
         {
             try
             {
@@ -21,17 +22,20 @@ namespace Client
                 if(Client.ReceiveZip(folderName) == null)
                 {
                     Console.WriteLine("Invalid package name {0}", name);
+                    Console.WriteLine("Invalid package name or other error");
+                    return false;
                 }
                 else
                 {
                     Compresser.DecompressZip(pathToPackage + ".zip", pathToPackage);
+                    return true;
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Unexpected exception. Exception: " + e.ToString());
             }
-
+            return false;
         }
 
     }
