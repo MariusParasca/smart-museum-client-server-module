@@ -27,6 +27,7 @@ namespace Client
                 else
                 {
                     Compresser.DecompressZip(pathToPackage + ".zip", pathToPackage);
+                    
                     File.Delete(@pathToPackage);
                     return true;
                 }

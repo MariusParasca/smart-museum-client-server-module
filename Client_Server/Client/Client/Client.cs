@@ -55,8 +55,8 @@ namespace Client
                 binaryReader = new BinaryReader(tcpclnt.GetStream());
 
                 Museum museum = new Museum(binaryWriter, binaryReader, "Muzeu de test");
-                Console.WriteLine("\nJob done! Now exit!");
                 Send(endPacket.type, packetToBytes(endPacket));
+                Console.WriteLine("\nJob done! Now exit!");
                 tcpclnt.Close();
             }
 
@@ -222,7 +222,7 @@ namespace Client
                     bw.Write(packet.data);
                     bw.Flush();
                     Console.WriteLine("[" + DateTime.Now + "] Packet received! size: {0}, checksum: {1}", read, checkSum);
-                    System.Threading.Thread.Sleep(50);
+                    System.Threading.Thread.Sleep(5);
                 }
                 fs.Close();
                 bw.Close();

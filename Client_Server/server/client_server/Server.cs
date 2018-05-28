@@ -59,19 +59,18 @@ namespace Server
             private void doChat()
             {
                 int requestCount = 0;
-                byte[] bytesFrom = new byte[10025];
                 requestCount = 0;
+                NetworkStream networkStream = clientSocket.GetStream();
 
-                while (true)
+                Packet packet = new Packet();
+                BinaryReader binaryReader = new BinaryReader(clientSocket.GetStream());
+                bool clientRunning =  true;
+                while (clientRunning)
                 {
                     try
                     {
                         requestCount = requestCount + 1;
-                        NetworkStream networkStream = clientSocket.GetStream();
-
-                        Packet packet = new Packet();
-                        BinaryReader binaryReader = new BinaryReader(clientSocket.GetStream());
-                        int len = binaryReader.ReadInt32();
+                          int len = binaryReader.ReadInt32();
                         packet.data = new byte[Constants.data_length];
                         int cnt = 0;
                         byte[] data = new byte[len + Constants.data_length];
@@ -85,18 +84,21 @@ namespace Server
                             packet.type = "[Error]";
                             packet.data = Encoding.ASCII.GetBytes("[server] Checksum does not match!" + myCheckSum + " " + checkSum);
                             Console.WriteLine("{0}-[{1}] {2}", clNo, DateTime.Now, "Checksum does not match!");
-                            continue;
+                            break; ;
                         }
 
                         packet = bytesToPacket(packetBytes, clNo);
                         Array.Copy(packetBytes, Constants.type_length, data, cnt, howBig - Constants.type_length);
                         cnt += howBig - Constants.type_length;
-                        if (packet.type == "[EndT]")
-                            break;
-
+                      
                         Console.WriteLine("[Client-{0}]-[{1}] {2}", clNo, DateTime.Now, "Packet received!");
 
-                        packet.type.Replace("\0", string.Empty);
+                        packet.type = packet.type.Replace("\0", string.Empty);
+                        if(packet.type=="[EndT]")
+                        {
+                            clientRunning = false;
+                            break;
+                        }
                         if (packet.type.ToLower().StartsWith("[set-museum]") || packet.type.ToLower().StartsWith("[set-exhibit]"))
                             ReceiveZip(networkStream, len, packet, howBig, clNo);
                         else
@@ -469,6 +471,9 @@ namespace Server
                         Console.WriteLine("[Client-{0}] [{1}] [Error] Checksum does not match!", clNo, DateTime.Now);
                         return null;
                     }
+                    if (packet.type == "[EndT]")
+                        break;
+
                     packet = bytesToPacket(packetBytes, clNo);
                     cnt += howBig - Constants.type_length;
 
