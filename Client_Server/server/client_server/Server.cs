@@ -452,7 +452,7 @@ namespace Server
             try
             {
                 BinaryReader binaryReader = new BinaryReader(networkStream);
-                packet.data = new byte[Constants.data_length];
+                Packet packet1 = new Packet();
                 int cnt = 0;
                 byte[] data = new byte[len + Constants.data_length];
                 byte[] packetBytes = new byte[Constants.data_length + Constants.type_length];
@@ -462,6 +462,14 @@ namespace Server
                 BinaryWriter bw = null;
                 Array.Copy(packetBytes, Constants.type_length, data, cnt, cat - Constants.type_length);
                 cnt += cat;
+                packet.type = packet.type.Replace("\0", string.Empty);
+                string filename = ".//Resources//" + packet.type + ".zip";
+                fs = new FileStream(filename, FileMode.Append);
+                bw = new BinaryWriter(fs);
+                bw.Write(packet.data);
+                //packet1 = packet;                    
+                ok = true;
+                packet.data = new byte[Constants.data_length];
 
                 while (cnt < len)
                 {
@@ -483,14 +491,6 @@ namespace Server
                     packet = bytesToPacket(packetBytes, clNo);
                     cnt += howBig - Constants.type_length;
 
-                    if (!ok)
-                    {
-                        packet.type = packet.type.Replace("\0", string.Empty);
-                        string filename = ".//Resources//" + packet.type + ".zip";
-                        fs = new FileStream(filename, FileMode.Append);
-                        bw = new BinaryWriter(fs);
-                        ok = true;
-                    }
 
                     bw.Write(packet.data);
                     bw.Flush();
